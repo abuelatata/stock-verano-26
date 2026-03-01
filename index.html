@@ -1,0 +1,1391 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Abuela Tata · Ceremonia 26 · Repeticiones</title>
+
+  <!-- jsPDF para PDF en el navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f8f7;
+      --card:#ffffff;
+      --ink:#102a2a;
+      --muted:#5c6b6b;
+      --brand:#8fcfc5;
+      --brand2:#6bbeb1;
+      --line:rgba(16,42,42,12);
+      --shadow:0 8px 30px rgba(16,42,42,08);
+      --radius:16px;
+      --warn:#b35b00;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg, #ffffff 0%, var(--bg) 32%, var(--bg) 100%);
+      -webkit-font-smoothing:antialiased;
+      padding-bottom:118px;
+    }
+    header{
+      position:sticky; top:0; z-index:50;
+      background:rgba(255,255,255,86);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 14px 12px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .brand{display:flex; gap:10px; align-items:center; min-width:240px;}
+    .logoWrap{
+      width:60px;height:60px;display:flex;align-items:center;justify-content:center;
+    }
+    .logoWrap img{max-height:60px;max-width:100%;object-fit:contain;}
+    .brand h1{font-size:15px; line-height:1.15; margin:0; letter-spacing:.2px;}
+    .brand small{display:block; color:var(--muted); font-weight:500; margin-top:2px;}
+
+    .search{
+      flex:1; min-width:240px;
+      display:flex; gap:10px; align-items:center; justify-content:flex-end;
+    }
+    .search input{
+      width:min(520px, 100%);
+      padding:14px 16px;
+      border-radius:999px;
+      border:2px solid rgba(107,190,177,0.9);
+      outline:none;
+      background:#ffffff;
+      font-size:15px;
+      font-weight:700;
+      box-shadow:0 12px 28px rgba(107,190,177,.18);
+    }
+    .search input::placeholder{
+      color: rgba(16,42,42,.55);
+      font-weight:600;
+    }
+
+    .langFlags{
+      display:flex; gap:6px; align-items:center;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(16,42,42,.10);
+      padding:6px;
+      border-radius:999px;
+      box-shadow:0 8px 18px rgba(16,42,42,.08);
+    }
+    .flagBtn{
+      width:38px;height:34px;
+      border-radius:999px;
+      border:1px solid rgba(16,42,42,.12);
+      background:#fff;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .flagBtn.active{
+      border-color: rgba(107,190,177,.8);
+      box-shadow: 0 10px 20px rgba(107,190,177,.18);
+      transform: translateY(-1px);
+    }
+
+    main{max-width:1100px; margin:0 auto; padding:18px 14px 40px;}
+    .section{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      margin-top:14px;
+    }
+    .sectionTitle{
+      display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+      margin-bottom:12px;
+    }
+    .sectionTitle strong{font-size:14px;}
+    .hint{color:var(--muted); font-size:12px;}
+    .formGrid{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap:10px;
+    }
+    .field{grid-column: span 2;}
+    .field label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:700;}
+    .field input{
+      width:100%;
+      border-radius:12px;
+      border:1px solid rgba(16,42,42,.14);
+      padding:12px 12px;
+      outline:none;
+      background:#fff;
+      font-size:14px;
+      font-weight:700;
+    }
+    .field input:focus{border-color: rgba(107,190,177,.9); box-shadow: 0 0 0 3px rgba(107,190,177,.18);}
+
+    .meta{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .pill{
+      background:rgba(143,207,197,22);
+      border:1px solid rgba(143,207,197,35);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      color:var(--ink);
+      box-shadow: 0 10px 20px rgba(16,42,42,06);
+    }
+
+    .note{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(179,91,0,.25);
+      background:rgba(255,170,0,.08);
+      color:#6a3c00;
+      font-size:13px;
+      display:none;
+    }
+
+    .noteErr{
+      margin:14px 0 0;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(180,0,0,.25);
+      background:rgba(255,0,0,.06);
+      color:#7a1111;
+      font-size:13px;
+      display:none;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: repeat(2, 1fr);}
+      .field{grid-column: span 3;}
+    }
+    @media (max-width: 620px){
+      .grid{grid-template-columns: 1fr;}
+      .field{grid-column: span 6;}
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow: 0 14px 35px rgba(16,42,42,.10);
+      display:flex;
+      flex-direction:column;
+      min-height: 100%;
+    }
+    .imgWrap{
+      position:relative;
+      background:linear-gradient(180deg, rgba(143,207,197,.20), rgba(255,255,255,0));
+      border-bottom:1px solid rgba(16,42,42,.08);
+    }
+    .imgWrap img{
+      width:100%;
+      height:260px;
+      object-fit:cover;
+      display:block;
+      background:#fff;
+      cursor:pointer;
+    }
+    .imgBadge{
+      position:absolute; left:10px; top:10px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(16,42,42,.10);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:900;
+      box-shadow:0 10px 20px rgba(16,42,42,.10);
+    }
+    .body{
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .titleRow{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
+    .ref{
+      font-weight:1000;
+      letter-spacing:.2px;
+    }
+    .name{
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      margin-top:2px;
+    }
+    .price{
+      font-weight:1000;
+      background:rgba(143,207,197,22);
+      border:1px solid rgba(143,207,197,35);
+      padding:7px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+      font-size:13px;
+    }
+    .kv{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .kv b{color:var(--ink)}
+    .sizes{padding:12px; display:flex; flex-direction:column; gap:10px;}
+    .sizesHeader{display:flex; align-items:center; justify-content:space-between; gap:10px; color:var(--muted); font-size:12px;}
+    .sizesGrid{display:grid; grid-template-columns: 1fr; gap:10px;}
+    .sizeLine{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+    .sizeTag{font-weight:800; font-size:13px; letter-spacing:.2px; min-width:54px;}
+    .stepper{display:flex; align-items:center; gap:10px;}
+    .btn{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:1px solid rgba(16,42,42,14);
+      background:linear-gradient(180deg, #fff 0%, #f7fbfa 100%);
+      box-shadow: 0 6px 16px rgba(16,42,42,08);
+      font-size:20px; font-weight:900; color:var(--ink);
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: scale(.98); }
+    .qty{
+      width:54px; height:44px;
+      border-radius:14px;
+      border:1px solid rgba(16,42,42,14);
+      text-align:center;
+      font-weight:900; font-size:14px;
+      outline:none; background:#fff;
+    }
+
+    .lineTotal{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:10px 12px 12px;
+      border-top:1px dashed rgba(16,42,42,.14);
+      color:var(--muted); font-size:13px;
+    }
+    .lineTotal strong{ color:var(--ink); }
+
+    .surchargeTag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      background:rgba(255,170,0,.12);
+      border:1px solid rgba(179,91,0,.22);
+      color:#6a3c00;
+      white-space:nowrap;
+    }
+
+    .bottomBar{
+      position:fixed; left:0; right:0; bottom:0;
+      background:rgba(255,255,255,92);
+      backdrop-filter: blur(10px);
+      border-top:1px solid var(--line);
+      z-index:60;
+    }
+    .bottomInner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .totals{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      color:var(--muted); font-size:13px;
+    }
+    .totals .big{
+      color:var(--ink);
+      font-weight:1000;
+      font-size:16px;
+      letter-spacing:.2px;
+      background:rgba(143,207,197,22);
+      border:1px solid rgba(143,207,197,35);
+      padding:8px 12px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .actions{display:flex; gap:10px; flex-wrap:wrap;}
+    button{
+      border:0;
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:900;
+      cursor:pointer;
+      letter-spacing:.2px;
+      box-shadow:0 12px 28px rgba(16,42,42,.10);
+    }
+    .primary{
+      background:linear-gradient(180deg, var(--brand) 0%, var(--brand2) 100%);
+      color:#083030;
+    }
+    .secondary{
+      background:#fff;
+      border:1px solid rgba(16,42,42,.14);
+      color:var(--ink);
+    }
+    button:active{transform: scale(.99)}
+
+    /* Lightbox imagen grande */
+    .lightbox{
+      position:fixed; inset:0;
+      background:rgba(16,42,42,72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:90;
+      padding:18px;
+    }
+    .lightboxInner{
+      width:min(980px, 100%);
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 20px 70px rgba(0,0,0,35);
+      border:1px solid rgba(255,255,255,25);
+    }
+    .lightboxHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,92);
+    }
+    .lightboxHead strong{font-size:13px;}
+    .lightboxImg{
+      width:100%;
+      height:auto;
+      display:block;
+      background:#fff;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logoWrap">
+          <img src="images/logo.png" alt="Abuela Tata">
+        </div>
+        <div>
+          <h1 id="ui_title">Abuela Tata · Ceremonia 26</h1>
+          <small id="ui_subtitle">Repeticiones · Selector de tallas (móvil pro)</small>
+        </div>
+      </div>
+
+      <div class="search">
+        <input id="q" type="search" placeholder="Buscar por referencia o nombre…" autocomplete="off" />
+        <div id="langFlags" class="langFlags" aria-label="Language">
+          <button type="button" class="flagBtn" data-lang="es" title="Español" aria-label="Español">🇪🇸</button>
+          <button type="button" class="flagBtn" data-lang="en" title="English" aria-label="English">🇬🇧</button>
+          <button type="button" class="flagBtn" data-lang="pt" title="Português" aria-label="Português">🇵🇹</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="section">
+      <div class="sectionTitle">
+        <strong id="ui_clientTitle">Datos del cliente</strong>
+        <span class="hint" id="ui_clientHint">Estos datos se meten en el email del pedido</span>
+      </div>
+
+      <div class="formGrid">
+        <div class="field">
+          <label id="ui_lbl_name">Nombre cliente *</label>
+          <input id="c_name" type="text" placeholder="Ej: Boutique Naya" />
+        </div>
+        <div class="field">
+          <label id="ui_lbl_vat">CIF / NIF *</label>
+          <input id="c_vat" type="text" placeholder="Ej: B12345678" />
+        </div>
+        <div class="field">
+          <label id="ui_lbl_email">Email cliente *</label>
+          <input id="c_email" type="email" placeholder="Ej: compras@tienda.com" />
+        </div>
+        <div class="field">
+          <label id="ui_lbl_cp">Código postal *</label>
+          <input id="c_cp" type="text" inputmode="numeric" placeholder="Ej: 41620" />
+        </div>
+        <div class="field">
+          <label id="ui_lbl_city">Localidad *</label>
+          <input id="c_city" type="text" placeholder="Ej: Marchena" />
+        </div>
+        <div class="field">
+          <label id="ui_lbl_notes">Observaciones (opcional)</label>
+          <input id="c_notes" type="text" placeholder="Ej: Entrega urgente / Comentarios…" />
+        </div>
+      </div>
+
+      <div class="note" id="surchargeNote"></div>
+    </div>
+
+    <div class="section" id="offlineBox" style="display:none">
+      <div class="sectionTitle">
+        <strong id="ui_offlineTitle">Modo escritorio (offline)</strong>
+        <span class="hint" id="ui_offlineHint">Si abriste el archivo desde el PC, carga la tarifa aquí</span>
+      </div>
+
+      <div class="formGrid" style="grid-template-columns:1fr;">
+        <div class="field">
+          <label id="ui_offlineLabel">Cargar tarifa.json desde tu ordenador</label>
+          <input id="tarifaFile" type="file" accept=".json,application/json" />
+        </div>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div class="pill" id="ui_pill_products">📦 Productos: <strong id="count">0</strong></div>
+      <div class="pill" id="ui_pill_lines">🧾 Líneas con cantidades: <strong id="lines">0</strong></div>
+    </div>
+
+    <div id="err" class="noteErr"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <div class="bottomBar">
+    <div class="bottomInner">
+      <div class="totals">
+        <span id="ui_unitsLabel">Unidades: <strong id="u">0</strong></span>
+        <span class="big" id="ui_totalLabel">Total: <span id="t">0,00</span> €</span>
+      </div>
+      <div class="actions">
+        <button class="secondary" id="btnClear" type="button">Vaciar</button>
+        <button class="secondary" id="btnPDF" type="button">📄 PDF</button>
+        <button class="primary" id="btnEmail" type="button">✉️ Enviar pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox imagen grande -->
+  <div class="lightbox" id="lb">
+    <div class="lightboxInner">
+      <div class="lightboxHead">
+        <strong id="lbTitle">Modelo</strong>
+        <button class="secondary" id="lbClose" type="button">Cerrar</button>
+      </div>
+      <img id="lbImg" class="lightboxImg" alt="Imagen modelo" />
+    </div>
+  </div>
+
+  <script>
+    // =============================
+    // i18n (ES / EN / PT)
+    // =============================
+    let currentLang = "es";
+
+    const translations = {
+      es: {
+        title: "Abuela Tata · Ceremonia 26",
+        subtitle: "Repeticiones · Selector de tallas (móvil pro)",
+        search: "Buscar por referencia o nombre…",
+
+        clientTitle: "Datos del cliente",
+        clientHint: "Estos datos se meten en el email del pedido",
+        lbl_name: "Nombre cliente *",
+        lbl_vat: "CIF / NIF *",
+        lbl_email: "Email cliente *",
+        lbl_cp: "Código postal *",
+        lbl_city: "Localidad *",
+        lbl_notes: "Observaciones (opcional)",
+        ph_name: "Ej: Boutique Naya",
+        ph_vat: "Ej: B12345678",
+        ph_email: "Ej: compras@tienda.com",
+        ph_cp: "Ej: 41620",
+        ph_city: "Ej: Marchena",
+        ph_notes: "Ej: Entrega urgente / Comentarios…",
+
+        offlineTitle: "Modo escritorio (offline)",
+        offlineHint: "Si abriste el archivo desde el PC, carga la tarifa aquí",
+        offlineLabel: "Cargar tarifa.json desde tu ordenador",
+
+        pill_products: "📦 Productos:",
+        pill_lines: "🧾 Líneas con cantidades:",
+        unitsLabel: "Unidades:",
+        totalLabel: "Total:",
+
+        btnClear: "Vaciar",
+        btnPDF: "📄 PDF",
+        btnEmail: "✉️ Enviar pedido",
+        lbClose: "Cerrar",
+
+        missingData: "Faltan datos del cliente:",
+        noQty: "No hay cantidades seleccionadas todavía.",
+
+        type: "Tipo",
+        family: "Familia",
+        sizes: "Tallas",
+        lineSubtotal: "Subtotal línea",
+        surcharge: "Supl. 10% (<3 uds)",
+        surchargeInfo: "Ojo: se aplica +10% en los modelos con menos de 3 unidades.",
+
+        orderSubjectPrefix: "REPETICIÓN CEREMONIA 26",
+        appGenerated: "PEDIDO (generado desde la app)",
+        dateTime: "Fecha y hora",
+        clientDataBlock: "DATOS DEL CLIENTE",
+        orderDetails: "DETALLE DEL PEDIDO",
+        price: "Precio",
+        subtotal: "Subtotal",
+        units: "Uds",
+        totalUnits: "TOTAL UNIDADES",
+        totalEUR: "TOTAL €",
+        thanks: "Muchas gracias",
+        confirm: "Esperamos confirmación de pedido",
+        pdfTitle: "ABUELA TATA · CEREMONIA 26 · REPETICIONES",
+        obs: "Obs",
+        noPhoto: "Sin foto"
+      },
+
+      en: {
+        title: "Abuela Tata · Ceremony 26",
+        subtitle: "Reorders · Size selector (mobile pro)",
+        search: "Search by reference or name…",
+
+        clientTitle: "Client details",
+        clientHint: "These details will appear in the order email",
+        lbl_name: "Client name *",
+        lbl_vat: "VAT / Tax ID *",
+        lbl_email: "Client email *",
+        lbl_cp: "Postcode *",
+        lbl_city: "City *",
+        lbl_notes: "Notes (optional)",
+        ph_name: "e.g. Boutique Naya",
+        ph_vat: "e.g. B12345678",
+        ph_email: "e.g. buying@shop.com",
+        ph_cp: "e.g. 41620",
+        ph_city: "e.g. Marchena",
+        ph_notes: "e.g. Urgent delivery / Comments…",
+
+        offlineTitle: "Desktop mode (offline)",
+        offlineHint: "If you opened the file from your PC, load the price list here",
+        offlineLabel: "Load tarifa.json from your computer",
+
+        pill_products: "📦 Products:",
+        pill_lines: "🧾 Lines with quantities:",
+        unitsLabel: "Units:",
+        totalLabel: "Total:",
+
+        btnClear: "Clear",
+        btnPDF: "📄 PDF",
+        btnEmail: "✉️ Send order",
+        lbClose: "Close",
+
+        missingData: "Missing client information:",
+        noQty: "No quantities selected yet.",
+
+        type: "Type",
+        family: "Family",
+        sizes: "Sizes",
+        lineSubtotal: "Line subtotal",
+        surcharge: "10% surcharge (<3 units)",
+        surchargeInfo: "Note: +10% applies on models with fewer than 3 units.",
+
+        orderSubjectPrefix: "CEREMONY 26 REORDER",
+        appGenerated: "ORDER (generated from the app)",
+        dateTime: "Date & time",
+        clientDataBlock: "CLIENT DETAILS",
+        orderDetails: "ORDER DETAILS",
+        price: "Price",
+        subtotal: "Subtotal",
+        units: "Units",
+        totalUnits: "TOTAL UNITS",
+        totalEUR: "TOTAL €",
+        thanks: "Thank you",
+        confirm: "Please confirm the order",
+        pdfTitle: "ABUELA TATA · CEREMONY 26 · REORDERS",
+        obs: "Notes",
+        noPhoto: "No photo"
+      },
+
+      pt: {
+        title: "Abuela Tata · Cerimónia 26",
+        subtitle: "Reposições · Seletor de tamanhos (mobile pro)",
+        search: "Pesquisar por referência ou nome…",
+
+        clientTitle: "Dados do cliente",
+        clientHint: "Estes dados aparecerão no email do pedido",
+        lbl_name: "Nome do cliente *",
+        lbl_vat: "NIF / ID Fiscal *",
+        lbl_email: "Email do cliente *",
+        lbl_cp: "Código postal *",
+        lbl_city: "Localidade *",
+        lbl_notes: "Observações (opcional)",
+        ph_name: "Ex.: Boutique Naya",
+        ph_vat: "Ex.: B12345678",
+        ph_email: "Ex.: compras@loja.com",
+        ph_cp: "Ex.: 41620",
+        ph_city: "Ex.: Marchena",
+        ph_notes: "Ex.: Entrega urgente / Comentários…",
+
+        offlineTitle: "Modo desktop (offline)",
+        offlineHint: "Se abriu o ficheiro no PC, carregue a lista aqui",
+        offlineLabel: "Carregar tarifa.json do seu computador",
+
+        pill_products: "📦 Produtos:",
+        pill_lines: "🧾 Linhas com quantidades:",
+        unitsLabel: "Unidades:",
+        totalLabel: "Total:",
+
+        btnClear: "Limpar",
+        btnPDF: "📄 PDF",
+        btnEmail: "✉️ Enviar pedido",
+        lbClose: "Fechar",
+
+        missingData: "Faltam dados do cliente:",
+        noQty: "Ainda não há quantidades selecionadas.",
+
+        type: "Tipo",
+        family: "Família",
+        sizes: "Tamanhos",
+        lineSubtotal: "Subtotal da linha",
+        surcharge: "Supl. 10% (<3 unid)",
+        surchargeInfo: "Nota: +10% aplica-se em modelos com menos de 3 unidades.",
+
+        orderSubjectPrefix: "REPOSIÇÃO CERIMÓNIA 26",
+        appGenerated: "PEDIDO (gerado pela app)",
+        dateTime: "Data e hora",
+        clientDataBlock: "DADOS DO CLIENTE",
+        orderDetails: "DETALHE DO PEDIDO",
+        price: "Preço",
+        subtotal: "Subtotal",
+        units: "Unid",
+        totalUnits: "TOTAL UNIDADES",
+        totalEUR: "TOTAL €",
+        thanks: "Muito obrigado",
+        confirm: "Aguardamos confirmação do pedido",
+        pdfTitle: "ABUELA TATA · CERIMÓNIA 26 · REPOSIÇÕES",
+        obs: "Obs",
+        noPhoto: "Sem foto"
+      }
+    };
+
+    function t(key){
+      const pack = translations[currentLang] || translations.es;
+      return pack[key] ?? (translations.es[key] ?? key);
+    }
+
+    function localeForLang(){
+      if(currentLang === "en") return "en-GB";
+      if(currentLang === "pt") return "pt-PT";
+      return "es-ES";
+    }
+
+    function setLanguage(lang){
+      currentLang = (lang === "en" || lang === "pt" || lang === "es") ? lang : "es";
+      document.documentElement.lang = currentLang;
+
+      document.getElementById("ui_title").textContent = t("title");
+      document.getElementById("ui_subtitle").textContent = t("subtitle");
+      document.getElementById("q").placeholder = t("search");
+
+      document.getElementById("ui_clientTitle").textContent = t("clientTitle");
+      document.getElementById("ui_clientHint").textContent = t("clientHint");
+      document.getElementById("ui_lbl_name").textContent = t("lbl_name");
+      document.getElementById("ui_lbl_vat").textContent = t("lbl_vat");
+      document.getElementById("ui_lbl_email").textContent = t("lbl_email");
+      document.getElementById("ui_lbl_cp").textContent = t("lbl_cp");
+      document.getElementById("ui_lbl_city").textContent = t("lbl_city");
+      document.getElementById("ui_lbl_notes").textContent = t("lbl_notes");
+
+      document.getElementById("c_name").placeholder = t("ph_name");
+      document.getElementById("c_vat").placeholder = t("ph_vat");
+      document.getElementById("c_email").placeholder = t("ph_email");
+      document.getElementById("c_cp").placeholder = t("ph_cp");
+      document.getElementById("c_city").placeholder = t("ph_city");
+      document.getElementById("c_notes").placeholder = t("ph_notes");
+
+      document.getElementById("ui_offlineTitle").textContent = t("offlineTitle");
+      document.getElementById("ui_offlineHint").textContent = t("offlineHint");
+      document.getElementById("ui_offlineLabel").textContent = t("offlineLabel");
+
+      document.getElementById("ui_pill_products").childNodes[0].textContent = t("pill_products")+" ";
+      document.getElementById("ui_pill_lines").childNodes[0].textContent = t("pill_lines")+" ";
+
+      document.getElementById("ui_unitsLabel").childNodes[0].textContent = t("unitsLabel")+" ";
+      document.getElementById("ui_totalLabel").childNodes[0].textContent = t("totalLabel")+" ";
+
+      document.getElementById("btnClear").textContent = t("btnClear");
+      document.getElementById("btnPDF").textContent = t("btnPDF");
+      document.getElementById("btnEmail").textContent = t("btnEmail");
+      document.getElementById("lbClose").textContent = t("lbClose");
+    }
+
+    function setActiveFlag(lang){
+      document.querySelectorAll(".flagBtn").forEach(b=>{
+        b.classList.toggle("active", b.dataset.lang === lang);
+      });
+    }
+
+    // =============================
+    // Reglas de tallas (CEREMONIA 26)
+    // - 12/13/03: 3M-4A
+    // - 25/04/44: 12M-12A (NO 7A y 9A)
+    // - 08: ÚNICA
+    // =============================
+    const SIZES_BEBE  = ["3m","6m","9m","12m","18m","2a","3a","4a"];
+    const SIZES_NINO  = ["12m","18m","2a","3a","4a","5a","6a","8a","10a","12a"]; // sin 7a y 9a
+    const SIZES_UNICA = ["ÚNICA"];
+
+    // TIPO = 2 primeras, FAMILIA = 3 últimas
+    function typeFromRef(ref){
+      const s = String(ref || "").trim();
+      if (s.length < 2) return "";
+      return s.slice(0,2);
+    }
+    function familyFromRef(ref){
+      const s = String(ref || "").trim();
+      if (s.length < 3) return "";
+      return s.slice(-3);
+    }
+
+    function sizesForType(type){
+      if (type === "08") return SIZES_UNICA;                 // diademas
+      if (["12","13","03"].includes(type)) return SIZES_BEBE; // jesusitos + braguita niño
+      if (["25","04","44"].includes(type)) return SIZES_NINO; // vestidos + pantalón niño + camisas
+      return SIZES_NINO;
+    }
+
+    // =============================
+    // Tarifa
+    // =============================
+    let productos = [];
+
+    async function loadTarifa(){
+      try{
+        const res = await fetch("data/tarifa.json", {cache:"no-store"});
+        if(!res.ok) throw new Error("No puedo cargar data/tarifa.json");
+        const data = await res.json();
+        setProductosFromJSON(data);
+      }catch(err){
+        console.warn(err);
+        // fallback: si algo falla, lo avisamos
+        document.getElementById("err").style.display = "block";
+        document.getElementById("err").textContent = "No he podido cargar la tarifa. Revisa que exista /data/tarifa.json en el repo.";
+      }
+    }
+
+    function setProductosFromJSON(data){
+      if(!Array.isArray(data)) throw new Error("El JSON debe ser un array: [ {ref,name,price}, ... ]");
+
+      productos = data
+        .filter(x => x && (x.ref || x.name))
+        .map(x => ({
+          ref: String(x.ref ?? "").trim(),
+          name: String(x.name ?? "").trim(),
+          price: Number(x.price ?? 0)
+        }))
+        .filter(x => x.ref.length > 0);
+
+      document.getElementById("count").textContent = productos.length;
+      render();
+    }
+
+    // =============================
+    // Pedido (estado)
+    // =============================
+    const order = Object.create(null);
+
+    function getQty(ref, size){
+      return (order[ref] && order[ref][size]) ? order[ref][size] : 0;
+    }
+    function setQty(ref, size, qty){
+      if (!order[ref]) order[ref] = Object.create(null);
+      order[ref][size] = Math.max(0, Number(qty) || 0);
+      if (order[ref][size] === 0) delete order[ref][size];
+      if (Object.keys(order[ref]).length === 0) delete order[ref];
+      refreshTotals();
+      // re-render solo esa tarjeta sería ideal, pero aquí mantenemos simple
+      render();
+    }
+
+    function formatEUR(n){
+      const v = Number(n) || 0;
+      return v.toLocaleString(localeForLang(), {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function nowSpain(){
+      return new Date().toLocaleString("es-ES", {
+        timeZone: "Europe/Madrid",
+        year:"numeric", month:"2-digit", day:"2-digit",
+        hour:"2-digit", minute:"2-digit", second:"2-digit"
+      });
+    }
+
+    function lineUnits(ref){
+      const obj = order[ref];
+      if(!obj) return 0;
+      return Object.values(obj).reduce((a,b)=>a+(Number(b)||0),0);
+    }
+
+    // Regla +10%: menos de 3 unidades por modelo/referencia
+    function surchargeApplies(ref){
+      const u = lineUnits(ref);
+      return u > 0 && u < 3;
+    }
+
+    function lineSubtotal(ref, price){
+      const u = lineUnits(ref);
+      const base = u * (Number(price)||0);
+      return surchargeApplies(ref) ? base * 1.10 : base;
+    }
+
+    function lineSurchargeAmount(ref, price){
+      const u = lineUnits(ref);
+      const base = u * (Number(price)||0);
+      return surchargeApplies(ref) ? base * 0.10 : 0;
+    }
+
+    // =============================
+    // Datos cliente
+    // =============================
+    function getClientData(){
+      return {
+        name: document.getElementById("c_name").value.trim(),
+        vat: document.getElementById("c_vat").value.trim(),
+        cp: document.getElementById("c_cp").value.trim(),
+        city: document.getElementById("c_city").value.trim(),
+        email: document.getElementById("c_email").value.trim(),
+        notes: document.getElementById("c_notes").value.trim()
+      };
+    }
+    function validateClientData(){
+      const c = getClientData();
+      const missing = [];
+      if(!c.name) missing.push(t("lbl_name").replace(" *",""));
+      if(!c.vat) missing.push(t("lbl_vat").replace(" *",""));
+      if(!c.email) missing.push(t("lbl_email").replace(" *",""));
+      if(!c.cp) missing.push(t("lbl_cp").replace(" *",""));
+      if(!c.city) missing.push(t("lbl_city").replace(" *",""));
+      return {ok: missing.length===0, missing, c};
+    }
+
+    // =============================
+    // Render
+    // =============================
+    const grid = document.getElementById("grid");
+    const q = document.getElementById("q");
+    const countEl = document.getElementById("count");
+    const linesEl = document.getElementById("lines");
+    const uEl = document.getElementById("u");
+    const tEl = document.getElementById("t");
+    const surchargeNote = document.getElementById("surchargeNote");
+
+    function render(){
+      const term = (q.value || "").trim().toLowerCase();
+
+      const filtered = productos.filter(p=>{
+        if(!term) return true;
+        return (p.ref || "").toLowerCase().includes(term) || (p.name || "").toLowerCase().includes(term);
+      });
+
+      grid.innerHTML = "";
+      filtered.forEach(p=>{
+        const type = typeFromRef(p.ref);
+        const fam  = familyFromRef(p.ref);
+        const sizes = sizesForType(type);
+
+        const u = lineUnits(p.ref);
+        const sub = lineSubtotal(p.ref, p.price);
+        const sur = lineSurchargeAmount(p.ref, p.price);
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const imgWrap = document.createElement("div");
+        imgWrap.className = "imgWrap";
+
+        const img = document.createElement("img");
+        img.alt = p.ref;
+        img.loading = "lazy";
+        img.src = `images/${p.ref}.jpg`;
+        img.onerror = () => { img.src = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='800'><rect width='100%' height='100%' fill='#ffffff'/><text x='50%' y='48%' text-anchor='middle' font-family='Arial' font-size='34' fill='#5c6b6b'>${t("noPhoto")}</text><text x='50%' y='56%' text-anchor='middle' font-family='Arial' font-size='30' fill='#102a2a'>${p.ref}</text></svg>`); };
+        img.addEventListener("click", ()=> openLightbox(p.ref, img.src));
+
+        const badge = document.createElement("div");
+        badge.className = "imgBadge";
+        badge.textContent = p.ref;
+
+        imgWrap.appendChild(img);
+        imgWrap.appendChild(badge);
+
+        const body = document.createElement("div");
+        body.className = "body";
+
+        const titleRow = document.createElement("div");
+        titleRow.className = "titleRow";
+
+        const left = document.createElement("div");
+        left.innerHTML = `<div class="ref">${p.ref}</div><div class="name">${escapeHTML(p.name || "")}</div>`;
+
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = `${formatEUR(p.price)} €`;
+
+        titleRow.appendChild(left);
+        titleRow.appendChild(price);
+
+        const kv = document.createElement("div");
+        kv.className = "kv";
+        kv.innerHTML = `
+          <div>${t("type")}: <b>${escapeHTML(type)}</b></div>
+          <div>${t("family")}: <b>${escapeHTML(fam)}</b></div>
+          <div>${t("sizes")}: <b>${escapeHTML(sizesText(sizes))}</b></div>
+          <div>${t("units")}: <b>${u}</b></div>
+        `;
+
+        const sizesBox = document.createElement("div");
+        sizesBox.className = "sizes";
+
+        const sizesHeader = document.createElement("div");
+        sizesHeader.className = "sizesHeader";
+        sizesHeader.innerHTML = `
+          <span>${t("sizes")}</span>
+          ${sur>0 ? `<span class="surchargeTag">${t("surcharge")}</span>` : `<span></span>`}
+        `;
+
+        const sizesGrid = document.createElement("div");
+        sizesGrid.className = "sizesGrid";
+
+        sizes.forEach(sz=>{
+          const line = document.createElement("div");
+          line.className = "sizeLine";
+
+          const tag = document.createElement("div");
+          tag.className = "sizeTag";
+          tag.textContent = sz.toUpperCase();
+
+          const step = document.createElement("div");
+          step.className = "stepper";
+
+          const minus = document.createElement("div");
+          minus.className = "btn";
+          minus.textContent = "−";
+          minus.addEventListener("click", ()=>{
+            setQty(p.ref, sz, getQty(p.ref, sz)-1);
+          });
+
+          const input = document.createElement("input");
+          input.className = "qty";
+          input.type = "number";
+          input.min = "0";
+          input.inputMode = "numeric";
+          input.value = String(getQty(p.ref, sz));
+          input.addEventListener("change", ()=>{
+            setQty(p.ref, sz, input.value);
+          });
+
+          const plus = document.createElement("div");
+          plus.className = "btn";
+          plus.textContent = "+";
+          plus.addEventListener("click", ()=>{
+            setQty(p.ref, sz, getQty(p.ref, sz)+1);
+          });
+
+          step.appendChild(minus);
+          step.appendChild(input);
+          step.appendChild(plus);
+
+          line.appendChild(tag);
+          line.appendChild(step);
+          sizesGrid.appendChild(line);
+        });
+
+        const lineTotal = document.createElement("div");
+        lineTotal.className = "lineTotal";
+        lineTotal.innerHTML = `
+          <span>${t("lineSubtotal")}${sur>0 ? ` (+10%)` : ""}</span>
+          <strong>${formatEUR(sub)} €</strong>
+        `;
+
+        sizesBox.appendChild(sizesHeader);
+        sizesBox.appendChild(sizesGrid);
+        sizesBox.appendChild(lineTotal);
+
+        body.appendChild(titleRow);
+        body.appendChild(kv);
+        body.appendChild(sizesBox);
+
+        card.appendChild(imgWrap);
+        card.appendChild(body);
+
+        grid.appendChild(card);
+      });
+
+      // totales tras render
+      refreshTotals();
+    }
+
+    function sizesText(arr){
+      if(arr.length === 1) return arr[0];
+      return `${arr[0]}–${arr[arr.length-1]}`.toUpperCase();
+    }
+
+    function escapeHTML(s){
+      return String(s||"").replace(/[&<>"']/g, (c)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+
+    function refreshTotals(){
+      let totalUnits = 0;
+      let totalEUR = 0;
+      let linesWithQty = 0;
+      let totalSurcharge = 0;
+
+      Object.keys(order).forEach(ref=>{
+        const prod = productos.find(p=>p.ref === ref);
+        const price = prod ? prod.price : 0;
+
+        const u = lineUnits(ref);
+        if(u>0) linesWithQty++;
+        totalUnits += u;
+
+        totalEUR += lineSubtotal(ref, price);
+        totalSurcharge += lineSurchargeAmount(ref, price);
+      });
+
+      linesEl.textContent = linesWithQty;
+      uEl.textContent = totalUnits;
+      tEl.textContent = formatEUR(totalEUR);
+
+      if(totalSurcharge > 0){
+        surchargeNote.style.display = "block";
+        surchargeNote.textContent = `${t("surchargeInfo")} (Suplemento total: ${formatEUR(totalSurcharge)} €)`;
+      }else{
+        surchargeNote.style.display = "none";
+        surchargeNote.textContent = "";
+      }
+    }
+
+    // =============================
+    // Lightbox
+    // =============================
+    const lb = document.getElementById("lb");
+    const lbImg = document.getElementById("lbImg");
+    const lbTitle = document.getElementById("lbTitle");
+    document.getElementById("lbClose").addEventListener("click", closeLightbox);
+    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
+
+    function openLightbox(ref, src){
+      lbTitle.textContent = ref;
+      lbImg.src = src;
+      lb.style.display = "flex";
+    }
+    function closeLightbox(){
+      lb.style.display = "none";
+      lbImg.src = "";
+    }
+
+    // =============================
+    // Email
+    // =============================
+    function buildOrderLines(){
+      const lines = [];
+      Object.keys(order).forEach(ref=>{
+        const prod = productos.find(p=>p.ref === ref);
+        const name = prod ? prod.name : "";
+        const price = prod ? prod.price : 0;
+
+        const type = typeFromRef(ref);
+        const fam = familyFromRef(ref);
+        const sizes = sizesForType(type);
+
+        const items = [];
+        sizes.forEach(sz=>{
+          const q = getQty(ref, sz);
+          if(q>0) items.push(`${sz.toUpperCase()}: ${q}`);
+        });
+        if(items.length===0) return;
+
+        const u = lineUnits(ref);
+        const sub = lineSubtotal(ref, price);
+        const sur = surchargeApplies(ref);
+
+        lines.push({
+          ref, name, price,
+          type, fam,
+          sizesText: items.join(" · "),
+          units: u,
+          subtotal: sub,
+          surcharge: sur
+        });
+      });
+
+      // orden por referencia
+      lines.sort((a,b)=> (a.ref>b.ref?1:-1));
+      return lines;
+    }
+
+    function sendOrderEmail(){
+      const v = validateClientData();
+      const errEl = document.getElementById("err");
+      if(!v.ok){
+        errEl.style.display="block";
+        errEl.textContent = `${t("missingData")} ${v.missing.join(", ")}`;
+        return;
+      }
+      const lines = buildOrderLines();
+      if(lines.length===0){
+        errEl.style.display="block";
+        errEl.textContent = t("noQty");
+        return;
+      }
+      errEl.style.display="none";
+
+      // total
+      let totalUnits=0, totalEUR=0, totalSurcharge=0;
+      lines.forEach(l=>{
+        totalUnits += l.units;
+        totalEUR += l.subtotal;
+        const base = l.units * l.price;
+        if(l.surcharge) totalSurcharge += base*0.10;
+      });
+
+      const subject = `${t("orderSubjectPrefix")} · ${v.c.name} · ${nowSpain().slice(0,10)}`;
+      const body = [
+        `${t("appGenerated")}`,
+        `${t("dateTime")}: ${nowSpain()}`,
+        "",
+        `==============================`,
+        `${t("clientDataBlock")}`,
+        `==============================`,
+        `Nombre: ${v.c.name}`,
+        `CIF/NIF: ${v.c.vat}`,
+        `Email: ${v.c.email}`,
+        `CP: ${v.c.cp}`,
+        `Localidad: ${v.c.city}`,
+        v.c.notes ? `${t("obs")}: ${v.c.notes}` : "",
+        "",
+        `==============================`,
+        `${t("orderDetails")}`,
+        `==============================`,
+        ...lines.map(l=>{
+          const surTxt = l.surcharge ? ` · ${t("surcharge")}` : "";
+          return `• ${l.ref} · ${l.name}\n  ${t("price")}: ${formatEUR(l.price)} €\n  ${l.sizesText}\n  ${t("units")}: ${l.units} · ${t("subtotal")}: ${formatEUR(l.subtotal)} €${surTxt}\n`;
+        }),
+        "",
+        `${t("totalUnits")}: ${totalUnits}`,
+        `${t("totalEUR")}: ${formatEUR(totalEUR)} €`,
+        totalSurcharge>0 ? `${t("surcharge")}: ${formatEUR(totalSurcharge)} €` : "",
+        "",
+        `${t("thanks")}.`,
+        `${t("confirm")}.`
+      ].filter(Boolean).join("\n");
+
+      // Enviar a tu correo (destino). Cambia si quieres.
+      const to = "info@abuelatata.com";
+      const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    }
+
+    // =============================
+    // PDF
+    // =============================
+    async function exportPDFWithImages(){
+      const v = validateClientData();
+      const errEl = document.getElementById("err");
+      if(!v.ok){
+        errEl.style.display="block";
+        errEl.textContent = `${t("missingData")} ${v.missing.join(", ")}`;
+        return;
+      }
+      const lines = buildOrderLines();
+      if(lines.length===0){
+        errEl.style.display="block";
+        errEl.textContent = t("noQty");
+        return;
+      }
+      errEl.style.display="none";
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit:"mm", format:"a4"});
+
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 12;
+
+      let y = 14;
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(14);
+      doc.text(t("pdfTitle"), margin, y);
+      y += 8;
+
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(10);
+      doc.text(`${t("dateTime")}: ${nowSpain()}`, margin, y); y += 6;
+
+      doc.setFont("helvetica","bold"); doc.text(t("clientDataBlock"), margin, y); y += 5;
+      doc.setFont("helvetica","normal");
+      doc.text(`Nombre: ${v.c.name}`, margin, y); y += 5;
+      doc.text(`CIF/NIF: ${v.c.vat}`, margin, y); y += 5;
+      doc.text(`Email: ${v.c.email}`, margin, y); y += 5;
+      doc.text(`CP: ${v.c.cp} · ${v.c.city}`, margin, y); y += 6;
+      if(v.c.notes){
+        const noteLines = doc.splitTextToSize(`${t("obs")}: ${v.c.notes}`, pageW - margin*2);
+        doc.text(noteLines, margin, y);
+        y += noteLines.length*5 + 2;
+      }
+
+      doc.setFont("helvetica","bold");
+      doc.text(t("orderDetails"), margin, y); y += 6;
+
+      // Totales
+      let totalUnits=0, totalEUR=0, totalSurcharge=0;
+      lines.forEach(l=>{
+        totalUnits += l.units;
+        totalEUR += l.subtotal;
+        const base = l.units * l.price;
+        if(l.surcharge) totalSurcharge += base*0.10;
+      });
+
+      // filas
+      const rowH = 30;
+      for(const l of lines){
+        if(y + rowH + 30 > pageH){
+          doc.addPage();
+          y = 14;
+        }
+
+        // cuadro
+        doc.setDrawColor(220);
+        doc.roundedRect(margin, y, pageW - margin*2, rowH, 3, 3);
+
+        // texto
+        doc.setFont("helvetica","bold"); doc.setFontSize(11);
+        doc.text(`${l.ref} · ${l.name}`, margin+3, y+8);
+
+        doc.setFont("helvetica","normal"); doc.setFontSize(10);
+        doc.text(`${t("price")}: ${formatEUR(l.price)} €`, margin+3, y+14);
+
+        const surTxt = l.surcharge ? ` · ${t("surcharge")}` : "";
+        const sizesLines = doc.splitTextToSize(l.sizesText, pageW - margin*2 - 6);
+        doc.text(sizesLines.slice(0,2), margin+3, y+19);
+
+        doc.setFont("helvetica","bold"); doc.setFontSize(10);
+        const rightText = `${l.units} ${t("units")} · ${formatEUR(l.subtotal)} €${surTxt}`;
+        doc.text(rightText, pageW - margin - doc.getTextWidth(rightText), y+24);
+
+        y += rowH + 6;
+      }
+
+      // resumen final
+      if(y + 26 > pageH){
+        doc.addPage();
+        y = 14;
+      }
+      doc.setFont("helvetica","bold"); doc.setFontSize(12);
+      doc.text(`${t("totalUnits")}: ${totalUnits}`, margin, y); y += 6;
+      doc.text(`${t("totalEUR")}: ${formatEUR(totalEUR)} €`, margin, y); y += 6;
+      if(totalSurcharge>0){
+        doc.setFontSize(10);
+        doc.text(`${t("surcharge")}: ${formatEUR(totalSurcharge)} €`, margin, y); y += 6;
+      }
+
+      const stamp = new Date().toISOString().slice(0,10);
+      doc.save(`Repeticion_AbuelaTata_Ceremonia26_${v.c.name.replace(/\s+/g,"_")}_${stamp}.pdf`);
+    }
+
+    // =============================
+    // Botones
+    // =============================
+    document.getElementById("btnEmail").addEventListener("click", sendOrderEmail);
+    document.getElementById("btnPDF").addEventListener("click", exportPDFWithImages);
+
+    document.getElementById("btnClear").addEventListener("click", () => {
+      for (const k of Object.keys(order)) delete order[k];
+      render();
+    });
+
+    q.addEventListener("input", () => render());
+
+    // =============================
+    // Modo OFFLINE (si abres por file://)
+    // =============================
+    const offlineBox = document.getElementById("offlineBox");
+    const tarifaFile = document.getElementById("tarifaFile");
+
+    function isFileProtocol(){
+      return window.location.protocol === "file:";
+    }
+
+    if (isFileProtocol()){
+      offlineBox.style.display = "block";
+      document.getElementById("err").style.display = "none";
+
+      tarifaFile.addEventListener("change", async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if(!file) return;
+
+        try{
+          const text = await file.text();
+          const json = JSON.parse(text);
+          setProductosFromJSON(json);
+        }catch(err){
+          alert("No he podido cargar la tarifa.json. Revisa que sea un JSON válido.");
+          console.error(err);
+        }
+      });
+    }
+
+    // =============================
+    // Banderas + idioma inicial
+    // =============================
+    document.querySelectorAll(".flagBtn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const lang = btn.dataset.lang;
+        setLanguage(lang);
+        setActiveFlag(lang);
+        try{ localStorage.setItem("lang", lang); }catch(e){}
+        render();
+      });
+    });
+
+    let saved = "es";
+    try{ saved = localStorage.getItem("lang") || "es"; }catch(e){}
+    setLanguage(saved);
+    setActiveFlag(saved);
+
+    // Arranque
+    loadTarifa();
+  </script>
+</body>
+</html>
