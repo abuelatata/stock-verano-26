@@ -197,7 +197,15 @@
     .thumb .noimg{ color:var(--muted); font-size:12px; text-align:center; padding:8px; }
     .meta{ flex:1; min-width:0; }
     .refRow{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
-    .ref{ font-weight:700; font-size:14px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ref{
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:.2px;
+  white-space:normal;      /* para que NO corte */
+  overflow:visible;        /* para que NO esconda */
+  text-overflow:clip;      /* para que NO ponga ... */
+  word-break:break-word;   /* si es larga, parte bien */
+}
     .badges{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
     .badge{
       font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid var(--stroke);
