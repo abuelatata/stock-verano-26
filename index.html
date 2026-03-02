@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Abuela Tata · Repeticiones Ceremonia 2026</title>
+
+  <!-- Favicon (pon tu logo en /img/logo.png si quieres) -->
+  <link rel="icon" href="img/logo.png" />
+
+  <!-- jsPDF (para PDF) -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f5efe6;
+      --ink:#6e4f3a;
+      --line:#d2c2b0;
+      --card:#ffffffcc;
+      --shadow: 0 10px 30px rgba(0,0,0,.07);
+      --accent:#7aa79a; /* verde agua */
+      --danger:#b25b5b;
+    }
+    body{
+      margin:0;
+      font-family: Georgia, serif;
+      background: var(--bg);
+      background-image: radial-gradient(#e8dfd3 1px, transparent 1px);
+      background-size: 18px 18px;
+      color:var(--ink);
+    }
+    .wrap{max-width:1100px;margin:auto;padding:28px 16px 70px;}
+    header{
+      display:flex;gap:14px;align-items:center;justify-content:space-between;
+      margin:10px 0 18px;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex;gap:14px;align-items:center;
+    }
+    .logo{
+      width:58px;height:58px;border-radius:14px;object-fit:cover;
+      background:#fff;border:1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0;font-size:20px;line-height:1.2;}
+    .sub{margin:2px 0 0;font-size:13px;opacity:.85}
+    .lang{
+      display:flex;gap:8px;align-items:center;
+      background:var(--card);
+      border:1px solid var(--line);
+      padding:8px 10px;border-radius:14px;
+      box-shadow: var(--shadow);
+    }
+    .flag{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:10px;
+      padding:6px 8px;
+      cursor:pointer;
+      font-size:14px;
+      line-height:1;
+      transition:transform .08s ease;
+    }
+    .flag:active{transform:scale(.98)}
+    .flag.active{
+      outline:2px solid var(--accent);
+      border-color: transparent;
+    }
+
+    .topbar{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+      margin:16px 0 16px;
+    }
+    .search{
+      flex:1 1 260px;
+      display:flex;gap:8px;align-items:center;
+      background:var(--card);
+      border:2px solid var(--line);
+      border-radius:16px;
+      padding:10px 12px;
+      box-shadow: var(--shadow);
+    }
+    .search input{
+      width:100%;
+      border:none;outline:none;
+      font-family: Georgia, serif;
+      font-size:14px;
+      background:transparent;
+      color:var(--ink);
+    }
+    .pill{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px 12px;
+      box-shadow: var(--shadow);
+      font-size:13px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .btn{
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      padding:11px 14px;
+      font-family: Georgia, serif;
+      box-shadow: var(--shadow);
+      background: var(--accent);
+      color:#fff;
+      font-size:14px;
+    }
+    .btn.secondary{
+      background:#fff;
+      color:var(--ink);
+      border:1px solid var(--line);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .card{
+      grid-column: span 12;
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      display:grid;
+      grid-template-columns: 120px 1fr;
+      min-height:120px;
+    }
+    @media (min-width:780px){
+      .card{grid-column: span 6;}
+    }
+    @media (min-width:1020px){
+      .card{grid-column: span 4;}
+    }
+
+    .pic{
+      width:120px;height:120px;
+      background:#fff;
+      border-right:1px solid var(--line);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .pic img{width:100%;height:100%;object-fit:cover;display:block}
+    .pic .ph{
+      font-size:12px;opacity:.75;text-align:center;padding:8px;
+    }
+
+    .content{padding:12px 12px 10px;}
+    .titleRow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+    .name{
+      font-weight:700;font-size:14px;margin:0 0 4px;
+    }
+    .ref{
+      font-size:12px;opacity:.85;margin:0;
+    }
+    .price{
+      font-size:13px;font-weight:700;white-space:nowrap;
+    }
+
+    .badges-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+      margin-bottom:6px;
+    }
+    .badge{
+      font-size:12px;
+      padding:5px 9px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.75);
+      color:var(--ink);
+    }
+    .badge-color{font-weight:700}
+    .badge-fam{opacity:.9}
+
+    .no-photo-note{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--ink);
+      opacity:.85;
+      padding:6px 8px;
+      border-left:3px solid var(--line);
+      background:rgba(255,255,255,.55);
+      border-radius:10px;
+    }
+
+    .sizes{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .sz{
+      display:flex;align-items:center;gap:6px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:6px 8px;
+      font-size:12px;
+    }
+    .sz b{font-size:12px}
+    .pm{
+      width:26px;height:26px;border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:700;
+      color:var(--ink);
+      line-height:1;
+    }
+    .qty{
+      min-width:18px;text-align:center;font-weight:700;
+    }
+
+    .cart{
+      position:fixed;
+      left:0;right:0;bottom:0;
+      background:rgba(255,255,255,.88);
+      border-top:1px solid var(--line);
+      backdrop-filter: blur(8px);
+      padding:10px 14px;
+    }
+    .cartin{
+      max-width:1100px;margin:auto;
+      display:flex;gap:10px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between;
+    }
+    .sum{
+      font-size:13px;
+    }
+    .sum strong{font-size:14px}
+    .warn{
+      color:var(--danger);
+      font-size:12px;
+      margin-top:4px;
+    }
+
+    .small{
+      font-size:12px;opacity:.85
+    }
+
+    .loading{
+      padding:18px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img class="logo" src="img/logo.png" alt="Abuela Tata" onerror="this.style.display='none'"/>
+        <div>
+          <h1 id="t_title">Repeticiones · Ceremonia 2026</h1>
+          <div class="sub" id="t_sub">Pedidos por referencia y tallas · Color visible en cada modelo</div>
+        </div>
+      </div>
+
+      <div class="lang" aria-label="Idioma">
+        <button class="flag active" id="btnES" title="Español">🇪🇸</button>
+        <button class="flag" id="btnEN" title="English">🇬🇧</button>
+        <button class="flag" id="btnPT" title="Português">🇵🇹</button>
+      </div>
+    </header>
+
+    <div class="topbar">
+      <div class="search">
+        <span>🔎</span>
+        <input id="q" type="search" placeholder="Buscar por referencia, descripción, familia o color…" />
+      </div>
+
+      <div class="pill">
+        <span>📦</span>
+        <span id="t_loaded">Cargando tarifa…</span>
+      </div>
+
+      <button class="btn secondary" id="btnClear">Vaciar</button>
+      <button class="btn" id="btnPDF">PDF + Email</button>
+    </div>
+
+    <div id="status" class="loading">Cargando datos…</div>
+    <div id="grid" class="grid" style="display:none;"></div>
+  </div>
+
+  <div class="cart">
+    <div class="cartin">
+      <div class="sum">
+        <div><strong id="cartUnits">0</strong> <span id="t_units">unidades</span> · <strong id="cartTotal">0,00 €</strong></div>
+        <div class="warn" id="cartSurcharge" style="display:none;"></div>
+      </div>
+      <div class="small" id="t_hint">Recargo +10% por referencia si pides menos de 3 uds.</div>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   IDIOMAS
+========================= */
+const I18N = {
+  es:{
+    title:"Repeticiones · Ceremonia 2026",
+    sub:"Pedidos por referencia y tallas · Color visible en cada modelo",
+    loaded:n=>`Tarifa cargada: ${n} modelos`,
+    searchPH:"Buscar por referencia, descripción, familia o color…",
+    units:"unidades",
+    hint:"Recargo +10% por referencia si pides menos de 3 uds.",
+    noPhoto:"Sin foto · mismo modelo/familia, cambia el color",
+    fam:"Fam.",
+    color:"Color",
+    pdfSubject:"Pedido Repeticiones Ceremonia 2026",
+    emailBodyIntro:"Hola,\n\nAdjunto pedido (PDF) para repeticiones Ceremonia 2026.\n\nResumen:\n",
+    emailBodyOutro:"\nMuchas gracias.\n\nAbuela Tata"
+  },
+  en:{
+    title:"Reorders · Ceremony 2026",
+    sub:"Orders by reference & sizes · Color visible on each item",
+    loaded:n=>`Price list loaded: ${n} styles`,
+    searchPH:"Search by reference, description, family or color…",
+    units:"units",
+    hint:"+10% surcharge per reference if you order less than 3 units.",
+    noPhoto:"No photo · same style/family, color changes",
+    fam:"Fam.",
+    color:"Color",
+    pdfSubject:"Reorders Order · Ceremony 2026",
+    emailBodyIntro:"Hello,\n\nPlease find attached the order (PDF) for Ceremony 2026 reorders.\n\nSummary:\n",
+    emailBodyOutro:"\nThank you.\n\nAbuela Tata"
+  },
+  pt:{
+    title:"Reposições · Cerimónia 2026",
+    sub:"Pedidos por referência e tamanhos · Cor visível em cada modelo",
+    loaded:n=>`Tabela carregada: ${n} modelos`,
+    searchPH:"Pesquisar por referência, descrição, família ou cor…",
+    units:"unidades",
+    hint:"+10% de acréscimo por referência se pedir menos de 3 unidades.",
+    noPhoto:"Sem foto · mesmo modelo/família, muda a cor",
+    fam:"Fam.",
+    color:"Cor",
+    pdfSubject:"Pedido Reposições · Cerimónia 2026",
+    emailBodyIntro:"Olá,\n\nSegue em anexo o pedido (PDF) de reposições Cerimónia 2026.\n\nResumo:\n",
+    emailBodyOutro:"\nObrigado.\n\nAbuela Tata"
+  }
+};
+
+let idiomaActual = "es";
+function setLang(lang){
+  idiomaActual = lang;
+  document.getElementById("btnES").classList.toggle("active", lang==="es");
+  document.getElementById("btnEN").classList.toggle("active", lang==="en");
+  document.getElementById("btnPT").classList.toggle("active", lang==="pt");
+
+  document.getElementById("t_title").textContent = I18N[lang].title;
+  document.getElementById("t_sub").textContent = I18N[lang].sub;
+  document.getElementById("q").placeholder = I18N[lang].searchPH;
+  document.getElementById("t_units").textContent = I18N[lang].units;
+  document.getElementById("t_hint").textContent = I18N[lang].hint;
+
+  render(); // re-pinta para traducir “Sin foto…”
+}
+
+document.getElementById("btnES").onclick=()=>setLang("es");
+document.getElementById("btnEN").onclick=()=>setLang("en");
+document.getElementById("btnPT").onclick=()=>setLang("pt");
+
+/* =========================
+   COLORES (código oficial)
+========================= */
+const mapaColores = {
+  "00": { es: "Blanco", en: "White", pt: "Branco" },
+  "01": { es: "Rosa", en: "Pink", pt: "Rosa" },
+  "04": { es: "Celeste", en: "Sky Blue", pt: "Azul Céu" },
+  "05": { es: "Beige", en: "Beige", pt: "Bege" },
+  "06": { es: "Arena", en: "Sand", pt: "Areia" },
+  "09": { es: "Verde", en: "Green", pt: "Verde" },
+  "17": { es: "Azul", en: "Blue", pt: "Azul" },
+  "34": { es: "Menta", en: "Mint", pt: "Menta" },
+  "25": { es: "Maquillaje", en: "Blush", pt: "Maquilhagem" }
+};
+
+function parseRef(ref){
+  const r = String(ref).trim();
+  if(!/^\d{7,8}$/.test(r)) return null;
+
+  // 7 cifras: TT CC FFF
+  if(r.length === 7){
+    return { tipo:r.substring(0,2), variante:"", color:r.substring(2,4), familia:r.substring(4,7), raw:r };
+  }
+  // 8 cifras: TT V CC FFF
+  return { tipo:r.substring(0,2), variante:r.substring(2,3), color:r.substring(3,5), familia:r.substring(5,8), raw:r };
+}
+
+function getColorNombre(ref){
+  const p = parseRef(ref);
+  if(!p) return "";
+  const c = mapaColores[p.color];
+  if(!c) return `Color ${p.color}`;
+  return c[idiomaActual] || c.es;
+}
+function getFamilia(ref){
+  const p = parseRef(ref);
+  return p ? p.familia : "";
+}
+
+/* =========================
+   TALLAS POR TIPO (ajusta si lo necesitas)
+========================= */
+const tallasPorTipo = {
+  "11": ["3M","6M","9M","12M","18M","2A"],                             // pelele
+  "12": ["3M","6M","9M","18M","2A","3A","4A"],                          // jesusito con capota
+  "13": ["3M","6M","9M","18M","2A","3A","4A"],                          // jesusito sin capota
+  "25": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],        // vestido vuelo
+  "22": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],        // abrigo
+  "43": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],        // conjunto (si aplica)
+  "08": ["U"]                                                            // talla única
+};
+
+function getTallas(ref){
+  const p = parseRef(ref);
+  if(!p) return [];
+  return tallasPorTipo[p.tipo] || ["6","7","8","9","10","11","12","13","14","15","16"]; // fallback
+}
+
+/* =========================
+   FAMILIAS NO REPETIBLES (tu lista)
+========================= */
+const familiasNoRepetibles = new Set(["404","407","410","411","412","413","414"]);
+
+/* =========================
+   DATOS + CARRITO
+========================= */
+let productos = [];
+let filtro = "";
+
+const cart = {}; 
+// cart[ref] = { ref, descripcion, precio, tallas:{'6':2,...} }
+
+function getUnitsByRef(ref){
+  const it = cart[ref];
+  if(!it) return 0;
+  return Object.values(it.tallas).reduce((a,b)=>a+b,0);
+}
+
+function setQty(ref, talla, delta){
+  if(!cart[ref]){
+    const p = productos.find(x=>String(x.ref)===String(ref));
+    cart[ref] = { ref:String(ref), descripcion:p?.descripcion||"", precio:Number(p?.precio||0), tallas:{} };
+  }
+  const it = cart[ref];
+  const cur = it.tallas[talla] || 0;
+  const next = Math.max(0, cur + delta);
+  if(next === 0) delete it.tallas[talla];
+  else it.tallas[talla] = next;
+
+  // si se queda sin tallas, borra referencia
+  if(Object.keys(it.tallas).length === 0) delete cart[ref];
+
+  renderCart();
+  // solo actualiza el numerito de ese talla
+  const el = document.querySelector(`[data-ref="${ref}"][data-size="${talla}"] .qty`);
+  if(el) el.textContent = String(next);
+}
+
+/* =========================
+   RENDER
+========================= */
+function normalize(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+
+function matchProduct(p){
+  if(!filtro) return true;
+  const ref = String(p.ref);
+  const fam = getFamilia(ref);
+  const col = getColorNombre(ref);
+  const hay = [
+    ref, p.descripcion||"", fam, col
+  ].map(normalize).join(" ");
+  return hay.includes(filtro);
+}
+
+function render(){
+  if(!productos.length) return;
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  const list = productos.filter(matchProduct);
+
+  list.forEach(p=>{
+    const ref = String(p.ref);
+    const fam = getFamilia(ref);
+    const colorTxt = getColorNombre(ref);
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    // imagen
+    const imgPathCandidates = [
+      `img/${ref}.jpg`,
+      `img/${ref}.png`,
+      `img/${ref}.webp`
+    ];
+
+    const pic = document.createElement("div");
+    pic.className = "pic";
+
+    const img = document.createElement("img");
+    let idx = 0;
+
+    function tryNext(){
+      if(idx >= imgPathCandidates.length){
+        pic.innerHTML = `<div class="ph">📷<br>${I18N[idiomaActual].noPhoto}</div>`;
+        return;
+      }
+      img.src = imgPathCandidates[idx++];
+    }
+    img.onload = ()=>{};
+    img.onerror = ()=>tryNext();
+    tryNext();
+    pic.appendChild(img);
+
+    // contenido
+    const content = document.createElement("div");
+    content.className = "content";
+
+    const price = Number(p.precio||0);
+    content.innerHTML = `
+      <div class="titleRow">
+        <div>
+          <p class="name">${escapeHTML(p.descripcion||"")}</p>
+          <p class="ref">${escapeHTML(ref)}</p>
+
+          <div class="badges-row">
+            <span class="badge badge-color">${I18N[idiomaActual].color}: ${escapeHTML(colorTxt)}</span>
+            <span class="badge badge-fam">${I18N[idiomaActual].fam} ${escapeHTML(fam)}</span>
+          </div>
+
+          <div class="no-photo-note" style="display:none" data-nophoto="${ref}">
+            ${I18N[idiomaActual].noPhoto}
+          </div>
+        </div>
+        <div class="price">${formatEUR(price)}</div>
+      </div>
+      <div class="sizes" data-sizes="${ref}"></div>
+    `;
+
+    // si la tarjeta no tiene imagen (cuando falla), activamos el aviso
+    img.onerror = ()=>{
+      const note = content.querySelector(`[data-nophoto="${ref}"]`);
+      if(note) note.style.display = "block";
+      tryNext();
+    };
+
+    // tallas
+    const sizesWrap = content.querySelector(`[data-sizes="${ref}"]`);
+    const sizes = getTallas(ref);
+
+    sizes.forEach(sz=>{
+      const current = cart[ref]?.tallas?.[sz] || 0;
+      const chip = document.createElement("div");
+      chip.className = "sz";
+      chip.setAttribute("data-ref", ref);
+      chip.setAttribute("data-size", sz);
+      chip.innerHTML = `
+        <b>${escapeHTML(sz)}</b>
+        <button class="pm" type="button" aria-label="minus">−</button>
+        <span class="qty">${current}</span>
+        <button class="pm" type="button" aria-label="plus">+</button>
+      `;
+      const btns = chip.querySelectorAll("button.pm");
+      btns[0].onclick=()=>setQty(ref, sz, -1);
+      btns[1].onclick=()=>setQty(ref, sz, +1);
+      sizesWrap.appendChild(chip);
+    });
+
+    card.appendChild(pic);
+    card.appendChild(content);
+    grid.appendChild(card);
+  });
+
+  // status
+  document.getElementById("status").style.display = "none";
+  document.getElementById("grid").style.display = "grid";
+}
+
+function renderCart(){
+  let units = 0;
+  let total = 0;
+  let surchargeText = [];
+
+  Object.keys(cart).forEach(ref=>{
+    const it = cart[ref];
+    const u = getUnitsByRef(ref);
+    units += u;
+
+    const base = it.precio * u;
+
+    // recargo 10% si menos de 3 uds por referencia
+    let line = base;
+    if(u > 0 && u < 3){
+      line = base * 1.10;
+      surchargeText.push(`${ref} (+10%)`);
+    }
+    total += line;
+  });
+
+  document.getElementById("cartUnits").textContent = String(units);
+  document.getElementById("cartTotal").textContent = formatEUR(total);
+
+  const w = document.getElementById("cartSurcharge");
+  if(surchargeText.length){
+    w.style.display = "block";
+    w.textContent = (idiomaActual==="es")
+      ? `Recargo aplicado en: ${surchargeText.join(", ")}`
+      : (idiomaActual==="en")
+        ? `Surcharge applied to: ${surchargeText.join(", ")}`
+        : `Acréscimo aplicado em: ${surchargeText.join(", ")}`;
+  } else {
+    w.style.display = "none";
+    w.textContent = "";
+  }
+}
+
+/* =========================
+   PDF + EMAIL
+========================= */
+function buildOrderLines(){
+  // devuelve array con {ref, desc, familia, color, tallas, units, price, lineTotal, surchargeApplied}
+  const out = [];
+  Object.keys(cart).forEach(ref=>{
+    const it = cart[ref];
+    const u = getUnitsByRef(ref);
+    if(!u) return;
+    const fam = getFamilia(ref);
+    const color = getColorNombre(ref);
+    const base = it.precio * u;
+    const surchargeApplied = (u < 3);
+    const lineTotal = surchargeApplied ? base * 1.10 : base;
+    out.push({
+      ref, desc: it.descripcion, familia: fam, color,
+      tallas: it.tallas, units: u, price: it.precio,
+      lineTotal, surchargeApplied
+    });
+  });
+  return out;
+}
+
+function makePDF(){
+  const lines = buildOrderLines();
+  if(!lines.length){
+    alert(idiomaActual==="es" ? "No hay pedido aún." : (idiomaActual==="en" ? "No order yet." : "Ainda não há pedido."));
+    return null;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:"pt", format:"a4" });
+  const margin = 40;
+  let y = 52;
+
+  doc.setFont("times","normal");
+  doc.setFontSize(18);
+  doc.text(I18N[idiomaActual].pdfSubject, margin, y);
+  y += 18;
+
+  doc.setFontSize(11);
+  doc.text(`Fecha: ${new Date().toLocaleDateString()}`, margin, y);
+  y += 18;
+
+  let grand = 0;
+
+  lines.forEach((ln, i)=>{
+    if(y > 760){
+      doc.addPage();
+      y = 52;
+    }
+
+    doc.setFontSize(12);
+    doc.setFont("times","bold");
+    doc.text(`${ln.ref}  —  ${ln.desc || ""}`, margin, y); y += 14;
+
+    doc.setFont("times","normal");
+    doc.setFontSize(11);
+    doc.text(`${I18N[idiomaActual].color}: ${ln.color}   ·   ${I18N[idiomaActual].fam} ${ln.familia}`, margin, y); y += 14;
+
+    const tallaStr = Object.keys(ln.tallas)
+      .sort((a,b)=>a.localeCompare(b))
+      .map(t=>`${t}:${ln.tallas[t]}`).join("  |  ");
+
+    doc.text(`Tallas: ${tallaStr}`, margin, y); y += 14;
+
+    const base = ln.price * ln.units;
+    const rec = ln.surchargeApplied ? (idiomaActual==="es" ? " (recargo +10%)" : idiomaActual==="en" ? " (+10% surcharge)" : " (+10% acréscimo)") : "";
+    doc.text(`Uds: ${ln.units}  ·  Precio: ${formatEUR(ln.price)}  ·  Subtotal: ${formatEUR(base)}${rec}`, margin, y); y += 14;
+
+    doc.setFont("times","bold");
+    doc.text(`TOTAL LÍNEA: ${formatEUR(ln.lineTotal)}`, margin, y); y += 18;
+
+    doc.setDrawColor(210,194,176);
+    doc.line(margin, y, 555, y);
+    y += 14;
+
+    grand += ln.lineTotal;
+  });
+
+  if(y > 740){ doc.addPage(); y = 52; }
+  doc.setFont("times","bold");
+  doc.setFontSize(14);
+  doc.text(`TOTAL: ${formatEUR(grand)}`, margin, y);
+
+  return { doc, total: grand, lines };
+}
+
+function pdfAndEmail(){
+  const res = makePDF();
+  if(!res) return;
+
+  const pdfBlob = res.doc.output("blob");
+  const file = new File([pdfBlob], "pedido-ceremonia-2026.pdf", { type:"application/pdf" });
+
+  // mailto NO adjunta archivo automáticamente (limitación). 
+  // Solución práctica: descargamos el PDF y abrimos mailto con el resumen.
+  res.doc.save("pedido-ceremonia-2026.pdf");
+
+  const lines = res.lines;
+  const summary = lines.map(ln=>{
+    const tallaStr = Object.keys(ln.tallas).sort((a,b)=>a.localeCompare(b)).map(t=>`${t}:${ln.tallas[t]}`).join(" ");
+    return `- ${ln.ref} | ${ln.color} | Fam ${ln.familia} | Uds:${ln.units} | ${tallaStr}`;
+  }).join("\n");
+
+  const body =
+    I18N[idiomaActual].emailBodyIntro +
+    summary +
+    `\n\nTOTAL: ${formatEUR(res.total)}\n\n` +
+    I18N[idiomaActual].emailBodyOutro;
+
+  const subject = encodeURIComponent(I18N[idiomaActual].pdfSubject);
+  const mailBody = encodeURIComponent(body);
+
+  // pon aquí tu email si quieres que siempre vaya a ti o a un buzón fijo:
+  const to = ""; // ejemplo: "info@abuelatata.com"
+  window.location.href = `mailto:${to}?subject=${subject}&body=${mailBody}`;
+}
+
+/* =========================
+   UTILIDADES
+========================= */
+function escapeHTML(s){
+  return String(s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+}
+function formatEUR(n){
+  const v = Number(n||0);
+  return v.toLocaleString("es-ES",{ style:"currency", currency:"EUR" });
+}
+
+/* =========================
+   EVENTOS UI
+========================= */
+document.getElementById("q").addEventListener("input", (e)=>{
+  filtro = normalize(e.target.value || "");
+  render();
+});
+
+document.getElementById("btnClear").onclick=()=>{
+  for(const k of Object.keys(cart)) delete cart[k];
+  render();
+  renderCart();
+};
+
+document.getElementById("btnPDF").onclick=pdfAndEmail;
+
+/* =========================
+   CARGA DE TARIFA
+========================= */
+async function init(){
+  try{
+    const r = await fetch("data/tarifa.json", { cache:"no-store" });
+    if(!r.ok) throw new Error("No se pudo cargar data/tarifa.json");
+    const data = await r.json();
+
+    // Espera array de productos
+    productos = Array.isArray(data) ? data : (Array.isArray(data.productos) ? data.productos : []);
+    if(!productos.length) throw new Error("tarifa.json está vacío o con formato distinto");
+
+    // Orden por referencia
+    productos.sort((a,b)=>String(a.ref).localeCompare(String(b.ref)));
+
+    document.getElementById("t_loaded").textContent = I18N[idiomaActual].loaded(productos.length);
+
+    render();
+    renderCart();
+  }catch(err){
+    document.getElementById("status").innerHTML =
+      `<b>Error:</b> ${escapeHTML(err.message)}<br><br>
+       Revisa que exista <b>data/tarifa.json</b> y que sea un array con <b>ref, descripcion, precio</b>.`;
+    console.error(err);
+  }
+}
+init();
+</script>
+</body>
+</html>
