@@ -157,6 +157,9 @@
       background:#fff;
       overflow:hidden;
       position:relative;
+      cursor: zoom-in;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
     .thumb img{
       width:100%; height:100%;
@@ -260,6 +263,81 @@
       color:var(--muted);
       font-size:13px;
     }
+
+    /* ====== MODAL / LIGHTBOX ====== */
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.68);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:9999;
+    }
+    .modal.open{display:flex;}
+    .modalCard{
+      width:min(980px, 96vw);
+      max-height:92vh;
+      background:rgba(255,255,255,.94);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow: 0 30px 70px rgba(0,0,0,.35);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .modalTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(122,91,69,.25);
+      background:rgba(245,239,230,.75);
+    }
+    .modalTop .ttl{
+      font-weight:700;
+      font-size:13px;
+      color:var(--ink);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .closeBtn{
+      border:1px solid rgba(11,59,58,.25);
+      background:#fff;
+      border-radius:999px;
+      width:38px;
+      height:38px;
+      cursor:pointer;
+      font-size:18px;
+      line-height:1;
+      color:var(--brand);
+    }
+    .modalBody{
+      padding:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#111;
+    }
+    .modalImg{
+      max-width:100%;
+      max-height: calc(92vh - 64px);
+      width:auto;
+      height:auto;
+      border-radius:18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      background:#222;
+      object-fit:contain;
+    }
+    /* En móvil, que aproveche más pantalla */
+    @media (max-width: 560px){
+      .modalCard{width:98vw; border-radius:18px}
+      .modalBody{padding:8px}
+      .modalImg{border-radius:14px}
+    }
   </style>
 </head>
 
@@ -333,21 +411,29 @@
     </div>
   </div>
 
+  <!-- MODAL (ampliación foto) -->
+  <div class="modal" id="imgModal" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+    <div class="modalCard">
+      <div class="modalTop">
+        <div class="ttl" id="modalTitle">—</div>
+        <button class="closeBtn" id="modalClose" type="button" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modalBody" id="modalBody">
+        <img class="modalImg" id="modalImg" alt="" />
+      </div>
+    </div>
+  </div>
+
 <script>
 /* ==========================
    CONFIG
 ========================== */
-// Ajusta si tu JSON está en otra ruta
 const TARIFA_URL = "data/tarifa.json";
-
-// Ajusta si tus imágenes están en otra carpeta o extensión
-// Si en el JSON ya viene "img", se usa directamente.
 const IMG_BASE = "img/";
 const IMG_EXTS = [".jpg",".jpeg",".png",".webp"];
 
 const FAMILIAS_NO_REPETIBLES = new Set(["404","407","410","411","412","413","414"]);
 
-// Reglas de tallas (si tu JSON trae tallas por artículo, se respeta eso)
 const SIZE_RULES = [
   { starts:["11"], sizes:["3M","6M","9M","12M","18M","2Y"] },
   { starts:["12","13","30","31"], sizes:["3M","6M","9M","18M","2Y","3Y","4Y"] },
@@ -355,7 +441,6 @@ const SIZE_RULES = [
   { starts:["08"], sizes:["U"] },
 ];
 
-// Recargo (si menos de 3 unidades por referencia)
 const SURCHARGE_PCT = 10;
 const SURCHARGE_MIN_QTY = 3;
 
@@ -387,7 +472,8 @@ const I18N = {
     totals_total:"Total",
     obsFallback:
       `<p><strong>Repeticiones:</strong> Por la alta demanda, rogamos enviar repeticiones lo antes posible. Si alguna talla no está clara, podéis indicarlo sin problema para previsión de tejidos y fornituras.</p>
-       <p><strong>Formas de pago:</strong> Según condiciones pactadas con cada cliente (transferencia / recibo domiciliado si procede).</p>`
+       <p><strong>Formas de pago:</strong> Según condiciones pactadas con cada cliente (transferencia / recibo domiciliado si procede).</p>`,
+    modalTapHint:"Toca fuera para cerrar"
   },
   en: {
     appTitle:"Reorders · Ceremony 26",
@@ -411,7 +497,8 @@ const I18N = {
     totals_total:"Total",
     obsFallback:
       `<p><strong>Reorders:</strong> Due to high demand, please send reorders as soon as possible. If any size is not certain, you may indicate it and we will confirm to plan fabrics and trims.</p>
-       <p><strong>Payment methods:</strong> As per the agreed customer terms (bank transfer / direct debit if applicable).</p>`
+       <p><strong>Payment methods:</strong> As per the agreed customer terms (bank transfer / direct debit if applicable).</p>`,
+    modalTapHint:"Tap outside to close"
   },
   pt: {
     appTitle:"Repetições · Cerimónia 26",
@@ -435,7 +522,8 @@ const I18N = {
     totals_total:"Total",
     obsFallback:
       `<p><strong>Repetições:</strong> Devido à elevada procura, pedimos que enviem as repetições o quanto antes. Se algum tamanho não estiver claro, podem indicar e confirmamos para planeamento de tecidos e aviamentos.</p>
-       <p><strong>Formas de pagamento:</strong> Conforme condições acordadas com cada cliente (transferência / débito direto se aplicável).</p>`
+       <p><strong>Formas de pagamento:</strong> Conforme condições acordadas com cada cliente (transferência / débito direto se aplicável).</p>`,
+    modalTapHint:"Toque fora para fechar"
   }
 };
 
@@ -446,9 +534,9 @@ if(!I18N[lang]) lang = "es";
    STATE
 ========================== */
 let tarifaData = null;
-let items = [];     // catálogo normalizado
-let filtered = [];  // filtrado
-let cart = {};      // { ref: { ref,nombre,precio,img, sizes:{size:qty} } }
+let items = [];
+let filtered = [];
+let cart = {};
 
 /* ==========================
    HELPERS
@@ -459,43 +547,70 @@ function familyOfRef(ref){
   const s = String(ref||"").trim();
   return s.slice(-3);
 }
-
 function typeOfRef(ref){
   const s = String(ref||"").trim();
   return s.slice(0,2);
 }
-
 function sizesForRef(ref){
   const t = typeOfRef(ref);
   for(const r of SIZE_RULES){
     if(r.starts.includes(t)) return r.sizes.slice();
   }
-  // fallback (si no matchea nada)
   return ["6","7","8","9","10","11","12","13","14","15","16"];
 }
-
 function fmtEur(n){
   const v = Number(n||0);
   return v.toLocaleString(lang==="en" ? "en-GB" : (lang==="pt" ? "pt-PT" : "es-ES"), { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
-
 function setLoading(msg){
   const el = $("loading");
   el.style.display = "block";
   el.textContent = msg;
 }
-
 function clearLoading(){
   $("loading").style.display = "none";
   $("loading").textContent = "";
 }
-
 function setActiveFlag(){
   $("btnES").classList.toggle("active", lang==="es");
   $("btnEN").classList.toggle("active", lang==="en");
   $("btnPT").classList.toggle("active", lang==="pt");
 }
 
+/* ==========================
+   MODAL / LIGHTBOX
+========================== */
+function openImageModal(src, title, alt){
+  const modal = $("imgModal");
+  const img = $("modalImg");
+  const ttl = $("modalTitle");
+
+  ttl.textContent = title || "—";
+  img.alt = alt || "";
+  img.src = src;
+
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeImageModal(){
+  const modal = $("imgModal");
+  const img = $("modalImg");
+  modal.classList.remove("open");
+  img.src = "";
+  document.body.style.overflow = "";
+}
+$("modalClose").addEventListener("click", closeImageModal);
+$("imgModal").addEventListener("click", (e)=>{
+  // cerrar si clic fuera de la tarjeta
+  if(e.target.id === "imgModal") closeImageModal();
+});
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") closeImageModal();
+});
+
+/* ==========================
+   I18N apply
+========================== */
 function applyI18N(){
   const T = I18N[lang];
   document.documentElement.lang = lang;
@@ -516,10 +631,6 @@ function applyI18N(){
 }
 
 function normalizeTarifa(raw){
-  // Acepta estructuras típicas:
-  // - { productos:[...] }
-  // - [...] directamente
-  // - { items:[...] }
   const arr = Array.isArray(raw) ? raw : (raw?.productos || raw?.items || raw?.data || []);
   return arr.map((p)=>{
     const ref = String(p.ref || p.referencia || p.codigo || "").trim();
@@ -532,29 +643,18 @@ function normalizeTarifa(raw){
 }
 
 function resolveImageUrl(item){
-  if(item.img){
-    // si ya es url absoluta o relativa
-    return item.img;
-  }
-  // fallback por ref con extensiones
-  // intentamos jpg primero al render (el onerror irá cambiando)
+  if(item.img) return item.img;
   return IMG_BASE + item.ref + IMG_EXTS[0];
 }
 
-function buildImgWithFallback(srcBaseNoExt, exts){
-  // no lo usamos aquí: lo resolvemos con onerror cambiando ext
-}
-
 /* ==========================
-   RENDER: Observaciones/Condiciones desde tarifa
+   Observaciones/Condiciones desde tarifa
 ========================== */
 function renderLegalFromTarifa(){
   const T = I18N[lang];
   const el = $("legalContent");
   if(!el) return;
 
-  // Intentos de lectura:
-  // tarifaData.observaciones[lang] / .observaciones / .condiciones / .notas / .notes
   const obs =
     tarifaData?.observaciones?.[lang] ||
     tarifaData?.observaciones ||
@@ -568,16 +668,11 @@ function renderLegalFromTarifa(){
 
   el.innerHTML = (obs && String(obs).trim()) ? String(obs) : T.obsFallback;
 
-  // Además, mostramos un resumen corto arriba en el listado si existe obs:
   const obsBox = $("obsBox");
   if(obsBox){
     const show = (obs && String(obs).trim());
     obsBox.style.display = show ? "block" : "none";
-    if(show){
-      obsBox.innerHTML = String(obs);
-    } else {
-      obsBox.innerHTML = "";
-    }
+    obsBox.innerHTML = show ? String(obs) : "";
   }
 }
 
@@ -605,6 +700,7 @@ function renderList(){
 
     const imgWrap = document.createElement("div");
     imgWrap.className = "thumb";
+    imgWrap.title = "Ampliar";
 
     const badge = document.createElement("div");
     badge.className = "badge";
@@ -622,7 +718,7 @@ function renderList(){
       img.src = it.img ? it.img : (base + IMG_EXTS[idx]);
     }
     img.onerror = () => {
-      if(it.img) return; // si era URL fija, no probamos
+      if(it.img) return;
       idx++;
       if(idx < IMG_EXTS.length) setSrc();
     };
@@ -630,9 +726,16 @@ function renderList(){
 
     imgWrap.appendChild(img);
 
+    // ✅ Click/tap para ampliar (móvil/tablet/pc)
+    imgWrap.addEventListener("click", ()=>{
+      // Enlazamos a una imagen "mejor" si existe (si es por ref, probamos la primera que cargó)
+      openImageModal(img.currentSrc || img.src, `${it.ref} · ${it.nombre || ""}`, it.nombre || it.ref);
+    });
+
     const meta = document.createElement("div");
     const h = document.createElement("h3");
     h.textContent = it.nombre || it.ref;
+
     const ref = document.createElement("div");
     ref.className = "ref";
     ref.textContent = `Ref: ${it.ref} · Familia: ${familyOfRef(it.ref)}`;
@@ -641,7 +744,6 @@ function renderList(){
     price.className = "price";
     price.innerHTML = `${lang==="en"?"Price":"Precio"}: <strong>${fmtEur(it.precio)} €</strong>`;
 
-    // tamaños
     const sizes = it.sizes && Array.isArray(it.sizes) && it.sizes.length ? it.sizes : sizesForRef(it.ref);
     const sizesBox = document.createElement("div");
     sizesBox.className = "sizes";
@@ -654,13 +756,13 @@ function renderList(){
       minus.className = "qtyBtn";
       minus.type = "button";
       minus.textContent = "–";
-      minus.addEventListener("click", ()=>changeQty(it, s, -1));
+      minus.addEventListener("click", (ev)=>{ ev.stopPropagation(); changeQty(it, s, -1); });
 
       const plus = document.createElement("button");
       plus.className = "qtyBtn";
       plus.type = "button";
       plus.textContent = "+";
-      plus.addEventListener("click", ()=>changeQty(it, s, +1));
+      plus.addEventListener("click", (ev)=>{ ev.stopPropagation(); changeQty(it, s, +1); });
 
       const t = document.createElement("div");
       t.className = "t";
@@ -696,50 +798,33 @@ function renderList(){
 function getQty(ref, size){
   return cart?.[ref]?.sizes?.[size] ? Number(cart[ref].sizes[size]) : 0;
 }
-
 function changeQty(item, size, delta){
   const ref = item.ref;
   if(!cart[ref]){
-    cart[ref] = {
-      ref,
-      nombre:item.nombre,
-      precio:item.precio,
-      img: resolveImageUrl(item),
-      sizes:{}
-    };
+    cart[ref] = { ref, nombre:item.nombre, precio:item.precio, img: resolveImageUrl(item), sizes:{} };
   }
   const cur = Number(cart[ref].sizes[size] || 0);
   const next = Math.max(0, cur + delta);
-  if(next === 0){
-    delete cart[ref].sizes[size];
-  } else {
-    cart[ref].sizes[size] = next;
-  }
-  // si se queda vacío, eliminar línea
-  if(Object.keys(cart[ref].sizes).length === 0){
-    delete cart[ref];
-  }
-  // actualizar UI quick
+  if(next === 0) delete cart[ref].sizes[size];
+  else cart[ref].sizes[size] = next;
+
+  if(Object.keys(cart[ref].sizes).length === 0) delete cart[ref];
+
   const qEl = document.getElementById(`qty_${ref}_${size}`);
   if(qEl) qEl.textContent = String(next);
 
   persistCart();
   renderCart();
 }
-
 function persistCart(){
-  try{
-    localStorage.setItem("cer26_cart", JSON.stringify(cart));
-  }catch(e){}
+  try{ localStorage.setItem("cer26_cart", JSON.stringify(cart)); }catch(e){}
 }
-
 function loadCart(){
   try{
     const s = localStorage.getItem("cer26_cart");
     if(s) cart = JSON.parse(s) || {};
   }catch(e){ cart = {}; }
 }
-
 function cartLines(){
   return Object.values(cart).map(line=>{
     const sizesPairs = Object.entries(line.sizes || {}).filter(([,q])=>Number(q)>0);
@@ -747,20 +832,15 @@ function cartLines(){
     return {...line, qty, sizesPairs};
   }).filter(x=>x.qty>0);
 }
-
 function calcTotals(lines){
   const subtotal = lines.reduce((acc,l)=>acc + (Number(l.precio||0)*Number(l.qty||0)), 0);
-
-  // recargo por referencia si qty < 3
   const surchargeBase = lines
     .filter(l => Number(l.qty) > 0 && Number(l.qty) < SURCHARGE_MIN_QTY)
     .reduce((acc,l)=>acc + (Number(l.precio||0)*Number(l.qty||0)), 0);
-
   const surcharge = surchargeBase * (SURCHARGE_PCT/100);
   const total = subtotal + surcharge;
   return { subtotal, surcharge, total };
 }
-
 function renderCart(){
   const T = I18N[lang];
   const box = $("cart");
@@ -769,8 +849,6 @@ function renderCart(){
   const lines = cartLines();
   $("t_items").textContent = `${lines.length} ${T.items}`;
 
-  // refresca los numeritos en catálogo (por si cambia de idioma o se recarga)
-  // (sin rerender total salvo si hace falta)
   for(const l of lines){
     for(const [s,q] of (l.sizesPairs||[])){
       const qEl = document.getElementById(`qty_${l.ref}_${s}`);
@@ -791,19 +869,22 @@ function renderCart(){
     mini.className = "cartMini";
     const im = document.createElement("img");
     im.alt = l.ref;
-    // mini fallback: si img es "img/REF.jpg" probamos extensiones si falla
     let src = l.img || (IMG_BASE + l.ref + IMG_EXTS[0]);
     im.src = src;
     if(!l.img){
       let idx = 0;
       im.onerror = ()=>{
         idx++;
-        if(idx<IMG_EXTS.length){
-          im.src = IMG_BASE + l.ref + IMG_EXTS[idx];
-        }
+        if(idx<IMG_EXTS.length) im.src = IMG_BASE + l.ref + IMG_EXTS[idx];
       };
     }
     mini.appendChild(im);
+
+    // Click en mini del carrito también amplía
+    mini.style.cursor = "zoom-in";
+    mini.addEventListener("click", ()=>{
+      openImageModal(im.currentSrc || im.src, `${l.ref} · ${l.nombre || ""}`, l.nombre || l.ref);
+    });
 
     const meta = document.createElement("div");
     meta.className = "cartMeta";
@@ -846,9 +927,8 @@ function renderCart(){
 ========================== */
 function applyFilter(){
   const term = $("q").value.trim().toLowerCase();
-  if(!term){
-    filtered = items.slice();
-  } else {
+  if(!term) filtered = items.slice();
+  else {
     filtered = items.filter(it=>{
       return (it.ref||"").toLowerCase().includes(term) ||
              (it.nombre||"").toLowerCase().includes(term) ||
@@ -869,18 +949,15 @@ async function loadTarifa(){
     if(!res.ok) throw new Error("HTTP "+res.status);
     const raw = await res.json();
 
-    // Puede venir como objeto con metadata + productos
     tarifaData = raw;
 
     items = normalizeTarifa(raw);
 
-    // Aplica regla de familias no repetibles (las ocultamos del catálogo)
     items = items.filter(it=>{
       const fam = familyOfRef(it.ref);
       return !FAMILIAS_NO_REPETIBLES.has(fam);
     });
 
-    // Si el artículo trae tallas como string (ej "6,7,8"), lo pasamos a array
     items = items.map(it=>{
       if(typeof it.sizes === "string"){
         const arr = it.sizes.split(",").map(x=>x.trim()).filter(Boolean);
@@ -910,7 +987,6 @@ function exportPdfSimple(){
   if(!lines.length){ return alert(lang==="en"?"No items selected.":"No hay nada seleccionado."); }
 
   const doc = new jsPDF({ unit:"mm", format:"a4" });
-  const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
 
   let y = 14;
@@ -967,24 +1043,17 @@ async function imgUrlToDataUrl(url, maxW = 220, maxH = 220) {
       ctx.drawImage(img, 0, 0, w, h);
       try{
         const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
-        resolve({ dataUrl, w, h });
+        resolve({ dataUrl });
       }catch(e){ reject(e); }
     };
     img.onerror = () => reject(new Error("No se pudo cargar " + url));
     img.src = url;
   });
 }
-
 function bestThumbUrl(line){
-  // Si line.img es una ruta fija, usamos esa
   if(line.img) return line.img;
-
-  // Si no, probamos con extensiones
-  // OJO: el PDF necesita URL cargable.
-  // Primero intentamos .jpg (y si falla, el loader del canvas rechazará: hacemos fallback aquí)
   return IMG_BASE + line.ref + IMG_EXTS[0];
 }
-
 async function exportPdfWithThumbs(){
   const { jsPDF } = window.jspdf || {};
   if(!jsPDF){ alert("Falta jsPDF"); return; }
@@ -1023,16 +1092,13 @@ async function exportPdfWithThumbs(){
     const imgX = margin + 2;
     const imgY = y + 3;
 
-    // Placeholder
     doc.setFontSize(8);
     doc.rect(imgX, imgY, thumbBox, thumbBox);
 
-    // Intento miniatura con fallback de extensiones si es imagen por ref
     let drew = false;
     let url = bestThumbUrl(l);
 
     if(!l.img){
-      // probar varias extensiones
       for(let i=0;i<IMG_EXTS.length;i++){
         try{
           url = IMG_BASE + l.ref + IMG_EXTS[i];
@@ -1040,18 +1106,14 @@ async function exportPdfWithThumbs(){
           doc.addImage(dataUrl, "JPEG", imgX, imgY, thumbBox, thumbBox);
           drew = true;
           break;
-        }catch(e){
-          // sigue probando
-        }
+        }catch(e){}
       }
     } else {
       try{
         const { dataUrl } = await imgUrlToDataUrl(url, 220, 220);
         doc.addImage(dataUrl, "JPEG", imgX, imgY, thumbBox, thumbBox);
         drew = true;
-      }catch(e){
-        drew = false;
-      }
+      }catch(e){ drew = false; }
     }
 
     if(!drew){
@@ -1101,12 +1163,9 @@ function buildEmailBody(lines){
   }).join("\n");
 
   const totalsTxt = `\nSubtotal: ${fmtEur(totals.subtotal)} €\nRecargo (${SURCHARGE_PCT}% si menos de ${SURCHARGE_MIN_QTY} uds por referencia): ${fmtEur(totals.surcharge)} €\nTOTAL: ${fmtEur(totals.total)} €\n`;
-
   const legalTxt = legal ? `\n\nOBSERVACIONES:\n${legal}\n` : "";
-
   return header + itemsTxt + totalsTxt + legalTxt;
 }
-
 function sendEmail(){
   const lines = cartLines();
   if(!lines.length){ return alert(lang==="en"?"No items selected.":"No hay nada seleccionado."); }
@@ -1124,31 +1183,21 @@ function setLang(newLang){
   setActiveFlag();
   applyI18N();
 }
-
 $("btnES").addEventListener("click", ()=>setLang("es"));
 $("btnEN").addEventListener("click", ()=>setLang("en"));
 $("btnPT").addEventListener("click", ()=>setLang("pt"));
 
-$("btnReload").addEventListener("click", ()=>{
-  loadTarifa();
-});
-
+$("btnReload").addEventListener("click", ()=>loadTarifa());
 $("q").addEventListener("input", applyFilter);
-
-$("btnClear").addEventListener("click", ()=>{
-  $("q").value = "";
-  applyFilter();
-});
+$("btnClear").addEventListener("click", ()=>{ $("q").value=""; applyFilter(); });
 
 $("btnReset").addEventListener("click", ()=>{
   if(!confirm(lang==="en"?"Clear the order?":"¿Vaciar el pedido?")) return;
   cart = {};
   persistCart();
   renderCart();
-  // reset quantities in list quickly
   renderList();
 });
-
 $("btnPdf").addEventListener("click", exportPdfSimple);
 $("btnPdfThumbs").addEventListener("click", exportPdfWithThumbs);
 $("btnEmail").addEventListener("click", sendEmail);
