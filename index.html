@@ -26,7 +26,7 @@
       background-size: 18px 18px;
       color:var(--ink);
     }
-    .wrap{max-width:1100px;margin:auto;padding:28px 16px 120px;}
+    .wrap{max-width:1100px;margin:auto;padding:28px 16px 130px;}
     header{
       display:flex;gap:14px;align-items:center;justify-content:space-between;
       margin:10px 0 18px; flex-wrap:wrap;
@@ -67,6 +67,10 @@
       margin:12px 0 16px;
     }
     .panel h2{margin:0 0 10px;font-size:14px;}
+    .panel p{margin:6px 0;font-size:13px;opacity:.92;line-height:1.35}
+    .panel ul{margin:8px 0 0 18px;padding:0;font-size:13px;opacity:.92}
+    .panel li{margin:6px 0}
+
     .formGrid{display:grid;grid-template-columns: repeat(12, 1fr);gap:10px;}
     .f{grid-column: span 12;display:flex;flex-direction:column;gap:5px;}
     @media (min-width:780px){
@@ -201,24 +205,35 @@
       </div>
     </header>
 
+    <!-- CONDICIONES (VISIBLES) -->
+    <div class="panel">
+      <h2 id="t_condTitle">Condiciones</h2>
+      <ul>
+        <li id="t_cond1">Recargo del <b>+10%</b> por referencia si el pedido de esa referencia es <b>menor de 3 unidades</b>.</li>
+        <li id="t_cond2">Los modelos de familias no repetibles <b>no aparecen</b> en esta app.</li>
+        <li id="t_cond3">Si no existe foto de una referencia, se mostrará “Sin foto” (misma familia, cambia el color).</li>
+      </ul>
+    </div>
+
+    <!-- DATOS CLIENTE (COMPLETO) -->
     <div class="panel">
       <h2 id="t_clientTitle">Datos del cliente</h2>
       <div class="formGrid">
-        <div class="f half"><label id="l_store">Nombre / Tienda</label><input id="c_store"></div>
-        <div class="f half"><label id="l_contact">Persona de contacto</label><input id="c_contact"></div>
+        <div class="f half"><label id="l_store">Nombre / Tienda</label><input id="c_store" placeholder="Ej: Boutique Pepita"></div>
+        <div class="f half"><label id="l_contact">Persona de contacto</label><input id="c_contact" placeholder="Ej: María"></div>
 
-        <div class="f third"><label id="l_postal">Código Postal</label><input id="c_postal"></div>
-        <div class="f third"><label id="l_city">Ciudad</label><input id="c_city"></div>
+        <div class="f third"><label id="l_postal">Código Postal</label><input id="c_postal" placeholder="Ej: 41001"></div>
+        <div class="f third"><label id="l_city">Ciudad</label><input id="c_city" placeholder="Ej: Sevilla"></div>
         <div class="f third"><label id="l_country">País</label><input id="c_country" value="España"></div>
 
-        <div class="f third"><label id="l_phone">Teléfono</label><input id="c_phone"></div>
-        <div class="f third"><label id="l_email">Email</label><input id="c_email"></div>
-        <div class="f third"><label id="l_rep">Representante</label><input id="c_rep"></div>
+        <div class="f third"><label id="l_phone">Teléfono</label><input id="c_phone" placeholder="+34 ..."></div>
+        <div class="f third"><label id="l_email">Email</label><input id="c_email" placeholder="cliente@..."></div>
+        <div class="f third"><label id="l_rep">Representante</label><input id="c_rep" placeholder="Ej: David / Moisés / ..."></div>
 
-        <div class="f twothird"><label id="l_address">Dirección</label><input id="c_address"></div>
-        <div class="f third"><label id="l_vat">CIF / VAT</label><input id="c_vat"></div>
+        <div class="f twothird"><label id="l_address">Dirección</label><input id="c_address" placeholder="Calle, número, etc."></div>
+        <div class="f third"><label id="l_vat">CIF / VAT</label><input id="c_vat" placeholder="Ej: B12345678"></div>
 
-        <div class="f"><label id="l_notes">Notas del pedido</label><textarea id="c_notes"></textarea></div>
+        <div class="f"><label id="l_notes">Notas del pedido</label><textarea id="c_notes" placeholder="Ej: misma familia, cambiar color/lazada/volantes..."></textarea></div>
       </div>
     </div>
 
@@ -252,45 +267,95 @@
   </div>
 
 <script>
-/* ====== NO REPETIBLES (NO DEBEN APARECER) ====== */
+/* =========================
+   NO REPETIBLES (NO APARECEN)
+========================= */
 const familiasNoRepetibles = new Set(["404","407","410","411","412","413","414"]);
 
 /* =========================
-   IDIOMAS (mínimo)
+   IDIOMAS
 ========================= */
 const I18N = {
-  es:{ title:"Repeticiones · Ceremonia 2026", sub:"Pedidos por referencia y tallas · Color visible en cada modelo",
-    clientTitle:"Datos del cliente", loaded:n=>`Tarifa cargada: ${n} modelos`,
-    searchPH:"Buscar por referencia, descripción, familia o color…", units:"unidades",
+  es:{
+    title:"Repeticiones · Ceremonia 2026",
+    sub:"Pedidos por referencia y tallas · Color visible en cada modelo",
+    condTitle:"Condiciones",
+    cond1:"Recargo del +10% por referencia si el pedido de esa referencia es menor de 3 unidades.",
+    cond2:"Los modelos de familias no repetibles no aparecen en esta app.",
+    cond3:"Si no existe foto de una referencia, se mostrará “Sin foto” (misma familia, cambia el color).",
+    clientTitle:"Datos del cliente",
+    loaded:n=>`Tarifa cargada: ${n} modelos`,
+    searchPH:"Buscar por referencia, descripción, familia o color…",
+    units:"unidades",
     hint:"Recargo +10% por referencia si pides menos de 3 uds.",
-    noPhoto:"Sin foto · mismo modelo/familia, cambia el color", fam:"Fam.", color:"Color",
-    pdfSubject:"Pedido Repeticiones Ceremonia 2026", noOrder:"No hay pedido aún." },
-  en:{ title:"Reorders · Ceremony 2026", sub:"Orders by reference & sizes · Color visible on each item",
-    clientTitle:"Customer details", loaded:n=>`Price list loaded: ${n} styles`,
-    searchPH:"Search by reference, description, family or color…", units:"units",
+    noPhoto:"Sin foto · misma familia, cambia el color",
+    fam:"Fam.",
+    color:"Color",
+    pdfSubject:"Pedido Repeticiones Ceremonia 2026",
+    noOrder:"No hay pedido aún.",
+    surchargeApplied:"Recargo aplicado en:"
+  },
+  en:{
+    title:"Reorders · Ceremony 2026",
+    sub:"Orders by reference & sizes · Color visible on each item",
+    condTitle:"Conditions",
+    cond1:"+10% surcharge per reference if that reference is ordered in less than 3 units.",
+    cond2:"Non-repeatable families do not appear in this app.",
+    cond3:"If there is no photo for a reference, it will show “No photo” (same family, color change).",
+    clientTitle:"Customer details",
+    loaded:n=>`Price list loaded: ${n} styles`,
+    searchPH:"Search by reference, description, family or color…",
+    units:"units",
     hint:"+10% surcharge per reference if you order less than 3 units.",
-    noPhoto:"No photo · same style/family, color changes", fam:"Fam.", color:"Color",
-    pdfSubject:"Reorders Order · Ceremony 2026", noOrder:"No order yet." },
-  pt:{ title:"Reposições · Cerimónia 2026", sub:"Pedidos por referência e tamanhos · Cor visível em cada modelo",
-    clientTitle:"Dados do cliente", loaded:n=>`Tabela carregada: ${n} modelos`,
-    searchPH:"Pesquisar por referência, descrição, família ou cor…", units:"unidades",
+    noPhoto:"No photo · same family, color changes",
+    fam:"Fam.",
+    color:"Color",
+    pdfSubject:"Reorders Order · Ceremony 2026",
+    noOrder:"No order yet.",
+    surchargeApplied:"Surcharge applied to:"
+  },
+  pt:{
+    title:"Reposições · Cerimónia 2026",
+    sub:"Pedidos por referência e tamanhos · Cor visível em cada modelo",
+    condTitle:"Condições",
+    cond1:"+10% de acréscimo por referência se essa referência for pedida em menos de 3 unidades.",
+    cond2:"Famílias não repetíveis não aparecem nesta app.",
+    cond3:"Se não houver foto de uma referência, aparecerá “Sem foto” (mesma família, muda a cor).",
+    clientTitle:"Dados do cliente",
+    loaded:n=>`Tabela carregada: ${n} modelos`,
+    searchPH:"Pesquisar por referência, descrição, família ou cor…",
+    units:"unidades",
     hint:"+10% de acréscimo por referência se pedir menos de 3 unidades.",
-    noPhoto:"Sem foto · mesmo modelo/família, muda a cor", fam:"Fam.", color:"Cor",
-    pdfSubject:"Pedido Reposições · Cerimónia 2026", noOrder:"Ainda não há pedido." }
+    noPhoto:"Sem foto · mesmo modelo/família, muda a cor",
+    fam:"Fam.",
+    color:"Cor",
+    pdfSubject:"Pedido Reposições · Cerimónia 2026",
+    noOrder:"Ainda não há pedido.",
+    surchargeApplied:"Acréscimo aplicado em:"
+  }
 };
 
-let idiomaActual = "es";
+let idiomaActual="es";
 function setLang(lang){
-  idiomaActual = lang;
+  idiomaActual=lang;
   document.getElementById("btnES").classList.toggle("active", lang==="es");
   document.getElementById("btnEN").classList.toggle("active", lang==="en");
   document.getElementById("btnPT").classList.toggle("active", lang==="pt");
+
   document.getElementById("t_title").textContent = I18N[lang].title;
   document.getElementById("t_sub").textContent = I18N[lang].sub;
+
+  document.getElementById("t_condTitle").textContent = I18N[lang].condTitle;
+  document.getElementById("t_cond1").innerHTML = I18N[lang].cond1.replace("+10%","<b>+10%</b>").replace("3","<b>3</b>");
+  document.getElementById("t_cond2").textContent = I18N[lang].cond2;
+  document.getElementById("t_cond3").textContent = I18N[lang].cond3;
+
   document.getElementById("t_clientTitle").textContent = I18N[lang].clientTitle;
   document.getElementById("q").placeholder = I18N[lang].searchPH;
+
   document.getElementById("t_units").textContent = I18N[lang].units;
   document.getElementById("t_hint").textContent = I18N[lang].hint;
+
   render(); renderCart();
 }
 document.getElementById("btnES").onclick=()=>setLang("es");
@@ -301,78 +366,96 @@ document.getElementById("btnPT").onclick=()=>setLang("pt");
    COLORES (incluye 24 MENTA)
 ========================= */
 const mapaColores = {
-  "00": { es: "Blanco", en: "White", pt: "Branco" },
-  "01": { es: "Rosa", en: "Pink", pt: "Rosa" },
-  "04": { es: "Celeste", en: "Sky Blue", pt: "Azul Céu" },
-  "05": { es: "Beige", en: "Beige", pt: "Bege" },
-  "06": { es: "Arena", en: "Sand", pt: "Areia" },
-  "09": { es: "Verde", en: "Green", pt: "Verde" },
-  "17": { es: "Azul", en: "Blue", pt: "Azul" },
-  "24": { es: "Menta", en: "Mint", pt: "Menta" },
-  "25": { es: "Maquillaje", en: "Blush", pt: "Maquilhagem" }
+  "00": { es:"Blanco", en:"White", pt:"Branco" },
+  "01": { es:"Rosa", en:"Pink", pt:"Rosa" },
+  "04": { es:"Celeste", en:"Sky Blue", pt:"Azul Céu" },
+  "05": { es:"Beige", en:"Beige", pt:"Bege" },
+  "06": { es:"Arena", en:"Sand", pt:"Areia" },
+  "09": { es:"Verde", en:"Green", pt:"Verde" },
+  "17": { es:"Azul", en:"Blue", pt:"Azul" },
+  "24": { es:"Menta", en:"Mint", pt:"Menta" },
+  "25": { es:"Maquillaje", en:"Blush", pt:"Blush" }
 };
 
 function parseRef(ref){
-  const r = String(ref).trim();
+  const r=String(ref).trim();
   if(!/^\d{7,8}$/.test(r)) return null;
-  if(r.length === 7) return { color:r.substring(2,4), familia:r.substring(4,7), raw:r };
-  return { color:r.substring(3,5), familia:r.substring(5,8), raw:r };
+  if(r.length===7){
+    return { tipo:r.slice(0,2), variante:"", color:r.slice(2,4), familia:r.slice(4,7), raw:r };
+  }
+  return { tipo:r.slice(0,2), variante:r.slice(2,3), color:r.slice(3,5), familia:r.slice(5,8), raw:r };
 }
 function getFamilia(ref){ const p=parseRef(ref); return p?p.familia:""; }
+function getTipo(ref){ const p=parseRef(ref); return p?p.tipo:String(ref).slice(0,2); }
 function getColorNombre(ref){
   const p=parseRef(ref); if(!p) return "";
-  const c = mapaColores[p.color];
-  if(!c) return (idiomaActual==="es") ? `${p.color} (sin definir)` : `${p.color}`;
+  const c=mapaColores[p.color];
+  if(!c){
+    return (idiomaActual==="es") ? `${p.color} (sin definir)` :
+           (idiomaActual==="en") ? `${p.color} (undefined)` :
+           `${p.color} (não definido)`;
+  }
   return c[idiomaActual] || c.es;
 }
 
 /* =========================
-   TALLAS (ajústalo si hace falta)
+   TALLAS CORRECTAS POR TIPO
+   (lo que tú definiste)
 ========================= */
 const tallasPorTipo = {
+  // 11: pelele (de 3M a 2A)
   "11": ["3M","6M","9M","12M","18M","2A"],
+
+  // 12/13/30/31: 3M,6M,9M,18M,2A,3A,4A
   "12": ["3M","6M","9M","18M","2A","3A","4A"],
   "13": ["3M","6M","9M","18M","2A","3A","4A"],
+  "30": ["3M","6M","9M","18M","2A","3A","4A"],
+  "31": ["3M","6M","9M","18M","2A","3A","4A"],
+
+  // 25/22/43: 12M,18M,2A,3A,4A,5A,6A,8A,10A,12A
   "25": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],
   "22": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],
   "43": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],
+
+  // 08: talla única
   "08": ["U"]
 };
-function getTipo(ref){ const r=String(ref).trim(); return r.substring(0,2); }
+
 function getTallas(ref){
   const t = getTipo(ref);
-  return tallasPorTipo[t] || ["6","7","8","9","10","11","12","13","14","15","16"];
+  return tallasPorTipo[t] || ["6A","7A","8A","9A","10A","11A","12A","13A","14A","15A","16A"];
 }
 
 /* =========================
    DATOS + CARRITO
 ========================= */
-let productos = [];
-let filtro = "";
-const cart = {};
+let productos=[];
+let filtro="";
+const cart={};
 
 function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));}
 function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
 function formatEUR(n){return Number(n||0).toLocaleString("es-ES",{style:"currency",currency:"EUR"});}
 function getUnitsByRef(ref){
-  const it = cart[ref]; if(!it) return 0;
+  const it=cart[ref]; if(!it) return 0;
   return Object.values(it.tallas).reduce((a,b)=>a+b,0);
 }
-
 function normalizeProduct(raw){
   const ref = raw.ref ?? raw.referencia ?? raw.Referencia ?? raw.REF ?? raw.codigo ?? raw.code;
   const descripcion = raw.descripcion ?? raw.descripción ?? raw.Descripcion ?? raw.Description ?? raw.nombre ?? raw.name ?? "";
   const precio = raw.precio ?? raw.Precio ?? raw.price ?? raw.PVP ?? 0;
-  if(ref == null) return null;
+  if(ref==null) return null;
   return { ref:String(ref).trim(), descripcion:String(descripcion||"").trim(), precio:Number(precio||0) };
 }
 
-/* JSON path fallback */
-const jsonCandidates = ["data/tarifa.json","tarifa.json","data/productos.json","data/data.json"];
+/* =========================
+   JSON: prueba rutas
+========================= */
+const jsonCandidates=["data/tarifa.json","tarifa.json","data/productos.json","data/data.json"];
 async function fetchFirstJSON(){
   for(const path of jsonCandidates){
     try{
-      const r = await fetch(path,{cache:"no-store"});
+      const r=await fetch(path,{cache:"no-store"});
       if(!r.ok) continue;
       return { path, data: await r.json() };
     }catch(e){}
@@ -380,86 +463,91 @@ async function fetchFirstJSON(){
   throw new Error("No encuentro la tarifa (data/tarifa.json).");
 }
 
-/* images fallback */
-const imgDirs = ["img","images","fotos","assets/img","assets/images"];
-const imgExts = ["jpg","jpeg","png","webp"];
+/* =========================
+   IMÁGENES: prueba carpetas
+========================= */
+const imgDirs=["img","images","fotos","assets/img","assets/images"];
+const imgExts=["jpg","jpeg","png","webp"];
 function buildImageCandidates(ref){
   const arr=[];
   for(const d of imgDirs) for(const e of imgExts) arr.push(`${d}/${ref}.${e}`);
   return arr;
 }
 
-/* ====== FILTRO (NO REPETIBLES NO APARECEN) ====== */
+/* =========================
+   FILTRO (NO REPETIBLES NO APARECEN)
+========================= */
 function matchProduct(p){
-  const ref = String(p.ref);
-  const fam = getFamilia(ref);
-
-  // Ocultar familias no repetibles
+  const ref=String(p.ref);
+  const fam=getFamilia(ref);
   if(familiasNoRepetibles.has(fam)) return false;
 
   if(!filtro) return true;
 
-  const col = getColorNombre(ref);
-  const hay = [ref, p.descripcion||"", fam, col].map(normalize).join(" ");
+  const col=getColorNombre(ref);
+  const hay=[ref,p.descripcion||"",fam,col].map(normalize).join(" ");
   return hay.includes(filtro);
 }
 
-function setQty(ref, talla, delta){
+/* =========================
+   UI: cantidades
+========================= */
+function setQty(ref,talla,delta){
   if(!cart[ref]){
-    const p = productos.find(x=>String(x.ref)===String(ref));
-    cart[ref] = { ref:String(ref), descripcion:p?.descripcion||"", precio:Number(p?.precio||0), tallas:{} };
+    const p=productos.find(x=>String(x.ref)===String(ref));
+    cart[ref]={ ref:String(ref), descripcion:p?.descripcion||"", precio:Number(p?.precio||0), tallas:{} };
   }
-  const it = cart[ref];
-  const cur = it.tallas[talla] || 0;
-  const next = Math.max(0, cur + delta);
-  if(next === 0) delete it.tallas[talla]; else it.tallas[talla] = next;
-  if(Object.keys(it.tallas).length === 0) delete cart[ref];
+  const it=cart[ref];
+  const cur=it.tallas[talla]||0;
+  const next=Math.max(0, cur+delta);
+  if(next===0) delete it.tallas[talla]; else it.tallas[talla]=next;
+  if(Object.keys(it.tallas).length===0) delete cart[ref];
 
-  const el = document.querySelector(`[data-ref="${ref}"][data-size="${talla}"] .qty`);
-  if(el) el.textContent = String(next);
+  const el=document.querySelector(`[data-ref="${ref}"][data-size="${talla}"] .qty`);
+  if(el) el.textContent=String(next);
 
   renderCart();
 }
 
 function render(){
   if(!productos.length) return;
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
+  const grid=document.getElementById("grid");
+  grid.innerHTML="";
 
   productos.filter(matchProduct).forEach(p=>{
-    const ref = String(p.ref);
-    const fam = getFamilia(ref);
-    const colorTxt = getColorNombre(ref);
+    const ref=String(p.ref);
+    const fam=getFamilia(ref);
+    const colorTxt=getColorNombre(ref);
 
-    const card = document.createElement("div");
-    card.className = "card";
+    const card=document.createElement("div");
+    card.className="card";
 
-    const pic = document.createElement("div");
-    pic.className = "pic";
+    const pic=document.createElement("div");
+    pic.className="pic";
 
-    const img = document.createElement("img");
-    const candidates = buildImageCandidates(ref);
+    const img=document.createElement("img");
+    const candidates=buildImageCandidates(ref);
     let idx=0;
 
-    const content = document.createElement("div");
-    content.className = "content";
+    const content=document.createElement("div");
+    content.className="content";
 
     function showNoPhoto(){
       img.remove();
-      pic.innerHTML = `<div class="ph">📷<br>${escapeHTML(I18N[idiomaActual].noPhoto)}</div>`;
-      const note = content.querySelector(".no-photo-note");
-      if(note) note.style.display = "block";
+      pic.innerHTML=`<div class="ph">📷<br>${escapeHTML(I18N[idiomaActual].noPhoto)}</div>`;
+      const note=content.querySelector(".no-photo-note");
+      if(note) note.style.display="block";
     }
     function tryNext(){
-      if(idx >= candidates.length) return showNoPhoto();
-      img.src = candidates[idx++];
+      if(idx>=candidates.length) return showNoPhoto();
+      img.src=candidates[idx++];
     }
-    img.onerror = ()=>tryNext();
+    img.onerror=()=>tryNext();
     tryNext();
     pic.appendChild(img);
 
-    const price = Number(p.precio||0);
-    content.innerHTML = `
+    const price=Number(p.precio||0);
+    content.innerHTML=`
       <div class="titleRow">
         <div>
           <p class="name">${escapeHTML(p.descripcion||"")}</p>
@@ -475,20 +563,22 @@ function render(){
       <div class="sizes" data-sizes="${escapeHTML(ref)}"></div>
     `;
 
-    const sizesWrap = content.querySelector(`[data-sizes="${ref}"]`);
+    const sizesWrap=content.querySelector(`[data-sizes="${ref}"]`);
     getTallas(ref).forEach(sz=>{
-      const current = cart[ref]?.tallas?.[sz] || 0;
-      const chip = document.createElement("div");
-      chip.className = "sz";
-      chip.setAttribute("data-ref", ref);
-      chip.setAttribute("data-size", sz);
-      chip.innerHTML = `<b>${escapeHTML(sz)}</b>
+      const current=cart[ref]?.tallas?.[sz]||0;
+      const chip=document.createElement("div");
+      chip.className="sz";
+      chip.setAttribute("data-ref",ref);
+      chip.setAttribute("data-size",sz);
+      chip.innerHTML=`
+        <b>${escapeHTML(sz)}</b>
         <button class="pm" type="button">−</button>
         <span class="qty">${current}</span>
-        <button class="pm" type="button">+</button>`;
-      const btns = chip.querySelectorAll("button.pm");
-      btns[0].onclick=()=>setQty(ref, sz, -1);
-      btns[1].onclick=()=>setQty(ref, sz, +1);
+        <button class="pm" type="button">+</button>
+      `;
+      const btns=chip.querySelectorAll("button.pm");
+      btns[0].onclick=()=>setQty(ref,sz,-1);
+      btns[1].onclick=()=>setQty(ref,sz,+1);
       sizesWrap.appendChild(chip);
     });
 
@@ -501,49 +591,136 @@ function render(){
   document.getElementById("grid").style.display="grid";
 }
 
-function renderCart(){
-  let units=0, total=0;
-  Object.keys(cart).forEach(ref=>{
-    const it = cart[ref];
-    const u = getUnitsByRef(ref);
-    units += u;
-    const base = it.precio * u;
-    total += (u>0 && u<3) ? base*1.10 : base;
-  });
-  document.getElementById("cartUnits").textContent = String(units);
-  document.getElementById("cartTotal").textContent = formatEUR(total);
+/* =========================
+   RECARGO +10% si <3 uds por ref
+========================= */
+function calcLineTotal(ref){
+  const it=cart[ref];
+  const u=getUnitsByRef(ref);
+  const base=it.precio*u;
+  const surcharge = (u>0 && u<3);
+  return { units:u, base, surcharge, total: surcharge ? base*1.10 : base };
 }
 
-/* PDF/Email minimal (solo aviso si vacío) */
+function renderCart(){
+  let units=0;
+  let total=0;
+  const surRefs=[];
+
+  Object.keys(cart).forEach(ref=>{
+    const c=calcLineTotal(ref);
+    units += c.units;
+    total += c.total;
+    if(c.surcharge) surRefs.push(ref);
+  });
+
+  document.getElementById("cartUnits").textContent=String(units);
+  document.getElementById("cartTotal").textContent=formatEUR(total);
+
+  const w=document.getElementById("cartSurcharge");
+  if(surRefs.length){
+    w.style.display="block";
+    w.textContent = `${I18N[idiomaActual].surchargeApplied} ${surRefs.join(", ")}`;
+  }else{
+    w.style.display="none";
+    w.textContent="";
+  }
+}
+
+/* =========================
+   PDF + Email (simple pero correcto con recargo)
+========================= */
+function getClientData(){
+  return {
+    store:  document.getElementById("c_store").value.trim(),
+    contact:document.getElementById("c_contact").value.trim(),
+    postal: document.getElementById("c_postal").value.trim(),
+    city:   document.getElementById("c_city").value.trim(),
+    country:document.getElementById("c_country").value.trim(),
+    phone:  document.getElementById("c_phone").value.trim(),
+    email:  document.getElementById("c_email").value.trim(),
+    rep:    document.getElementById("c_rep").value.trim(),
+    address:document.getElementById("c_address").value.trim(),
+    vat:    document.getElementById("c_vat").value.trim(),
+    notes:  document.getElementById("c_notes").value.trim()
+  };
+}
+
 document.getElementById("btnPDF").onclick=()=>{
   if(!Object.keys(cart).length){ alert(I18N[idiomaActual].noOrder); return; }
+
+  const c = getClientData();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:"pt", format:"a4" });
-  doc.setFont("times","bold"); doc.setFontSize(16);
-  doc.text(I18N[idiomaActual].pdfSubject, 40, 50);
-  doc.setFont("times","normal"); doc.setFontSize(11);
 
-  const lines = Object.keys(cart).map(ref=>{
+  let y=50;
+  doc.setFont("times","bold"); doc.setFontSize(16);
+  doc.text(I18N[idiomaActual].pdfSubject, 40, y); y+=18;
+
+  doc.setFont("times","normal"); doc.setFontSize(11);
+  doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 40, y); y+=16;
+
+  const clientLines = [
+    `Cliente: ${c.store||"-"} · Contacto: ${c.contact||"-"}`,
+    `CP: ${c.postal||"-"} · Ciudad: ${c.city||"-"} · País: ${c.country||"-"}`,
+    `Email: ${c.email||"-"} · Tel: ${c.phone||"-"} · Rep: ${c.rep||"-"}`,
+    `Dirección: ${c.address||"-"}`,
+    `CIF/VAT: ${c.vat||"-"}`,
+    `Notas: ${c.notes||"-"}`
+  ];
+
+  clientLines.forEach(line=>{
+    if(y>770){ doc.addPage(); y=50; }
+    doc.text(line, 40, y); y+=14;
+  });
+  y+=8;
+
+  let grand=0;
+  const emailLines=[];
+
+  Object.keys(cart).forEach(ref=>{
     const it=cart[ref];
     const fam=getFamilia(ref);
     const col=getColorNombre(ref);
     const tallaStr=Object.keys(it.tallas).sort().map(t=>`${t}:${it.tallas[t]}`).join(" | ");
-    return `${ref} — ${it.descripcion} — ${col} — Fam ${fam} — ${tallaStr}`;
+    const cc=calcLineTotal(ref);
+    grand += cc.total;
+
+    const line = `${ref} — ${it.descripcion} — ${col} — Fam ${fam} — ${tallaStr} — Uds:${cc.units} — ${formatEUR(cc.total)}${cc.surcharge ? " (+10%)" : ""}`;
+    emailLines.push(line);
+
+    if(y>770){ doc.addPage(); y=50; }
+    doc.setFont("times","bold"); doc.text(ref, 40, y); y+=14;
+    doc.setFont("times","normal");
+    doc.text(`${it.descripcion} · ${col} · Fam ${fam}`, 40, y); y+=14;
+    doc.text(`Tallas: ${tallaStr}`, 40, y); y+=14;
+    doc.text(`Total línea: ${formatEUR(cc.total)}${cc.surcharge ? " (recargo +10%)" : ""}`, 40, y); y+=18;
   });
 
-  let y=80;
-  lines.forEach(l=>{ if(y>770){ doc.addPage(); y=50; } doc.text(l,40,y); y+=14; });
+  if(y>770){ doc.addPage(); y=50; }
+  doc.setFont("times","bold"); doc.setFontSize(13);
+  doc.text(`TOTAL: ${formatEUR(grand)}`, 40, y);
+
   doc.save("pedido-ceremonia-2026.pdf");
-  window.location.href = `mailto:?subject=${encodeURIComponent(I18N[idiomaActual].pdfSubject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+
+  window.location.href =
+    `mailto:?subject=${encodeURIComponent(I18N[idiomaActual].pdfSubject)}&body=${encodeURIComponent(
+      clientLines.join("\n") + "\n\nPEDIDO:\n" + emailLines.join("\n") + "\n\nTOTAL: " + formatEUR(grand)
+    )}`;
 };
 
+/* =========================
+   BOTONES
+========================= */
 document.getElementById("btnClear").onclick=()=>{
   for(const k of Object.keys(cart)) delete cart[k];
   render(); renderCart();
 };
 document.getElementById("q").addEventListener("input",(e)=>{filtro=normalize(e.target.value||""); render();});
 
-/* INIT */
+/* =========================
+   INIT
+========================= */
 (async function init(){
   try{
     const { path, data } = await fetchFirstJSON();
@@ -551,8 +728,11 @@ document.getElementById("q").addEventListener("input",(e)=>{filtro=normalize(e.t
               Array.isArray(data.productos) ? data.productos :
               Array.isArray(data.items) ? data.items :
               Array.isArray(data.data) ? data.data : [];
+
     productos = arr.map(normalizeProduct).filter(Boolean).sort((a,b)=>String(a.ref).localeCompare(String(b.ref)));
+
     document.getElementById("t_loaded").textContent = I18N[idiomaActual].loaded(productos.length) + ` · (${path})`;
+
     render(); renderCart();
   }catch(err){
     document.getElementById("status").innerHTML = `<b>Error:</b> ${escapeHTML(err.message)}`;
