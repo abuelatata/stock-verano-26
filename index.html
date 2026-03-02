@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Abuela Tata · Repeticiones Ceremonia 2026</title>
 
-  <!-- Favicon (pon tu logo en /img/logo.png si quieres) -->
   <link rel="icon" href="img/logo.png" />
 
-  <!-- jsPDF (para PDF) -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
@@ -29,15 +27,12 @@
       background-size: 18px 18px;
       color:var(--ink);
     }
-    .wrap{max-width:1100px;margin:auto;padding:28px 16px 70px;}
+    .wrap{max-width:1100px;margin:auto;padding:28px 16px 110px;}
     header{
       display:flex;gap:14px;align-items:center;justify-content:space-between;
-      margin:10px 0 18px;
-      flex-wrap:wrap;
+      margin:10px 0 18px; flex-wrap:wrap;
     }
-    .brand{
-      display:flex;gap:14px;align-items:center;
-    }
+    .brand{display:flex;gap:14px;align-items:center;}
     .logo{
       width:58px;height:58px;border-radius:14px;object-fit:cover;
       background:#fff;border:1px solid var(--line);
@@ -45,6 +40,7 @@
     }
     h1{margin:0;font-size:20px;line-height:1.2;}
     .sub{margin:2px 0 0;font-size:13px;opacity:.85}
+
     .lang{
       display:flex;gap:8px;align-items:center;
       background:var(--card);
@@ -60,17 +56,53 @@
       cursor:pointer;
       font-size:14px;
       line-height:1;
-      transition:transform .08s ease;
     }
-    .flag:active{transform:scale(.98)}
-    .flag.active{
-      outline:2px solid var(--accent);
-      border-color: transparent;
+    .flag.active{outline:2px solid var(--accent); border-color:transparent;}
+
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow: var(--shadow);
+      padding:14px;
+      margin:12px 0 16px;
     }
+    .panel h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .formGrid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:10px;
+    }
+    .f{
+      grid-column: span 12;
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+    }
+    @media (min-width:780px){
+      .f.half{grid-column: span 6;}
+      .f.third{grid-column: span 4;}
+    }
+    label{font-size:12px;opacity:.9}
+    input, textarea{
+      font-family: Georgia, serif;
+      font-size:14px;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      outline:none;
+    }
+    textarea{min-height:74px; resize:vertical}
 
     .topbar{
       display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-      margin:16px 0 16px;
+      margin:8px 0 16px;
     }
     .search{
       flex:1 1 260px;
@@ -99,8 +131,7 @@
       display:flex;align-items:center;gap:8px;
     }
     .btn{
-      border:none;
-      cursor:pointer;
+      border:none; cursor:pointer;
       border-radius:16px;
       padding:11px 14px;
       font-family: Georgia, serif;
@@ -110,8 +141,7 @@
       font-size:14px;
     }
     .btn.secondary{
-      background:#fff;
-      color:var(--ink);
+      background:#fff; color:var(--ink);
       border:1px solid var(--line);
     }
 
@@ -131,12 +161,8 @@
       grid-template-columns: 120px 1fr;
       min-height:120px;
     }
-    @media (min-width:780px){
-      .card{grid-column: span 6;}
-    }
-    @media (min-width:1020px){
-      .card{grid-column: span 4;}
-    }
+    @media (min-width:780px){ .card{grid-column: span 6;} }
+    @media (min-width:1020px){ .card{grid-column: span 4;} }
 
     .pic{
       width:120px;height:120px;
@@ -145,28 +171,17 @@
       display:flex;align-items:center;justify-content:center;
     }
     .pic img{width:100%;height:100%;object-fit:cover;display:block}
-    .pic .ph{
-      font-size:12px;opacity:.75;text-align:center;padding:8px;
-    }
+    .pic .ph{font-size:12px;opacity:.75;text-align:center;padding:8px;}
 
     .content{padding:12px 12px 10px;}
     .titleRow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-    .name{
-      font-weight:700;font-size:14px;margin:0 0 4px;
-    }
-    .ref{
-      font-size:12px;opacity:.85;margin:0;
-    }
-    .price{
-      font-size:13px;font-weight:700;white-space:nowrap;
-    }
+    .name{font-weight:700;font-size:14px;margin:0 0 4px;}
+    .ref{font-size:12px;opacity:.85;margin:0;}
+    .price{font-size:13px;font-weight:700;white-space:nowrap;}
 
     .badges-row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:8px;
-      margin-bottom:6px;
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-top:8px; margin-bottom:6px;
     }
     .badge{
       font-size:12px;
@@ -188,6 +203,7 @@
       border-left:3px solid var(--line);
       background:rgba(255,255,255,.55);
       border-radius:10px;
+      display:none;
     }
 
     .sizes{
@@ -204,7 +220,6 @@
       padding:6px 8px;
       font-size:12px;
     }
-    .sz b{font-size:12px}
     .pm{
       width:26px;height:26px;border-radius:10px;
       border:1px solid var(--line);
@@ -214,13 +229,10 @@
       color:var(--ink);
       line-height:1;
     }
-    .qty{
-      min-width:18px;text-align:center;font-weight:700;
-    }
+    .qty{min-width:18px;text-align:center;font-weight:700;}
 
     .cart{
-      position:fixed;
-      left:0;right:0;bottom:0;
+      position:fixed; left:0;right:0;bottom:0;
       background:rgba(255,255,255,.88);
       border-top:1px solid var(--line);
       backdrop-filter: blur(8px);
@@ -231,19 +243,10 @@
       display:flex;gap:10px;flex-wrap:wrap;
       align-items:center;justify-content:space-between;
     }
-    .sum{
-      font-size:13px;
-    }
+    .sum{font-size:13px;}
     .sum strong{font-size:14px}
-    .warn{
-      color:var(--danger);
-      font-size:12px;
-      margin-top:4px;
-    }
-
-    .small{
-      font-size:12px;opacity:.85
-    }
+    .warn{color:var(--danger);font-size:12px;margin-top:4px;}
+    .small{font-size:12px;opacity:.85}
 
     .loading{
       padding:18px;
@@ -272,6 +275,44 @@
         <button class="flag" id="btnPT" title="Português">🇵🇹</button>
       </div>
     </header>
+
+    <!-- DATOS CLIENTE -->
+    <div class="panel">
+      <h2 id="t_clientTitle">Datos del cliente</h2>
+      <div class="formGrid">
+        <div class="f half">
+          <label id="l_store">Tienda / Cliente</label>
+          <input id="c_store" placeholder="Ej: Boutique Pepita" />
+        </div>
+        <div class="f half">
+          <label id="l_contact">Persona de contacto</label>
+          <input id="c_contact" placeholder="Ej: María" />
+        </div>
+
+        <div class="f third">
+          <label id="l_phone">Teléfono</label>
+          <input id="c_phone" placeholder="+34 ..." />
+        </div>
+        <div class="f third">
+          <label id="l_email">Email</label>
+          <input id="c_email" placeholder="cliente@..." />
+        </div>
+        <div class="f third">
+          <label id="l_rep">Representante</label>
+          <input id="c_rep" placeholder="Ej: David / Moisés / ..." />
+        </div>
+
+        <div class="f">
+          <label id="l_address">Dirección / Observaciones entrega</label>
+          <input id="c_address" placeholder="Dirección, horario, etc." />
+        </div>
+
+        <div class="f">
+          <label id="l_notes">Notas del pedido</label>
+          <textarea id="c_notes" placeholder="Ej: repetir mismo modelo cambiando color, lazada, volantes..."></textarea>
+        </div>
+      </div>
+    </div>
 
     <div class="topbar">
       <div class="search">
@@ -310,6 +351,14 @@ const I18N = {
   es:{
     title:"Repeticiones · Ceremonia 2026",
     sub:"Pedidos por referencia y tallas · Color visible en cada modelo",
+    clientTitle:"Datos del cliente",
+    store:"Tienda / Cliente",
+    contact:"Persona de contacto",
+    phone:"Teléfono",
+    email:"Email",
+    rep:"Representante",
+    address:"Dirección / Observaciones entrega",
+    notes:"Notas del pedido",
     loaded:n=>`Tarifa cargada: ${n} modelos`,
     searchPH:"Buscar por referencia, descripción, familia o color…",
     units:"unidades",
@@ -318,12 +367,21 @@ const I18N = {
     fam:"Fam.",
     color:"Color",
     pdfSubject:"Pedido Repeticiones Ceremonia 2026",
-    emailBodyIntro:"Hola,\n\nAdjunto pedido (PDF) para repeticiones Ceremonia 2026.\n\nResumen:\n",
-    emailBodyOutro:"\nMuchas gracias.\n\nAbuela Tata"
+    emailBodyIntro:"Hola,\n\nAdjunto pedido (PDF) para repeticiones Ceremonia 2026.\n\nDATOS CLIENTE:\n",
+    emailBodyOutro:"\nMuchas gracias.\n\nAbuela Tata",
+    noOrder:"No hay pedido aún."
   },
   en:{
     title:"Reorders · Ceremony 2026",
     sub:"Orders by reference & sizes · Color visible on each item",
+    clientTitle:"Customer details",
+    store:"Store / Customer",
+    contact:"Contact person",
+    phone:"Phone",
+    email:"Email",
+    rep:"Sales rep",
+    address:"Address / Delivery notes",
+    notes:"Order notes",
     loaded:n=>`Price list loaded: ${n} styles`,
     searchPH:"Search by reference, description, family or color…",
     units:"units",
@@ -332,12 +390,21 @@ const I18N = {
     fam:"Fam.",
     color:"Color",
     pdfSubject:"Reorders Order · Ceremony 2026",
-    emailBodyIntro:"Hello,\n\nPlease find attached the order (PDF) for Ceremony 2026 reorders.\n\nSummary:\n",
-    emailBodyOutro:"\nThank you.\n\nAbuela Tata"
+    emailBodyIntro:"Hello,\n\nPlease find attached the order (PDF) for Ceremony 2026 reorders.\n\nCUSTOMER DETAILS:\n",
+    emailBodyOutro:"\nThank you.\n\nAbuela Tata",
+    noOrder:"No order yet."
   },
   pt:{
     title:"Reposições · Cerimónia 2026",
     sub:"Pedidos por referência e tamanhos · Cor visível em cada modelo",
+    clientTitle:"Dados do cliente",
+    store:"Loja / Cliente",
+    contact:"Pessoa de contacto",
+    phone:"Telefone",
+    email:"Email",
+    rep:"Representante",
+    address:"Morada / Notas de entrega",
+    notes:"Notas do pedido",
     loaded:n=>`Tabela carregada: ${n} modelos`,
     searchPH:"Pesquisar por referência, descrição, família ou cor…",
     units:"unidades",
@@ -346,8 +413,9 @@ const I18N = {
     fam:"Fam.",
     color:"Cor",
     pdfSubject:"Pedido Reposições · Cerimónia 2026",
-    emailBodyIntro:"Olá,\n\nSegue em anexo o pedido (PDF) de reposições Cerimónia 2026.\n\nResumo:\n",
-    emailBodyOutro:"\nObrigado.\n\nAbuela Tata"
+    emailBodyIntro:"Olá,\n\nSegue em anexo o pedido (PDF) de reposições Cerimónia 2026.\n\nDADOS DO CLIENTE:\n",
+    emailBodyOutro:"\nObrigado.\n\nAbuela Tata",
+    noOrder:"Ainda não há pedido."
   }
 };
 
@@ -358,13 +426,26 @@ function setLang(lang){
   document.getElementById("btnEN").classList.toggle("active", lang==="en");
   document.getElementById("btnPT").classList.toggle("active", lang==="pt");
 
+  // textos
   document.getElementById("t_title").textContent = I18N[lang].title;
   document.getElementById("t_sub").textContent = I18N[lang].sub;
+  document.getElementById("t_clientTitle").textContent = I18N[lang].clientTitle;
+
+  document.getElementById("l_store").textContent = I18N[lang].store;
+  document.getElementById("l_contact").textContent = I18N[lang].contact;
+  document.getElementById("l_phone").textContent = I18N[lang].phone;
+  document.getElementById("l_email").textContent = I18N[lang].email;
+  document.getElementById("l_rep").textContent = I18N[lang].rep;
+  document.getElementById("l_address").textContent = I18N[lang].address;
+  document.getElementById("l_notes").textContent = I18N[lang].notes;
+
   document.getElementById("q").placeholder = I18N[lang].searchPH;
   document.getElementById("t_units").textContent = I18N[lang].units;
   document.getElementById("t_hint").textContent = I18N[lang].hint;
 
-  render(); // re-pinta para traducir “Sin foto…”
+  // repinta
+  render();
+  renderCart();
 }
 
 document.getElementById("btnES").onclick=()=>setLang("es");
@@ -372,7 +453,7 @@ document.getElementById("btnEN").onclick=()=>setLang("en");
 document.getElementById("btnPT").onclick=()=>setLang("pt");
 
 /* =========================
-   COLORES (código oficial)
+   COLORES (tu tabla)
 ========================= */
 const mapaColores = {
   "00": { es: "Blanco", en: "White", pt: "Branco" },
@@ -389,15 +470,17 @@ const mapaColores = {
 function parseRef(ref){
   const r = String(ref).trim();
   if(!/^\d{7,8}$/.test(r)) return null;
-
-  // 7 cifras: TT CC FFF
   if(r.length === 7){
+    // TT CC FFF
     return { tipo:r.substring(0,2), variante:"", color:r.substring(2,4), familia:r.substring(4,7), raw:r };
   }
   // 8 cifras: TT V CC FFF
   return { tipo:r.substring(0,2), variante:r.substring(2,3), color:r.substring(3,5), familia:r.substring(5,8), raw:r };
 }
-
+function getFamilia(ref){
+  const p = parseRef(ref);
+  return p ? p.familia : "";
+}
 function getColorNombre(ref){
   const p = parseRef(ref);
   if(!p) return "";
@@ -405,48 +488,114 @@ function getColorNombre(ref){
   if(!c) return `Color ${p.color}`;
   return c[idiomaActual] || c.es;
 }
-function getFamilia(ref){
-  const p = parseRef(ref);
-  return p ? p.familia : "";
-}
 
 /* =========================
-   TALLAS POR TIPO (ajusta si lo necesitas)
+   TALLAS POR TIPO (ajusta si hace falta)
 ========================= */
 const tallasPorTipo = {
-  "11": ["3M","6M","9M","12M","18M","2A"],                             // pelele
-  "12": ["3M","6M","9M","18M","2A","3A","4A"],                          // jesusito con capota
-  "13": ["3M","6M","9M","18M","2A","3A","4A"],                          // jesusito sin capota
-  "25": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],        // vestido vuelo
-  "22": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],        // abrigo
-  "43": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],        // conjunto (si aplica)
-  "08": ["U"]                                                            // talla única
+  "11": ["3M","6M","9M","12M","18M","2A"],
+  "12": ["3M","6M","9M","18M","2A","3A","4A"],
+  "13": ["3M","6M","9M","18M","2A","3A","4A"],
+  "25": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],
+  "22": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],
+  "43": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],
+  "08": ["U"]
 };
-
 function getTallas(ref){
   const p = parseRef(ref);
   if(!p) return [];
-  return tallasPorTipo[p.tipo] || ["6","7","8","9","10","11","12","13","14","15","16"]; // fallback
+  return tallasPorTipo[p.tipo] || ["6","7","8","9","10","11","12","13","14","15","16"];
 }
-
-/* =========================
-   FAMILIAS NO REPETIBLES (tu lista)
-========================= */
-const familiasNoRepetibles = new Set(["404","407","410","411","412","413","414"]);
 
 /* =========================
    DATOS + CARRITO
 ========================= */
 let productos = [];
 let filtro = "";
+const cart = {}; // cart[ref] = { ref, descripcion, precio, tallas:{} }
 
-const cart = {}; 
-// cart[ref] = { ref, descripcion, precio, tallas:{'6':2,...} }
-
+/* =========================
+   UTIL
+========================= */
+function escapeHTML(s){
+  return String(s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+}
+function normalize(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+function formatEUR(n){
+  const v = Number(n||0);
+  return v.toLocaleString("es-ES",{ style:"currency", currency:"EUR" });
+}
 function getUnitsByRef(ref){
   const it = cart[ref];
   if(!it) return 0;
   return Object.values(it.tallas).reduce((a,b)=>a+b,0);
+}
+
+/* =========================
+   JSON: acepta claves distintas
+========================= */
+function normalizeProduct(raw){
+  const ref = raw.ref ?? raw.referencia ?? raw.Referencia ?? raw.REF ?? raw.codigo ?? raw.code;
+  const descripcion = raw.descripcion ?? raw.descripción ?? raw.Descripcion ?? raw.Description ?? raw.nombre ?? raw.name ?? "";
+  const precio = raw.precio ?? raw.Precio ?? raw.price ?? raw.PVP ?? 0;
+
+  if(ref == null) return null;
+
+  return {
+    ref: String(ref).trim(),
+    descripcion: String(descripcion || "").trim(),
+    precio: Number(precio || 0)
+  };
+}
+
+/* =========================
+   CARGA TARIFA: prueba varias rutas
+========================= */
+const jsonCandidates = [
+  "data/tarifa.json",
+  "tarifa.json",
+  "data/productos.json",
+  "data/data.json"
+];
+
+async function fetchFirstJSON(){
+  for(const path of jsonCandidates){
+    try{
+      const r = await fetch(path, { cache:"no-store" });
+      if(!r.ok) continue;
+      const data = await r.json();
+      return { path, data };
+    }catch(e){ /* sigue */ }
+  }
+  throw new Error("No encuentro la tarifa. Prueba: data/tarifa.json o tarifa.json");
+}
+
+/* =========================
+   IMÁGENES: prueba varias carpetas
+========================= */
+const imgDirs = ["img", "images", "fotos", "assets/img", "assets/images"];
+const imgExts = ["jpg","jpeg","png","webp"];
+
+function buildImageCandidates(ref){
+  const arr = [];
+  for(const d of imgDirs){
+    for(const e of imgExts){
+      arr.push(`${d}/${ref}.${e}`);
+    }
+  }
+  return arr;
+}
+
+/* =========================
+   RENDER
+========================= */
+function matchProduct(p){
+  if(!filtro) return true;
+  const ref = String(p.ref);
+  const fam = getFamilia(ref);
+  const col = getColorNombre(ref);
+  const hay = [ref, p.descripcion||"", fam, col].map(normalize).join(" ");
+  return hay.includes(filtro);
 }
 
 function setQty(ref, talla, delta){
@@ -460,34 +609,16 @@ function setQty(ref, talla, delta){
   if(next === 0) delete it.tallas[talla];
   else it.tallas[talla] = next;
 
-  // si se queda sin tallas, borra referencia
   if(Object.keys(it.tallas).length === 0) delete cart[ref];
 
-  renderCart();
-  // solo actualiza el numerito de ese talla
   const el = document.querySelector(`[data-ref="${ref}"][data-size="${talla}"] .qty`);
   if(el) el.textContent = String(next);
-}
 
-/* =========================
-   RENDER
-========================= */
-function normalize(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
-
-function matchProduct(p){
-  if(!filtro) return true;
-  const ref = String(p.ref);
-  const fam = getFamilia(ref);
-  const col = getColorNombre(ref);
-  const hay = [
-    ref, p.descripcion||"", fam, col
-  ].map(normalize).join(" ");
-  return hay.includes(filtro);
+  renderCart();
 }
 
 function render(){
   if(!productos.length) return;
-
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
@@ -501,34 +632,30 @@ function render(){
     const card = document.createElement("div");
     card.className = "card";
 
-    // imagen
-    const imgPathCandidates = [
-      `img/${ref}.jpg`,
-      `img/${ref}.png`,
-      `img/${ref}.webp`
-    ];
-
+    // Imagen con fallback multi-carpeta
     const pic = document.createElement("div");
     pic.className = "pic";
-
     const img = document.createElement("img");
+    const candidates = buildImageCandidates(ref);
     let idx = 0;
 
+    const content = document.createElement("div");
+    content.className = "content";
+
+    function showNoPhoto(){
+      img.remove();
+      pic.innerHTML = `<div class="ph">📷<br>${escapeHTML(I18N[idiomaActual].noPhoto)}</div>`;
+      const note = content.querySelector(".no-photo-note");
+      if(note) note.style.display = "block";
+    }
     function tryNext(){
-      if(idx >= imgPathCandidates.length){
-        pic.innerHTML = `<div class="ph">📷<br>${I18N[idiomaActual].noPhoto}</div>`;
-        return;
-      }
-      img.src = imgPathCandidates[idx++];
+      if(idx >= candidates.length) return showNoPhoto();
+      img.src = candidates[idx++];
     }
     img.onload = ()=>{};
     img.onerror = ()=>tryNext();
     tryNext();
     pic.appendChild(img);
-
-    // contenido
-    const content = document.createElement("div");
-    content.className = "content";
 
     const price = Number(p.precio||0);
     content.innerHTML = `
@@ -538,27 +665,17 @@ function render(){
           <p class="ref">${escapeHTML(ref)}</p>
 
           <div class="badges-row">
-            <span class="badge badge-color">${I18N[idiomaActual].color}: ${escapeHTML(colorTxt)}</span>
-            <span class="badge badge-fam">${I18N[idiomaActual].fam} ${escapeHTML(fam)}</span>
+            <span class="badge badge-color">${escapeHTML(I18N[idiomaActual].color)}: ${escapeHTML(colorTxt)}</span>
+            <span class="badge badge-fam">${escapeHTML(I18N[idiomaActual].fam)} ${escapeHTML(fam)}</span>
           </div>
 
-          <div class="no-photo-note" style="display:none" data-nophoto="${ref}">
-            ${I18N[idiomaActual].noPhoto}
-          </div>
+          <div class="no-photo-note">${escapeHTML(I18N[idiomaActual].noPhoto)}</div>
         </div>
         <div class="price">${formatEUR(price)}</div>
       </div>
-      <div class="sizes" data-sizes="${ref}"></div>
+      <div class="sizes" data-sizes="${escapeHTML(ref)}"></div>
     `;
 
-    // si la tarjeta no tiene imagen (cuando falla), activamos el aviso
-    img.onerror = ()=>{
-      const note = content.querySelector(`[data-nophoto="${ref}"]`);
-      if(note) note.style.display = "block";
-      tryNext();
-    };
-
-    // tallas
     const sizesWrap = content.querySelector(`[data-sizes="${ref}"]`);
     const sizes = getTallas(ref);
 
@@ -570,9 +687,9 @@ function render(){
       chip.setAttribute("data-size", sz);
       chip.innerHTML = `
         <b>${escapeHTML(sz)}</b>
-        <button class="pm" type="button" aria-label="minus">−</button>
+        <button class="pm" type="button">−</button>
         <span class="qty">${current}</span>
-        <button class="pm" type="button" aria-label="plus">+</button>
+        <button class="pm" type="button">+</button>
       `;
       const btns = chip.querySelectorAll("button.pm");
       btns[0].onclick=()=>setQty(ref, sz, -1);
@@ -585,7 +702,6 @@ function render(){
     grid.appendChild(card);
   });
 
-  // status
   document.getElementById("status").style.display = "none";
   document.getElementById("grid").style.display = "grid";
 }
@@ -601,9 +717,8 @@ function renderCart(){
     units += u;
 
     const base = it.precio * u;
-
-    // recargo 10% si menos de 3 uds por referencia
     let line = base;
+
     if(u > 0 && u < 3){
       line = base * 1.10;
       surchargeText.push(`${ref} (+10%)`);
@@ -617,11 +732,12 @@ function renderCart(){
   const w = document.getElementById("cartSurcharge");
   if(surchargeText.length){
     w.style.display = "block";
-    w.textContent = (idiomaActual==="es")
-      ? `Recargo aplicado en: ${surchargeText.join(", ")}`
-      : (idiomaActual==="en")
-        ? `Surcharge applied to: ${surchargeText.join(", ")}`
-        : `Acréscimo aplicado em: ${surchargeText.join(", ")}`;
+    w.textContent =
+      (idiomaActual==="es")
+        ? `Recargo aplicado en: ${surchargeText.join(", ")}`
+        : (idiomaActual==="en")
+          ? `Surcharge applied to: ${surchargeText.join(", ")}`
+          : `Acréscimo aplicado em: ${surchargeText.join(", ")}`;
   } else {
     w.style.display = "none";
     w.textContent = "";
@@ -629,10 +745,21 @@ function renderCart(){
 }
 
 /* =========================
-   PDF + EMAIL
+   PDF + EMAIL (incluye datos cliente)
 ========================= */
+function getClientData(){
+  return {
+    store: document.getElementById("c_store").value.trim(),
+    contact: document.getElementById("c_contact").value.trim(),
+    phone: document.getElementById("c_phone").value.trim(),
+    email: document.getElementById("c_email").value.trim(),
+    rep: document.getElementById("c_rep").value.trim(),
+    address: document.getElementById("c_address").value.trim(),
+    notes: document.getElementById("c_notes").value.trim()
+  };
+}
+
 function buildOrderLines(){
-  // devuelve array con {ref, desc, familia, color, tallas, units, price, lineTotal, surchargeApplied}
   const out = [];
   Object.keys(cart).forEach(ref=>{
     const it = cart[ref];
@@ -655,34 +782,54 @@ function buildOrderLines(){
 function makePDF(){
   const lines = buildOrderLines();
   if(!lines.length){
-    alert(idiomaActual==="es" ? "No hay pedido aún." : (idiomaActual==="en" ? "No order yet." : "Ainda não há pedido."));
+    alert(I18N[idiomaActual].noOrder);
     return null;
   }
 
+  const client = getClientData();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:"pt", format:"a4" });
   const margin = 40;
   let y = 52;
 
-  doc.setFont("times","normal");
+  doc.setFont("times","bold");
   doc.setFontSize(18);
   doc.text(I18N[idiomaActual].pdfSubject, margin, y);
   y += 18;
 
+  doc.setFont("times","normal");
   doc.setFontSize(11);
   doc.text(`Fecha: ${new Date().toLocaleDateString()}`, margin, y);
-  y += 18;
+  y += 16;
+
+  // Datos cliente
+  doc.setFont("times","bold");
+  doc.text(I18N[idiomaActual].clientTitle, margin, y); y += 14;
+  doc.setFont("times","normal");
+
+  const clientLines = [
+    `${I18N[idiomaActual].store}: ${client.store || "-"}`,
+    `${I18N[idiomaActual].contact}: ${client.contact || "-"}`,
+    `${I18N[idiomaActual].phone}: ${client.phone || "-"}`,
+    `${I18N[idiomaActual].email}: ${client.email || "-"}`,
+    `${I18N[idiomaActual].rep}: ${client.rep || "-"}`,
+    `${I18N[idiomaActual].address}: ${client.address || "-"}`,
+    `${I18N[idiomaActual].notes}: ${client.notes || "-"}`
+  ];
+
+  clientLines.forEach(line=>{
+    if(y > 760){ doc.addPage(); y = 52; }
+    doc.text(line, margin, y); y += 13;
+  });
+  y += 10;
 
   let grand = 0;
 
-  lines.forEach((ln, i)=>{
-    if(y > 760){
-      doc.addPage();
-      y = 52;
-    }
+  lines.forEach(ln=>{
+    if(y > 740){ doc.addPage(); y = 52; }
 
-    doc.setFontSize(12);
     doc.setFont("times","bold");
+    doc.setFontSize(12);
     doc.text(`${ln.ref}  —  ${ln.desc || ""}`, margin, y); y += 14;
 
     doc.setFont("times","normal");
@@ -714,28 +861,35 @@ function makePDF(){
   doc.setFontSize(14);
   doc.text(`TOTAL: ${formatEUR(grand)}`, margin, y);
 
-  return { doc, total: grand, lines };
+  return { doc, total: grand, lines, client };
 }
 
 function pdfAndEmail(){
   const res = makePDF();
   if(!res) return;
 
-  const pdfBlob = res.doc.output("blob");
-  const file = new File([pdfBlob], "pedido-ceremonia-2026.pdf", { type:"application/pdf" });
-
-  // mailto NO adjunta archivo automáticamente (limitación). 
-  // Solución práctica: descargamos el PDF y abrimos mailto con el resumen.
+  // descarga PDF
   res.doc.save("pedido-ceremonia-2026.pdf");
 
-  const lines = res.lines;
-  const summary = lines.map(ln=>{
+  const c = res.client;
+  const clientBlock =
+    `${I18N[idiomaActual].store}: ${c.store || "-"}\n` +
+    `${I18N[idiomaActual].contact}: ${c.contact || "-"}\n` +
+    `${I18N[idiomaActual].phone}: ${c.phone || "-"}\n` +
+    `${I18N[idiomaActual].email}: ${c.email || "-"}\n` +
+    `${I18N[idiomaActual].rep}: ${c.rep || "-"}\n` +
+    `${I18N[idiomaActual].address}: ${c.address || "-"}\n` +
+    `${I18N[idiomaActual].notes}: ${c.notes || "-"}\n`;
+
+  const summary = res.lines.map(ln=>{
     const tallaStr = Object.keys(ln.tallas).sort((a,b)=>a.localeCompare(b)).map(t=>`${t}:${ln.tallas[t]}`).join(" ");
     return `- ${ln.ref} | ${ln.color} | Fam ${ln.familia} | Uds:${ln.units} | ${tallaStr}`;
   }).join("\n");
 
   const body =
     I18N[idiomaActual].emailBodyIntro +
+    clientBlock +
+    "\nPEDIDO:\n" +
     summary +
     `\n\nTOTAL: ${formatEUR(res.total)}\n\n` +
     I18N[idiomaActual].emailBodyOutro;
@@ -743,20 +897,7 @@ function pdfAndEmail(){
   const subject = encodeURIComponent(I18N[idiomaActual].pdfSubject);
   const mailBody = encodeURIComponent(body);
 
-  // pon aquí tu email si quieres que siempre vaya a ti o a un buzón fijo:
-  const to = ""; // ejemplo: "info@abuelatata.com"
-  window.location.href = `mailto:${to}?subject=${subject}&body=${mailBody}`;
-}
-
-/* =========================
-   UTILIDADES
-========================= */
-function escapeHTML(s){
-  return String(s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
-}
-function formatEUR(n){
-  const v = Number(n||0);
-  return v.toLocaleString("es-ES",{ style:"currency", currency:"EUR" });
+  window.location.href = `mailto:?subject=${subject}&body=${mailBody}`;
 }
 
 /* =========================
@@ -766,39 +907,42 @@ document.getElementById("q").addEventListener("input", (e)=>{
   filtro = normalize(e.target.value || "");
   render();
 });
-
 document.getElementById("btnClear").onclick=()=>{
   for(const k of Object.keys(cart)) delete cart[k];
   render();
   renderCart();
 };
-
 document.getElementById("btnPDF").onclick=pdfAndEmail;
 
 /* =========================
-   CARGA DE TARIFA
+   INIT
 ========================= */
 async function init(){
   try{
-    const r = await fetch("data/tarifa.json", { cache:"no-store" });
-    if(!r.ok) throw new Error("No se pudo cargar data/tarifa.json");
-    const data = await r.json();
+    const { path, data } = await fetchFirstJSON();
 
-    // Espera array de productos
-    productos = Array.isArray(data) ? data : (Array.isArray(data.productos) ? data.productos : []);
-    if(!productos.length) throw new Error("tarifa.json está vacío o con formato distinto");
+    let arr = [];
+    if(Array.isArray(data)) arr = data;
+    else if(Array.isArray(data.productos)) arr = data.productos;
+    else if(Array.isArray(data.items)) arr = data.items;
+    else if(Array.isArray(data.data)) arr = data.data;
 
-    // Orden por referencia
-    productos.sort((a,b)=>String(a.ref).localeCompare(String(b.ref)));
+    const norm = arr.map(normalizeProduct).filter(Boolean);
 
-    document.getElementById("t_loaded").textContent = I18N[idiomaActual].loaded(productos.length);
+    if(!norm.length) throw new Error("La tarifa se ha cargado, pero no reconozco las columnas (ref/descripcion/precio).");
+
+    productos = norm.sort((a,b)=>String(a.ref).localeCompare(String(b.ref)));
+    document.getElementById("t_loaded").textContent = I18N[idiomaActual].loaded(productos.length) + ` · (${path})`;
 
     render();
     renderCart();
   }catch(err){
     document.getElementById("status").innerHTML =
       `<b>Error:</b> ${escapeHTML(err.message)}<br><br>
-       Revisa que exista <b>data/tarifa.json</b> y que sea un array con <b>ref, descripcion, precio</b>.`;
+       <div style="opacity:.85;font-size:13px">
+       Asegúrate de tener la tarifa en <b>data/tarifa.json</b> (o <b>tarifa.json</b>).<br>
+       Y las fotos en una carpeta tipo: <b>img/</b>, <b>images/</b> o <b>fotos/</b>.
+       </div>`;
     console.error(err);
   }
 }
