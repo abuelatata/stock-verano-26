@@ -499,46 +499,54 @@ function hideLoadBanner(){
   b.textContent = "";
 }
 
-async function urlExists(url){
-  try{
-    const r = await fetch(url, { method:"HEAD", cache:"no-store" });
-    return r.ok;
-  }catch(e){
-    return false;
-  }
-}
-function guessImgForRef(ref){
-  const base = IMAGE_BASE + ref;
-  return [base + ".jpg", base + ".jpeg", base + ".png", base + ".webp"];
-}
-async function resolveImageUrl(p){
-  if (p.img) return p.img;
-  const tries = guessImgForRef(p.ref);
-  for (const u of tries){
-    if (await urlExists(u)) return u;
-  }
-  return null;
-}
-
 async function loadProducts(){
   hideLoadBanner();
+
   const stamp = `cb=${Date.now()}`;
   const url = DATA_URL.includes("?") ? `${DATA_URL}&${stamp}` : `${DATA_URL}?${stamp}`;
+
   try{
     const r = await fetch(url, { cache:"no-store" });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const raw = await r.json();
-    if (!Array.isArray(raw)) throw new Error("El JSON no es un array");
 
-    // Adaptamos nombres posibles de campos (ref/referencia/codigo etc.)
-    PRODUCTS = raw.map(x => ({
-      ref: (x.ref || x.referencia || x.codigo || x.Referencia || x.Codigo || "").toString().trim(),
-      desc: (x.desc || x.descripcion || x.nombre || x.producto || x.Descripcion || "").toString().trim(),
-      img: (x.img || x.foto || x.imagen || x.Imagen || "").toString().trim() || null
-    })).filter(x=>x.ref);
+    const raw = await r.json();
+
+    // ✅ Soporta: [ ... ]  o  { items:[...] }  o  { data:[...] }  o  { productos:[...] } etc.
+    let arr = null;
+    if (Array.isArray(raw)) arr = raw;
+    else if (raw && typeof raw === "object"){
+      arr =
+        raw.items || raw.data || raw.productos || raw.products || raw.tarifa || raw.articulos || raw.rows || null;
+    }
+
+    if (!Array.isArray(arr)) {
+      // debug útil pa ti
+      showLoadBanner("⚠️ He cargado tarifa.json pero NO encuentro el array de artículos. Si tu JSON es tipo {items:[...]}, dime el nombre exacto de la propiedad.");
+      PRODUCTS = [];
+      render();
+      return;
+    }
+
+    function normalizeRef(v){
+      let ref = (v ?? "").toString().trim();
+      if (/^\d+$/.test(ref) && ref.length < 7) ref = ref.padStart(7, "0"); // recupera 03/04 si venían como 3/4
+      return ref;
+    }
+
+    PRODUCTS = arr.map(x => {
+      const ref = normalizeRef(
+        x.ref ?? x.referencia ?? x.codigo ?? x.Referencia ?? x.Codigo ?? x.REF ?? x["Referencia Artículo"] ?? x["Referencia"]
+      );
+
+      return {
+        ref,
+        desc: (x.desc || x.descripcion || x.nombre || x.producto || x.Descripcion || x["Descripción"] || "").toString().trim(),
+        img: (x.img || x.foto || x.imagen || x.Imagen || "").toString().trim() || null
+      };
+    }).filter(p => p.ref);
 
     if (!PRODUCTS.length){
-      showLoadBanner("⚠️ He cargado ./data/tarifa.json pero no encuentro referencias (campo ref/referencia/codigo).");
+      showLoadBanner("⚠️ El JSON se ha cargado, pero no salen referencias (campo ref/referencia/codigo).");
     }
 
     for (const p of PRODUCTS){
@@ -548,8 +556,9 @@ async function loadProducts(){
     }
 
     render();
+
   }catch(e){
-    showLoadBanner("⚠️ No se ha podido cargar ./data/tarifa.json. Revisa que esté publicado en GitHub Pages y que el JSON sea válido. ("+e.message+")");
+    showLoadBanner("⚠️ No se ha podido cargar ./data/tarifa.json (revisa GitHub Pages y que el JSON sea válido). ("+e.message+")");
     PRODUCTS = [];
     render();
   }
