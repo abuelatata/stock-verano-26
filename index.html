@@ -6,7 +6,6 @@
   <title>Abuela Tata · Repeticiones Ceremonia 2026</title>
 
   <link rel="icon" href="img/logo.png" />
-
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
@@ -16,7 +15,7 @@
       --line:#d2c2b0;
       --card:#ffffffcc;
       --shadow: 0 10px 30px rgba(0,0,0,.07);
-      --accent:#7aa79a; /* verde agua */
+      --accent:#7aa79a;
       --danger:#b25b5b;
     }
     body{
@@ -27,7 +26,7 @@
       background-size: 18px 18px;
       color:var(--ink);
     }
-    .wrap{max-width:1100px;margin:auto;padding:28px 16px 110px;}
+    .wrap{max-width:1100px;margin:auto;padding:28px 16px 120px;}
     header{
       display:flex;gap:14px;align-items:center;justify-content:space-between;
       margin:10px 0 18px; flex-wrap:wrap;
@@ -67,25 +66,13 @@
       padding:14px;
       margin:12px 0 16px;
     }
-    .panel h2{
-      margin:0 0 10px;
-      font-size:14px;
-      letter-spacing:.2px;
-    }
-    .formGrid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:10px;
-    }
-    .f{
-      grid-column: span 12;
-      display:flex;
-      flex-direction:column;
-      gap:5px;
-    }
+    .panel h2{margin:0 0 10px;font-size:14px;}
+    .formGrid{display:grid;grid-template-columns: repeat(12, 1fr);gap:10px;}
+    .f{grid-column: span 12;display:flex;flex-direction:column;gap:5px;}
     @media (min-width:780px){
       .f.half{grid-column: span 6;}
       .f.third{grid-column: span 4;}
+      .f.twothird{grid-column: span 8;}
     }
     label{font-size:12px;opacity:.9}
     input, textarea{
@@ -100,73 +87,41 @@
     }
     textarea{min-height:74px; resize:vertical}
 
-    .topbar{
-      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-      margin:8px 0 16px;
-    }
+    .topbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 16px;}
     .search{
-      flex:1 1 260px;
-      display:flex;gap:8px;align-items:center;
-      background:var(--card);
-      border:2px solid var(--line);
-      border-radius:16px;
-      padding:10px 12px;
-      box-shadow: var(--shadow);
+      flex:1 1 260px;display:flex;gap:8px;align-items:center;
+      background:var(--card);border:2px solid var(--line);
+      border-radius:16px;padding:10px 12px;box-shadow: var(--shadow);
     }
     .search input{
-      width:100%;
-      border:none;outline:none;
-      font-family: Georgia, serif;
-      font-size:14px;
-      background:transparent;
-      color:var(--ink);
+      width:100%;border:none;outline:none;font-family: Georgia, serif;
+      font-size:14px;background:transparent;color:var(--ink);
     }
     .pill{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:10px 12px;
-      box-shadow: var(--shadow);
-      font-size:13px;
-      display:flex;align-items:center;gap:8px;
+      background:var(--card);border:1px solid var(--line);
+      border-radius:16px;padding:10px 12px;box-shadow: var(--shadow);
+      font-size:13px;display:flex;align-items:center;gap:8px;
     }
     .btn{
-      border:none; cursor:pointer;
-      border-radius:16px;
-      padding:11px 14px;
-      font-family: Georgia, serif;
-      box-shadow: var(--shadow);
-      background: var(--accent);
-      color:#fff;
-      font-size:14px;
+      border:none; cursor:pointer;border-radius:16px;
+      padding:11px 14px;font-family: Georgia, serif;
+      box-shadow: var(--shadow);background: var(--accent);
+      color:#fff;font-size:14px;
     }
-    .btn.secondary{
-      background:#fff; color:var(--ink);
-      border:1px solid var(--line);
-    }
+    .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);}
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:14px;
-    }
+    .grid{display:grid;grid-template-columns: repeat(12, 1fr);gap:14px;}
     .card{
-      grid-column: span 12;
-      background: var(--card);
-      border:1px solid var(--line);
-      border-radius:20px;
-      overflow:hidden;
-      box-shadow: var(--shadow);
-      display:grid;
-      grid-template-columns: 120px 1fr;
-      min-height:120px;
+      grid-column: span 12;background: var(--card);
+      border:1px solid var(--line);border-radius:20px;overflow:hidden;
+      box-shadow: var(--shadow);display:grid;
+      grid-template-columns: 120px 1fr;min-height:120px;
     }
     @media (min-width:780px){ .card{grid-column: span 6;} }
     @media (min-width:1020px){ .card{grid-column: span 4;} }
 
     .pic{
-      width:120px;height:120px;
-      background:#fff;
+      width:120px;height:120px;background:#fff;
       border-right:1px solid var(--line);
       display:flex;align-items:center;justify-content:center;
     }
@@ -179,55 +134,29 @@
     .ref{font-size:12px;opacity:.85;margin:0;}
     .price{font-size:13px;font-weight:700;white-space:nowrap;}
 
-    .badges-row{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-top:8px; margin-bottom:6px;
-    }
+    .badges-row{display:flex; gap:8px; flex-wrap:wrap;margin-top:8px;margin-bottom:6px;}
     .badge{
-      font-size:12px;
-      padding:5px 9px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.75);
+      font-size:12px;padding:5px 9px;border-radius:999px;
+      border:1px solid var(--line);background:rgba(255,255,255,.75);
       color:var(--ink);
     }
     .badge-color{font-weight:700}
     .badge-fam{opacity:.9}
 
     .no-photo-note{
-      margin-top:6px;
-      font-size:12px;
-      color:var(--ink);
-      opacity:.85;
-      padding:6px 8px;
-      border-left:3px solid var(--line);
-      background:rgba(255,255,255,.55);
-      border-radius:10px;
-      display:none;
+      margin-top:6px;font-size:12px;color:var(--ink);opacity:.85;
+      padding:6px 8px;border-left:3px solid var(--line);
+      background:rgba(255,255,255,.55);border-radius:10px;display:none;
     }
 
-    .sizes{
-      margin-top:10px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
+    .sizes{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;}
     .sz{
-      display:flex;align-items:center;gap:6px;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:14px;
-      padding:6px 8px;
-      font-size:12px;
+      display:flex;align-items:center;gap:6px;border:1px solid var(--line);
+      background:#fff;border-radius:14px;padding:6px 8px;font-size:12px;
     }
     .pm{
-      width:26px;height:26px;border-radius:10px;
-      border:1px solid var(--line);
-      background:#fff;
-      cursor:pointer;
-      font-weight:700;
-      color:var(--ink);
-      line-height:1;
+      width:26px;height:26px;border-radius:10px;border:1px solid var(--line);
+      background:#fff;cursor:pointer;font-weight:700;color:var(--ink);line-height:1;
     }
     .qty{min-width:18px;text-align:center;font-weight:700;}
 
@@ -239,8 +168,7 @@
       padding:10px 14px;
     }
     .cartin{
-      max-width:1100px;margin:auto;
-      display:flex;gap:10px;flex-wrap:wrap;
+      max-width:1100px;margin:auto;display:flex;gap:10px;flex-wrap:wrap;
       align-items:center;justify-content:space-between;
     }
     .sum{font-size:13px;}
@@ -249,11 +177,8 @@
     .small{font-size:12px;opacity:.85}
 
     .loading{
-      padding:18px;
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:20px;
-      box-shadow: var(--shadow);
+      padding:18px;background:var(--card);border:1px solid var(--line);
+      border-radius:20px;box-shadow: var(--shadow);
     }
   </style>
 </head>
@@ -276,41 +201,24 @@
       </div>
     </header>
 
-    <!-- DATOS CLIENTE -->
     <div class="panel">
       <h2 id="t_clientTitle">Datos del cliente</h2>
       <div class="formGrid">
-        <div class="f half">
-          <label id="l_store">Tienda / Cliente</label>
-          <input id="c_store" placeholder="Ej: Boutique Pepita" />
-        </div>
-        <div class="f half">
-          <label id="l_contact">Persona de contacto</label>
-          <input id="c_contact" placeholder="Ej: María" />
-        </div>
+        <div class="f half"><label id="l_store">Nombre / Tienda</label><input id="c_store"></div>
+        <div class="f half"><label id="l_contact">Persona de contacto</label><input id="c_contact"></div>
 
-        <div class="f third">
-          <label id="l_phone">Teléfono</label>
-          <input id="c_phone" placeholder="+34 ..." />
-        </div>
-        <div class="f third">
-          <label id="l_email">Email</label>
-          <input id="c_email" placeholder="cliente@..." />
-        </div>
-        <div class="f third">
-          <label id="l_rep">Representante</label>
-          <input id="c_rep" placeholder="Ej: David / Moisés / ..." />
-        </div>
+        <div class="f third"><label id="l_postal">Código Postal</label><input id="c_postal"></div>
+        <div class="f third"><label id="l_city">Ciudad</label><input id="c_city"></div>
+        <div class="f third"><label id="l_country">País</label><input id="c_country" value="España"></div>
 
-        <div class="f">
-          <label id="l_address">Dirección / Observaciones entrega</label>
-          <input id="c_address" placeholder="Dirección, horario, etc." />
-        </div>
+        <div class="f third"><label id="l_phone">Teléfono</label><input id="c_phone"></div>
+        <div class="f third"><label id="l_email">Email</label><input id="c_email"></div>
+        <div class="f third"><label id="l_rep">Representante</label><input id="c_rep"></div>
 
-        <div class="f">
-          <label id="l_notes">Notas del pedido</label>
-          <textarea id="c_notes" placeholder="Ej: repetir mismo modelo cambiando color, lazada, volantes..."></textarea>
-        </div>
+        <div class="f twothird"><label id="l_address">Dirección</label><input id="c_address"></div>
+        <div class="f third"><label id="l_vat">CIF / VAT</label><input id="c_vat"></div>
+
+        <div class="f"><label id="l_notes">Notas del pedido</label><textarea id="c_notes"></textarea></div>
       </div>
     </div>
 
@@ -344,79 +252,31 @@
   </div>
 
 <script>
+/* ====== NO REPETIBLES (NO DEBEN APARECER) ====== */
+const familiasNoRepetibles = new Set(["404","407","410","411","412","413","414"]);
+
 /* =========================
-   IDIOMAS
+   IDIOMAS (mínimo)
 ========================= */
 const I18N = {
-  es:{
-    title:"Repeticiones · Ceremonia 2026",
-    sub:"Pedidos por referencia y tallas · Color visible en cada modelo",
-    clientTitle:"Datos del cliente",
-    store:"Tienda / Cliente",
-    contact:"Persona de contacto",
-    phone:"Teléfono",
-    email:"Email",
-    rep:"Representante",
-    address:"Dirección / Observaciones entrega",
-    notes:"Notas del pedido",
-    loaded:n=>`Tarifa cargada: ${n} modelos`,
-    searchPH:"Buscar por referencia, descripción, familia o color…",
-    units:"unidades",
+  es:{ title:"Repeticiones · Ceremonia 2026", sub:"Pedidos por referencia y tallas · Color visible en cada modelo",
+    clientTitle:"Datos del cliente", loaded:n=>`Tarifa cargada: ${n} modelos`,
+    searchPH:"Buscar por referencia, descripción, familia o color…", units:"unidades",
     hint:"Recargo +10% por referencia si pides menos de 3 uds.",
-    noPhoto:"Sin foto · mismo modelo/familia, cambia el color",
-    fam:"Fam.",
-    color:"Color",
-    pdfSubject:"Pedido Repeticiones Ceremonia 2026",
-    emailBodyIntro:"Hola,\n\nAdjunto pedido (PDF) para repeticiones Ceremonia 2026.\n\nDATOS CLIENTE:\n",
-    emailBodyOutro:"\nMuchas gracias.\n\nAbuela Tata",
-    noOrder:"No hay pedido aún."
-  },
-  en:{
-    title:"Reorders · Ceremony 2026",
-    sub:"Orders by reference & sizes · Color visible on each item",
-    clientTitle:"Customer details",
-    store:"Store / Customer",
-    contact:"Contact person",
-    phone:"Phone",
-    email:"Email",
-    rep:"Sales rep",
-    address:"Address / Delivery notes",
-    notes:"Order notes",
-    loaded:n=>`Price list loaded: ${n} styles`,
-    searchPH:"Search by reference, description, family or color…",
-    units:"units",
+    noPhoto:"Sin foto · mismo modelo/familia, cambia el color", fam:"Fam.", color:"Color",
+    pdfSubject:"Pedido Repeticiones Ceremonia 2026", noOrder:"No hay pedido aún." },
+  en:{ title:"Reorders · Ceremony 2026", sub:"Orders by reference & sizes · Color visible on each item",
+    clientTitle:"Customer details", loaded:n=>`Price list loaded: ${n} styles`,
+    searchPH:"Search by reference, description, family or color…", units:"units",
     hint:"+10% surcharge per reference if you order less than 3 units.",
-    noPhoto:"No photo · same style/family, color changes",
-    fam:"Fam.",
-    color:"Color",
-    pdfSubject:"Reorders Order · Ceremony 2026",
-    emailBodyIntro:"Hello,\n\nPlease find attached the order (PDF) for Ceremony 2026 reorders.\n\nCUSTOMER DETAILS:\n",
-    emailBodyOutro:"\nThank you.\n\nAbuela Tata",
-    noOrder:"No order yet."
-  },
-  pt:{
-    title:"Reposições · Cerimónia 2026",
-    sub:"Pedidos por referência e tamanhos · Cor visível em cada modelo",
-    clientTitle:"Dados do cliente",
-    store:"Loja / Cliente",
-    contact:"Pessoa de contacto",
-    phone:"Telefone",
-    email:"Email",
-    rep:"Representante",
-    address:"Morada / Notas de entrega",
-    notes:"Notas do pedido",
-    loaded:n=>`Tabela carregada: ${n} modelos`,
-    searchPH:"Pesquisar por referência, descrição, família ou cor…",
-    units:"unidades",
+    noPhoto:"No photo · same style/family, color changes", fam:"Fam.", color:"Color",
+    pdfSubject:"Reorders Order · Ceremony 2026", noOrder:"No order yet." },
+  pt:{ title:"Reposições · Cerimónia 2026", sub:"Pedidos por referência e tamanhos · Cor visível em cada modelo",
+    clientTitle:"Dados do cliente", loaded:n=>`Tabela carregada: ${n} modelos`,
+    searchPH:"Pesquisar por referência, descrição, família ou cor…", units:"unidades",
     hint:"+10% de acréscimo por referência se pedir menos de 3 unidades.",
-    noPhoto:"Sem foto · mesmo modelo/família, muda a cor",
-    fam:"Fam.",
-    color:"Cor",
-    pdfSubject:"Pedido Reposições · Cerimónia 2026",
-    emailBodyIntro:"Olá,\n\nSegue em anexo o pedido (PDF) de reposições Cerimónia 2026.\n\nDADOS DO CLIENTE:\n",
-    emailBodyOutro:"\nObrigado.\n\nAbuela Tata",
-    noOrder:"Ainda não há pedido."
-  }
+    noPhoto:"Sem foto · mesmo modelo/família, muda a cor", fam:"Fam.", color:"Cor",
+    pdfSubject:"Pedido Reposições · Cerimónia 2026", noOrder:"Ainda não há pedido." }
 };
 
 let idiomaActual = "es";
@@ -425,35 +285,20 @@ function setLang(lang){
   document.getElementById("btnES").classList.toggle("active", lang==="es");
   document.getElementById("btnEN").classList.toggle("active", lang==="en");
   document.getElementById("btnPT").classList.toggle("active", lang==="pt");
-
-  // textos
   document.getElementById("t_title").textContent = I18N[lang].title;
   document.getElementById("t_sub").textContent = I18N[lang].sub;
   document.getElementById("t_clientTitle").textContent = I18N[lang].clientTitle;
-
-  document.getElementById("l_store").textContent = I18N[lang].store;
-  document.getElementById("l_contact").textContent = I18N[lang].contact;
-  document.getElementById("l_phone").textContent = I18N[lang].phone;
-  document.getElementById("l_email").textContent = I18N[lang].email;
-  document.getElementById("l_rep").textContent = I18N[lang].rep;
-  document.getElementById("l_address").textContent = I18N[lang].address;
-  document.getElementById("l_notes").textContent = I18N[lang].notes;
-
   document.getElementById("q").placeholder = I18N[lang].searchPH;
   document.getElementById("t_units").textContent = I18N[lang].units;
   document.getElementById("t_hint").textContent = I18N[lang].hint;
-
-  // repinta
-  render();
-  renderCart();
+  render(); renderCart();
 }
-
 document.getElementById("btnES").onclick=()=>setLang("es");
 document.getElementById("btnEN").onclick=()=>setLang("en");
 document.getElementById("btnPT").onclick=()=>setLang("pt");
 
 /* =========================
-   COLORES (tu tabla)
+   COLORES (incluye 24 MENTA)
 ========================= */
 const mapaColores = {
   "00": { es: "Blanco", en: "White", pt: "Branco" },
@@ -463,34 +308,26 @@ const mapaColores = {
   "06": { es: "Arena", en: "Sand", pt: "Areia" },
   "09": { es: "Verde", en: "Green", pt: "Verde" },
   "17": { es: "Azul", en: "Blue", pt: "Azul" },
-  "34": { es: "Menta", en: "Mint", pt: "Menta" },
+  "24": { es: "Menta", en: "Mint", pt: "Menta" },
   "25": { es: "Maquillaje", en: "Blush", pt: "Maquilhagem" }
 };
 
 function parseRef(ref){
   const r = String(ref).trim();
   if(!/^\d{7,8}$/.test(r)) return null;
-  if(r.length === 7){
-    // TT CC FFF
-    return { tipo:r.substring(0,2), variante:"", color:r.substring(2,4), familia:r.substring(4,7), raw:r };
-  }
-  // 8 cifras: TT V CC FFF
-  return { tipo:r.substring(0,2), variante:r.substring(2,3), color:r.substring(3,5), familia:r.substring(5,8), raw:r };
+  if(r.length === 7) return { color:r.substring(2,4), familia:r.substring(4,7), raw:r };
+  return { color:r.substring(3,5), familia:r.substring(5,8), raw:r };
 }
-function getFamilia(ref){
-  const p = parseRef(ref);
-  return p ? p.familia : "";
-}
+function getFamilia(ref){ const p=parseRef(ref); return p?p.familia:""; }
 function getColorNombre(ref){
-  const p = parseRef(ref);
-  if(!p) return "";
+  const p=parseRef(ref); if(!p) return "";
   const c = mapaColores[p.color];
-  if(!c) return `Color ${p.color}`;
+  if(!c) return (idiomaActual==="es") ? `${p.color} (sin definir)` : `${p.color}`;
   return c[idiomaActual] || c.es;
 }
 
 /* =========================
-   TALLAS POR TIPO (ajusta si hace falta)
+   TALLAS (ajústalo si hace falta)
 ========================= */
 const tallasPorTipo = {
   "11": ["3M","6M","9M","12M","18M","2A"],
@@ -501,10 +338,10 @@ const tallasPorTipo = {
   "43": ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"],
   "08": ["U"]
 };
+function getTipo(ref){ const r=String(ref).trim(); return r.substring(0,2); }
 function getTallas(ref){
-  const p = parseRef(ref);
-  if(!p) return [];
-  return tallasPorTipo[p.tipo] || ["6","7","8","9","10","11","12","13","14","15","16"];
+  const t = getTipo(ref);
+  return tallasPorTipo[t] || ["6","7","8","9","10","11","12","13","14","15","16"];
 }
 
 /* =========================
@@ -512,87 +349,56 @@ function getTallas(ref){
 ========================= */
 let productos = [];
 let filtro = "";
-const cart = {}; // cart[ref] = { ref, descripcion, precio, tallas:{} }
+const cart = {};
 
-/* =========================
-   UTIL
-========================= */
-function escapeHTML(s){
-  return String(s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
-}
-function normalize(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
-function formatEUR(n){
-  const v = Number(n||0);
-  return v.toLocaleString("es-ES",{ style:"currency", currency:"EUR" });
-}
+function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));}
+function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
+function formatEUR(n){return Number(n||0).toLocaleString("es-ES",{style:"currency",currency:"EUR"});}
 function getUnitsByRef(ref){
-  const it = cart[ref];
-  if(!it) return 0;
+  const it = cart[ref]; if(!it) return 0;
   return Object.values(it.tallas).reduce((a,b)=>a+b,0);
 }
 
-/* =========================
-   JSON: acepta claves distintas
-========================= */
 function normalizeProduct(raw){
   const ref = raw.ref ?? raw.referencia ?? raw.Referencia ?? raw.REF ?? raw.codigo ?? raw.code;
   const descripcion = raw.descripcion ?? raw.descripción ?? raw.Descripcion ?? raw.Description ?? raw.nombre ?? raw.name ?? "";
   const precio = raw.precio ?? raw.Precio ?? raw.price ?? raw.PVP ?? 0;
-
   if(ref == null) return null;
-
-  return {
-    ref: String(ref).trim(),
-    descripcion: String(descripcion || "").trim(),
-    precio: Number(precio || 0)
-  };
+  return { ref:String(ref).trim(), descripcion:String(descripcion||"").trim(), precio:Number(precio||0) };
 }
 
-/* =========================
-   CARGA TARIFA: prueba varias rutas
-========================= */
-const jsonCandidates = [
-  "data/tarifa.json",
-  "tarifa.json",
-  "data/productos.json",
-  "data/data.json"
-];
-
+/* JSON path fallback */
+const jsonCandidates = ["data/tarifa.json","tarifa.json","data/productos.json","data/data.json"];
 async function fetchFirstJSON(){
   for(const path of jsonCandidates){
     try{
-      const r = await fetch(path, { cache:"no-store" });
+      const r = await fetch(path,{cache:"no-store"});
       if(!r.ok) continue;
-      const data = await r.json();
-      return { path, data };
-    }catch(e){ /* sigue */ }
+      return { path, data: await r.json() };
+    }catch(e){}
   }
-  throw new Error("No encuentro la tarifa. Prueba: data/tarifa.json o tarifa.json");
+  throw new Error("No encuentro la tarifa (data/tarifa.json).");
 }
 
-/* =========================
-   IMÁGENES: prueba varias carpetas
-========================= */
-const imgDirs = ["img", "images", "fotos", "assets/img", "assets/images"];
+/* images fallback */
+const imgDirs = ["img","images","fotos","assets/img","assets/images"];
 const imgExts = ["jpg","jpeg","png","webp"];
-
 function buildImageCandidates(ref){
-  const arr = [];
-  for(const d of imgDirs){
-    for(const e of imgExts){
-      arr.push(`${d}/${ref}.${e}`);
-    }
-  }
+  const arr=[];
+  for(const d of imgDirs) for(const e of imgExts) arr.push(`${d}/${ref}.${e}`);
   return arr;
 }
 
-/* =========================
-   RENDER
-========================= */
+/* ====== FILTRO (NO REPETIBLES NO APARECEN) ====== */
 function matchProduct(p){
-  if(!filtro) return true;
   const ref = String(p.ref);
   const fam = getFamilia(ref);
+
+  // Ocultar familias no repetibles
+  if(familiasNoRepetibles.has(fam)) return false;
+
+  if(!filtro) return true;
+
   const col = getColorNombre(ref);
   const hay = [ref, p.descripcion||"", fam, col].map(normalize).join(" ");
   return hay.includes(filtro);
@@ -606,9 +412,7 @@ function setQty(ref, talla, delta){
   const it = cart[ref];
   const cur = it.tallas[talla] || 0;
   const next = Math.max(0, cur + delta);
-  if(next === 0) delete it.tallas[talla];
-  else it.tallas[talla] = next;
-
+  if(next === 0) delete it.tallas[talla]; else it.tallas[talla] = next;
   if(Object.keys(it.tallas).length === 0) delete cart[ref];
 
   const el = document.querySelector(`[data-ref="${ref}"][data-size="${talla}"] .qty`);
@@ -622,9 +426,7 @@ function render(){
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  const list = productos.filter(matchProduct);
-
-  list.forEach(p=>{
+  productos.filter(matchProduct).forEach(p=>{
     const ref = String(p.ref);
     const fam = getFamilia(ref);
     const colorTxt = getColorNombre(ref);
@@ -632,12 +434,12 @@ function render(){
     const card = document.createElement("div");
     card.className = "card";
 
-    // Imagen con fallback multi-carpeta
     const pic = document.createElement("div");
     pic.className = "pic";
+
     const img = document.createElement("img");
     const candidates = buildImageCandidates(ref);
-    let idx = 0;
+    let idx=0;
 
     const content = document.createElement("div");
     content.className = "content";
@@ -652,7 +454,6 @@ function render(){
       if(idx >= candidates.length) return showNoPhoto();
       img.src = candidates[idx++];
     }
-    img.onload = ()=>{};
     img.onerror = ()=>tryNext();
     tryNext();
     pic.appendChild(img);
@@ -663,12 +464,10 @@ function render(){
         <div>
           <p class="name">${escapeHTML(p.descripcion||"")}</p>
           <p class="ref">${escapeHTML(ref)}</p>
-
           <div class="badges-row">
             <span class="badge badge-color">${escapeHTML(I18N[idiomaActual].color)}: ${escapeHTML(colorTxt)}</span>
             <span class="badge badge-fam">${escapeHTML(I18N[idiomaActual].fam)} ${escapeHTML(fam)}</span>
           </div>
-
           <div class="no-photo-note">${escapeHTML(I18N[idiomaActual].noPhoto)}</div>
         </div>
         <div class="price">${formatEUR(price)}</div>
@@ -677,20 +476,16 @@ function render(){
     `;
 
     const sizesWrap = content.querySelector(`[data-sizes="${ref}"]`);
-    const sizes = getTallas(ref);
-
-    sizes.forEach(sz=>{
+    getTallas(ref).forEach(sz=>{
       const current = cart[ref]?.tallas?.[sz] || 0;
       const chip = document.createElement("div");
       chip.className = "sz";
       chip.setAttribute("data-ref", ref);
       chip.setAttribute("data-size", sz);
-      chip.innerHTML = `
-        <b>${escapeHTML(sz)}</b>
+      chip.innerHTML = `<b>${escapeHTML(sz)}</b>
         <button class="pm" type="button">−</button>
         <span class="qty">${current}</span>
-        <button class="pm" type="button">+</button>
-      `;
+        <button class="pm" type="button">+</button>`;
       const btns = chip.querySelectorAll("button.pm");
       btns[0].onclick=()=>setQty(ref, sz, -1);
       btns[1].onclick=()=>setQty(ref, sz, +1);
@@ -702,251 +497,68 @@ function render(){
     grid.appendChild(card);
   });
 
-  document.getElementById("status").style.display = "none";
-  document.getElementById("grid").style.display = "grid";
+  document.getElementById("status").style.display="none";
+  document.getElementById("grid").style.display="grid";
 }
 
 function renderCart(){
-  let units = 0;
-  let total = 0;
-  let surchargeText = [];
-
+  let units=0, total=0;
   Object.keys(cart).forEach(ref=>{
     const it = cart[ref];
     const u = getUnitsByRef(ref);
     units += u;
-
     const base = it.precio * u;
-    let line = base;
-
-    if(u > 0 && u < 3){
-      line = base * 1.10;
-      surchargeText.push(`${ref} (+10%)`);
-    }
-    total += line;
+    total += (u>0 && u<3) ? base*1.10 : base;
   });
-
   document.getElementById("cartUnits").textContent = String(units);
   document.getElementById("cartTotal").textContent = formatEUR(total);
-
-  const w = document.getElementById("cartSurcharge");
-  if(surchargeText.length){
-    w.style.display = "block";
-    w.textContent =
-      (idiomaActual==="es")
-        ? `Recargo aplicado en: ${surchargeText.join(", ")}`
-        : (idiomaActual==="en")
-          ? `Surcharge applied to: ${surchargeText.join(", ")}`
-          : `Acréscimo aplicado em: ${surchargeText.join(", ")}`;
-  } else {
-    w.style.display = "none";
-    w.textContent = "";
-  }
 }
 
-/* =========================
-   PDF + EMAIL (incluye datos cliente)
-========================= */
-function getClientData(){
-  return {
-    store: document.getElementById("c_store").value.trim(),
-    contact: document.getElementById("c_contact").value.trim(),
-    phone: document.getElementById("c_phone").value.trim(),
-    email: document.getElementById("c_email").value.trim(),
-    rep: document.getElementById("c_rep").value.trim(),
-    address: document.getElementById("c_address").value.trim(),
-    notes: document.getElementById("c_notes").value.trim()
-  };
-}
-
-function buildOrderLines(){
-  const out = [];
-  Object.keys(cart).forEach(ref=>{
-    const it = cart[ref];
-    const u = getUnitsByRef(ref);
-    if(!u) return;
-    const fam = getFamilia(ref);
-    const color = getColorNombre(ref);
-    const base = it.precio * u;
-    const surchargeApplied = (u < 3);
-    const lineTotal = surchargeApplied ? base * 1.10 : base;
-    out.push({
-      ref, desc: it.descripcion, familia: fam, color,
-      tallas: it.tallas, units: u, price: it.precio,
-      lineTotal, surchargeApplied
-    });
-  });
-  return out;
-}
-
-function makePDF(){
-  const lines = buildOrderLines();
-  if(!lines.length){
-    alert(I18N[idiomaActual].noOrder);
-    return null;
-  }
-
-  const client = getClientData();
+/* PDF/Email minimal (solo aviso si vacío) */
+document.getElementById("btnPDF").onclick=()=>{
+  if(!Object.keys(cart).length){ alert(I18N[idiomaActual].noOrder); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:"pt", format:"a4" });
-  const margin = 40;
-  let y = 52;
+  doc.setFont("times","bold"); doc.setFontSize(16);
+  doc.text(I18N[idiomaActual].pdfSubject, 40, 50);
+  doc.setFont("times","normal"); doc.setFontSize(11);
 
-  doc.setFont("times","bold");
-  doc.setFontSize(18);
-  doc.text(I18N[idiomaActual].pdfSubject, margin, y);
-  y += 18;
-
-  doc.setFont("times","normal");
-  doc.setFontSize(11);
-  doc.text(`Fecha: ${new Date().toLocaleDateString()}`, margin, y);
-  y += 16;
-
-  // Datos cliente
-  doc.setFont("times","bold");
-  doc.text(I18N[idiomaActual].clientTitle, margin, y); y += 14;
-  doc.setFont("times","normal");
-
-  const clientLines = [
-    `${I18N[idiomaActual].store}: ${client.store || "-"}`,
-    `${I18N[idiomaActual].contact}: ${client.contact || "-"}`,
-    `${I18N[idiomaActual].phone}: ${client.phone || "-"}`,
-    `${I18N[idiomaActual].email}: ${client.email || "-"}`,
-    `${I18N[idiomaActual].rep}: ${client.rep || "-"}`,
-    `${I18N[idiomaActual].address}: ${client.address || "-"}`,
-    `${I18N[idiomaActual].notes}: ${client.notes || "-"}`
-  ];
-
-  clientLines.forEach(line=>{
-    if(y > 760){ doc.addPage(); y = 52; }
-    doc.text(line, margin, y); y += 13;
-  });
-  y += 10;
-
-  let grand = 0;
-
-  lines.forEach(ln=>{
-    if(y > 740){ doc.addPage(); y = 52; }
-
-    doc.setFont("times","bold");
-    doc.setFontSize(12);
-    doc.text(`${ln.ref}  —  ${ln.desc || ""}`, margin, y); y += 14;
-
-    doc.setFont("times","normal");
-    doc.setFontSize(11);
-    doc.text(`${I18N[idiomaActual].color}: ${ln.color}   ·   ${I18N[idiomaActual].fam} ${ln.familia}`, margin, y); y += 14;
-
-    const tallaStr = Object.keys(ln.tallas)
-      .sort((a,b)=>a.localeCompare(b))
-      .map(t=>`${t}:${ln.tallas[t]}`).join("  |  ");
-
-    doc.text(`Tallas: ${tallaStr}`, margin, y); y += 14;
-
-    const base = ln.price * ln.units;
-    const rec = ln.surchargeApplied ? (idiomaActual==="es" ? " (recargo +10%)" : idiomaActual==="en" ? " (+10% surcharge)" : " (+10% acréscimo)") : "";
-    doc.text(`Uds: ${ln.units}  ·  Precio: ${formatEUR(ln.price)}  ·  Subtotal: ${formatEUR(base)}${rec}`, margin, y); y += 14;
-
-    doc.setFont("times","bold");
-    doc.text(`TOTAL LÍNEA: ${formatEUR(ln.lineTotal)}`, margin, y); y += 18;
-
-    doc.setDrawColor(210,194,176);
-    doc.line(margin, y, 555, y);
-    y += 14;
-
-    grand += ln.lineTotal;
+  const lines = Object.keys(cart).map(ref=>{
+    const it=cart[ref];
+    const fam=getFamilia(ref);
+    const col=getColorNombre(ref);
+    const tallaStr=Object.keys(it.tallas).sort().map(t=>`${t}:${it.tallas[t]}`).join(" | ");
+    return `${ref} — ${it.descripcion} — ${col} — Fam ${fam} — ${tallaStr}`;
   });
 
-  if(y > 740){ doc.addPage(); y = 52; }
-  doc.setFont("times","bold");
-  doc.setFontSize(14);
-  doc.text(`TOTAL: ${formatEUR(grand)}`, margin, y);
+  let y=80;
+  lines.forEach(l=>{ if(y>770){ doc.addPage(); y=50; } doc.text(l,40,y); y+=14; });
+  doc.save("pedido-ceremonia-2026.pdf");
+  window.location.href = `mailto:?subject=${encodeURIComponent(I18N[idiomaActual].pdfSubject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+};
 
-  return { doc, total: grand, lines, client };
-}
-
-function pdfAndEmail(){
-  const res = makePDF();
-  if(!res) return;
-
-  // descarga PDF
-  res.doc.save("pedido-ceremonia-2026.pdf");
-
-  const c = res.client;
-  const clientBlock =
-    `${I18N[idiomaActual].store}: ${c.store || "-"}\n` +
-    `${I18N[idiomaActual].contact}: ${c.contact || "-"}\n` +
-    `${I18N[idiomaActual].phone}: ${c.phone || "-"}\n` +
-    `${I18N[idiomaActual].email}: ${c.email || "-"}\n` +
-    `${I18N[idiomaActual].rep}: ${c.rep || "-"}\n` +
-    `${I18N[idiomaActual].address}: ${c.address || "-"}\n` +
-    `${I18N[idiomaActual].notes}: ${c.notes || "-"}\n`;
-
-  const summary = res.lines.map(ln=>{
-    const tallaStr = Object.keys(ln.tallas).sort((a,b)=>a.localeCompare(b)).map(t=>`${t}:${ln.tallas[t]}`).join(" ");
-    return `- ${ln.ref} | ${ln.color} | Fam ${ln.familia} | Uds:${ln.units} | ${tallaStr}`;
-  }).join("\n");
-
-  const body =
-    I18N[idiomaActual].emailBodyIntro +
-    clientBlock +
-    "\nPEDIDO:\n" +
-    summary +
-    `\n\nTOTAL: ${formatEUR(res.total)}\n\n` +
-    I18N[idiomaActual].emailBodyOutro;
-
-  const subject = encodeURIComponent(I18N[idiomaActual].pdfSubject);
-  const mailBody = encodeURIComponent(body);
-
-  window.location.href = `mailto:?subject=${subject}&body=${mailBody}`;
-}
-
-/* =========================
-   EVENTOS UI
-========================= */
-document.getElementById("q").addEventListener("input", (e)=>{
-  filtro = normalize(e.target.value || "");
-  render();
-});
 document.getElementById("btnClear").onclick=()=>{
   for(const k of Object.keys(cart)) delete cart[k];
-  render();
-  renderCart();
+  render(); renderCart();
 };
-document.getElementById("btnPDF").onclick=pdfAndEmail;
+document.getElementById("q").addEventListener("input",(e)=>{filtro=normalize(e.target.value||""); render();});
 
-/* =========================
-   INIT
-========================= */
-async function init(){
+/* INIT */
+(async function init(){
   try{
     const { path, data } = await fetchFirstJSON();
-
-    let arr = [];
-    if(Array.isArray(data)) arr = data;
-    else if(Array.isArray(data.productos)) arr = data.productos;
-    else if(Array.isArray(data.items)) arr = data.items;
-    else if(Array.isArray(data.data)) arr = data.data;
-
-    const norm = arr.map(normalizeProduct).filter(Boolean);
-
-    if(!norm.length) throw new Error("La tarifa se ha cargado, pero no reconozco las columnas (ref/descripcion/precio).");
-
-    productos = norm.sort((a,b)=>String(a.ref).localeCompare(String(b.ref)));
+    let arr = Array.isArray(data) ? data :
+              Array.isArray(data.productos) ? data.productos :
+              Array.isArray(data.items) ? data.items :
+              Array.isArray(data.data) ? data.data : [];
+    productos = arr.map(normalizeProduct).filter(Boolean).sort((a,b)=>String(a.ref).localeCompare(String(b.ref)));
     document.getElementById("t_loaded").textContent = I18N[idiomaActual].loaded(productos.length) + ` · (${path})`;
-
-    render();
-    renderCart();
+    render(); renderCart();
   }catch(err){
-    document.getElementById("status").innerHTML =
-      `<b>Error:</b> ${escapeHTML(err.message)}<br><br>
-       <div style="opacity:.85;font-size:13px">
-       Asegúrate de tener la tarifa en <b>data/tarifa.json</b> (o <b>tarifa.json</b>).<br>
-       Y las fotos en una carpeta tipo: <b>img/</b>, <b>images/</b> o <b>fotos/</b>.
-       </div>`;
+    document.getElementById("status").innerHTML = `<b>Error:</b> ${escapeHTML(err.message)}`;
     console.error(err);
   }
-}
-init();
+})();
 </script>
 </body>
 </html>
