@@ -498,7 +498,34 @@ function hideLoadBanner(){
   b.classList.remove("show");
   b.textContent = "";
 }
+// ✅ BASE de imágenes (según tu estructura)
+const IMAGE_BASE = "./images/";
 
+// Comprueba si existe una URL (para probar .jpg/.png/.webp)
+async function urlExists(url){
+  try{
+    const r = await fetch(url, { method:"HEAD", cache:"no-store" });
+    return r.ok;
+  }catch(e){
+    return false;
+  }
+}
+
+// Genera posibles nombres de archivo para una referencia
+function guessImgForRef(ref){
+  const base = IMAGE_BASE + ref;
+  return [base + ".jpg", base + ".jpeg", base + ".png", base + ".webp"];
+}
+
+// Devuelve la primera imagen que exista (o null)
+async function resolveImageUrl(p){
+  if (p.img) return p.img;          // si en el JSON ya viene ruta, úsala
+  const tries = guessImgForRef(p.ref);
+  for (const u of tries){
+    if (await urlExists(u)) return u;
+  }
+  return null;
+}
 async function loadProducts(){
   hideLoadBanner();
 
