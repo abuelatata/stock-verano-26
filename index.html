@@ -197,7 +197,7 @@
     const DATA_SOURCES = { repeticiones: "./data/tarifa.json" };
     const MODE_INFO = {
       repeticiones: { title: "Ceremonia 26 · Repeticiones", subtitle: "Artículos repetibles según familias de continuidad", catalogTitle: "Artículos repetibles", catalogNote: "Se muestran los artículos repetibles (familias de continuidad) y también niño/accesorios.", formNote: "Se enviará a <b>info@abuelatata.com</b> con copia al email del cliente. El pedido queda guardado automáticamente en Supabase.", serviceLabel: "Fecha estimada de servicio", serviceBoxText: "📅 Fecha estimada de servicio<br><small>Según calendario de repeticiones</small>", serviceFineprint: "* +10% automático por modelo si el total del modelo es <b>1–2 uds</b>. Con <b>3 o más</b> no aplica.<br>* Envío: solo se indica si se cargará o no." },
-      stock: { title: "Ceremonia 26 · Stock disponible", subtitle: "Stock real conectado con Supabase", catalogTitle: "Stock disponible Ceremonia 26", catalogNote: "Aquí solo se puede pedir lo que exista en stock. Al confirmar el pedido, el stock se descuenta automáticamente en Supabase.", formNote: "Se enviará a <b>info@abuelatata.com</b> con copia al email del cliente. Solo después del envío correcto se guarda en Supabase y se descuenta stock.", serviceLabel: "Servicio previsto", serviceBoxText: "📦 Servicio previsto<br><small>Disponible inmediato sujeto a validación final</small>", serviceFineprint: "* En stock disponible no se aplica el +10% de repetición.<br>* Las cantidades quedan limitadas al stock real cargado en Supabase." }
+      stock: { title: "Ceremonia 26 · Stock disponible", subtitle: "Stock real conectado con Supabase", catalogTitle: "Stock disponible Ceremonia 26", catalogNote: "Aquí solo se puede pedir lo que exista en stock. Al confirmar el pedido, el stock se descuenta automáticamente en Supabase.", formNote: "Se enviará a <b>info@abuelatata.com</b> con copia al email del cliente. Pedido sujeto a comprobación final de stock y guardado automático en Supabase.", serviceLabel: "Servicio previsto", serviceBoxText: "📦 Servicio previsto<br><small>Disponible inmediato sujeto a validación final</small>", serviceFineprint: "* En stock disponible no se aplica el +10% de repetición.<br>* Las cantidades quedan limitadas al stock real cargado en Supabase." }
     };
     const CALENDARIO_REPETICIONES = [
       { cierre: "2026-04-10", servicio: "2026-04-30" },
@@ -219,7 +219,6 @@
     let ALL = [], VIEW = [];
     const ORDER = new Map();
     let lastSavedSignature = null;
-    let isSendingOrder = false;
     const $ = (id)=>document.getElementById(id);
     function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._tm); toast._tm=setTimeout(()=>t.classList.remove("show"),2600); }
     function showError(msg){ const b=$("errorBox"); b.style.display="block"; b.textContent=msg; }
@@ -275,53 +274,80 @@
     function orderSignature(){ return JSON.stringify({mode:currentMode,form:getForm(),order:serializeOrder(),total:buildOrderLines().map(x=>x.subtotal).reduce((a,b)=>a+b,0)}); }
     async function decrementStockOptimistic(ref,talla,qty){ for(let attempt=0; attempt<3; attempt++){ const {data:row,error:readErr}=await supabaseClient.from("stock_ceremonia26").select("id,stock").eq("referencia",ref).eq("talla",talla).maybeSingle(); if(readErr) throw readErr; if(!row) throw new Error(`No existe ${ref} talla ${talla} en stock.`); const currentStock=Math.max(0,Number(row.stock||0)); if(currentStock<qty) throw new Error(`Stock insuficiente en ${ref} talla ${talla}. Disponible: ${currentStock}.`); const nextStock=currentStock-qty; const {data:updated,error:updateErr}=await supabaseClient.from("stock_ceremonia26").update({stock:nextStock}).eq("id",row.id).eq("stock",currentStock).select("id,stock"); if(updateErr) throw updateErr; if(updated && updated.length===1) return {id:row.id,ref,talla,previousStock:currentStock,nextStock,qty}; } throw new Error(`No se ha podido reservar ${ref} talla ${talla}. Inténtalo de nuevo.`); }
     async function restoreStock(reservations){ for(const r of reservations.reverse()){ try{ await supabaseClient.from("stock_ceremonia26").update({stock:r.previousStock}).eq("id",r.id).eq("stock",r.nextStock); }catch(e){ console.error("Rollback stock", e); } } }
-    async function persistOrderInSupabase(){ if(!supabaseClient) throw new Error("No hay conexión con Supabase."); const signature=orderSignature(); if(signature===lastSavedSignature) return {reused:true}; const d=getForm(); const servicio=d.fechaServicio || calcularFechaServicio(); const lines=buildExpandedOrderLines(); const total=Number(lines.reduce((a,b)=>a+Number(b.importe||0),0).toFixed(2)); let reservations=[]; try{ if(currentMode==="stock"){ for(const line of lines) reservations.push(await decrementStockOptimistic(line.ref,line.talla,line.cantidad)); } const header={empresa:d.empresa,nombre_apellidos:d.nombre,cif:d.cif,cp:d.cp,poblacion:d.poblacion,provincia:d.provincia,telefono:d.tel,email:d.email,representante:d.rep||null,fecha_pedido:isoToEs(d.fechaPedido||isoToday()),fecha_servicio:isoToEs(servicio),observaciones:d.obs||null,modo:currentMode,total}; const {data:pedido,error:pedidoErr}=await supabaseClient.from("pedidos_ceremonia26").insert(header).select("id").single(); if(pedidoErr) throw pedidoErr; const payloadLines=lines.map(line=>({pedido_id:pedido.id,referencia:line.ref,descripcion:line.desc,talla:line.talla,cantidad:line.cantidad,precio:line.precio,importe:line.importe,modo:currentMode})); const {error:lineErr}=await supabaseClient.from("pedido_lineas_ceremonia26").insert(payloadLines); if(lineErr) throw lineErr; lastSavedSignature=signature; return {pedidoId:pedido.id,total}; }catch(err){ if(reservations.length) await restoreStock(reservations); throw err; } }
-    async function generatePDF(){ if(!validateForm()) return; const d=getForm(); const lines=buildOrderLines(); let total=0; const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"}); const margin=12; let y=14; doc.setFont("times","bold"); doc.setFontSize(16); doc.text(`ABUELA TATA · ${MODE_INFO[currentMode].title.toUpperCase()}`,margin,y); y+=7; doc.setFont("times","normal"); doc.setFontSize(11); doc.text("Importes NETOS antes de impuestos (IVA/RE según cliente)",margin,y); y+=8; doc.setFontSize(10); [ `Modo: ${MODE_INFO[currentMode].title}`, `Tienda/Empresa: ${d.empresa}`, `Nombre: ${d.nombre}`, `CIF/NIF: ${d.cif}`, `CP: ${d.cp} · Población: ${d.poblacion} · Provincia: ${d.provincia}`, `Tel: ${d.tel}`, `Email: ${d.email}`, d.rep ? `Representante: ${d.rep}` : null, `Fecha del pedido: ${isoToEs(d.fechaPedido || isoToday())}`, `Servicio previsto: ${isoToEs(d.fechaServicio || calcularFechaServicio())}` ].filter(Boolean).forEach(t=>{ doc.text(t,margin,y); y+=5; }); if(d.obs){ y+=2; doc.setFont("times","bold"); doc.text("Observaciones:",margin,y); y+=5; doc.setFont("times","normal"); const obsLines=doc.splitTextToSize(d.obs,180); doc.text(obsLines,margin,y); y+=obsLines.length*5; } y+=6; doc.setDrawColor(160); doc.line(margin,y,210-margin,y); y+=7; doc.setFont("times","bold"); doc.setFontSize(12); doc.text("MODELOS PEDIDOS",margin,y); y+=6; const X_IMG=margin, X_REF=margin+26, X_TALLAS=margin+92, W_REF=60, W_TALLAS=52, X_PRICE=176, X_IMPORTE=198; doc.setFontSize(9); doc.text("Imagen",X_IMG,y); doc.text("Ref / Descripción",X_REF,y); doc.text("Tallas",X_TALLAS,y); doc.text("Precio",X_PRICE,y,{align:"right"}); doc.text("Importe",X_IMPORTE,y,{align:"right"}); y+=5; doc.setDrawColor(200); doc.line(margin,y,210-margin,y); y+=5; doc.setFont("times","normal"); for(const ln of lines){ const refDesc=`${ln.ref} · ${ln.desc}`; const refLines=doc.splitTextToSize(refDesc,W_REF); const tallaLines=doc.splitTextToSize(ln.tallas||"",W_TALLAS); const maxLines=Math.max(refLines.length,tallaLines.length,1); const lineH=4.1, minRowH=22, padTop=3, padBottom=6; const rowH=Math.max(minRowH,padTop+(maxLines*lineH)+padBottom); if(y+rowH>287){ doc.addPage(); y=16; } let imgData=null; if(ln.imgUrl) imgData=await urlToDataURL(ln.imgUrl); if(imgData){ try{ doc.addImage(imgData,"JPEG",X_IMG,y-1,20,20); }catch(e){ try{ doc.addImage(imgData,"PNG",X_IMG,y-1,20,20); }catch(_){ } } } else { doc.setDrawColor(210); doc.rect(X_IMG,y-1,20,20); doc.setFontSize(7); doc.text("Sin foto",X_IMG+10,y+9,{align:"center"}); doc.setFontSize(9); } doc.text(refLines,X_REF,y+3); doc.text(tallaLines,X_TALLAS,y+3); doc.text(eur(ln.precio),X_PRICE,y+3,{align:"right"}); doc.setFont("times","bold"); doc.text(eur(ln.subtotal),X_IMPORTE,y+3,{align:"right"}); doc.setFont("times","normal"); if(ln.inc){ doc.setTextColor(192,57,43); doc.setFont("times","bold"); doc.text("+10% (1–2 uds)",X_REF,y+Math.min(18,rowH-5)); doc.setFont("times","normal"); doc.setTextColor(0,0,0); } total+=ln.subtotal; y+=rowH; doc.setDrawColor(235); doc.line(margin,y-2,210-margin,y-2); } if(y+30>287){ doc.addPage(); y=16; } y+=6; doc.setFont("times","bold"); doc.setFontSize(12); doc.text("TOTAL NETO (antes de impuestos): "+eur(total),margin,y); y+=8; doc.setFont("times","normal"); doc.setFontSize(9); doc.text(total>=SHIPPING_FREE_THRESHOLD ? `🚚 No se cargarán gastos de envío (pedido ≥ ${SHIPPING_FREE_THRESHOLD}€ netos).` : `🚚 Se cargarán gastos de envío (pedido < ${SHIPPING_FREE_THRESHOLD}€ netos).`,margin,y); doc.save(`ABUELA_TATA_${currentMode.toUpperCase()}_${(d.empresa||"PEDIDO").replace(/\s+/g,"_")}.pdf`); toast("PDF guardado."); }
-    function buildEmailPayload(){ const d=getForm(); const lines=buildOrderLines(); let total=0, totalUnits=0, modelos=0; const body=[]; body.push(`ABUELA TATA · ${MODE_INFO[currentMode].title.toUpperCase()}`); body.push("IMPORTES NETOS ANTES DE IMPUESTOS (IVA / RE no incluidos)"); body.push(""); body.push(`Modo: ${MODE_INFO[currentMode].title}`); body.push(`Tienda/Empresa: ${d.empresa}`); body.push(`Nombre: ${d.nombre}`); body.push(`CIF/NIF: ${d.cif}`); body.push(`CP: ${d.cp} · Población: ${d.poblacion} · Provincia: ${d.provincia}`); body.push(`Tel: ${d.tel}`); body.push(`Email: ${d.email}`); if(d.rep) body.push(`Representante: ${d.rep}`); body.push(`Fecha del pedido: ${isoToEs(d.fechaPedido || isoToday())}`); body.push(`Servicio previsto: ${isoToEs(d.fechaServicio || calcularFechaServicio())}`); body.push(""); if(d.obs){ body.push("Observaciones:"); body.push(d.obs); body.push(""); } body.push("MODELOS PEDIDOS:"); body.push(""); for(const ln of lines){ modelos++; totalUnits+=ln.units; total+=ln.subtotal; body.push(`${ln.ref} · ${ln.desc}`); body.push(`Tallas: ${ln.tallas}`); body.push(`Unidades: ${ln.units} · Precio: ${eur(ln.precio)} · Importe modelo: ${eur(ln.subtotal)}${ln.inc ? " (incluye +10%)" : ""}`); body.push(""); } body.push(`Modelos: ${modelos} · Unidades totales: ${totalUnits}`); body.push(`TOTAL NETO (antes de impuestos): ${eur(total)}`); body.push(""); body.push(total>=SHIPPING_FREE_THRESHOLD ? `🚚 No se cargarán gastos de envío (pedido ≥ ${SHIPPING_FREE_THRESHOLD}€ netos).` : `🚚 Se cargarán gastos de envío (pedido < ${SHIPPING_FREE_THRESHOLD}€ netos).`); return { d, total, pedidoTexto: body.join("\n") }; }
-    async function sendEmailReal(payload){
-      if(!window.emailjs) throw new Error("EmailJS no está cargado.");
-      const params={
+
+    function emailJsConfigured(){ return !!(window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID); }
+    function buildEmailPayload(){
+      const d=getForm(); const lines=buildOrderLines(); let total=0, totalUnits=0, modelos=0; const body=[];
+      body.push(`ABUELA TATA · ${MODE_INFO[currentMode].title.toUpperCase()}`);
+      body.push("IMPORTES NETOS ANTES DE IMPUESTOS (IVA / RE no incluidos)");
+      body.push("");
+      body.push(`Modo: ${MODE_INFO[currentMode].title}`);
+      body.push(`Tienda/Empresa: ${d.empresa}`);
+      body.push(`Nombre: ${d.nombre}`);
+      body.push(`CIF/NIF: ${d.cif}`);
+      body.push(`CP: ${d.cp} · Población: ${d.poblacion} · Provincia: ${d.provincia}`);
+      body.push(`Tel: ${d.tel}`);
+      body.push(`Email: ${d.email}`);
+      if(d.rep) body.push(`Representante: ${d.rep}`);
+      body.push(`Fecha del pedido: ${isoToEs(d.fechaPedido || isoToday())}`);
+      body.push(`Servicio previsto: ${isoToEs(d.fechaServicio || calcularFechaServicio())}`);
+      body.push("");
+      if(d.obs){ body.push("Observaciones:"); body.push(d.obs); body.push(""); }
+      body.push("MODELOS PEDIDOS:");
+      body.push("");
+      for(const ln of lines){
+        modelos++; totalUnits+=ln.units; total+=ln.subtotal;
+        body.push(`${ln.ref} · ${ln.desc}`);
+        body.push(`Tallas: ${ln.tallas}`);
+        body.push(`Unidades: ${ln.units} · Precio: ${eur(ln.precio)} · Importe modelo: ${eur(ln.subtotal)}${ln.inc ? " (incluye +10%)" : ""}`);
+        body.push("");
+      }
+      body.push(`Modelos: ${modelos} · Unidades totales: ${totalUnits}`);
+      body.push(`TOTAL NETO (antes de impuestos): ${eur(total)}`);
+      body.push("");
+      body.push(total>=SHIPPING_FREE_THRESHOLD ? `🚚 No se cargarán gastos de envío (pedido ≥ ${SHIPPING_FREE_THRESHOLD}€ netos).` : `🚚 Se cargarán gastos de envío (pedido < ${SHIPPING_FREE_THRESHOLD}€ netos).`);
+      const subject=`${MODE_INFO[currentMode].title} · ${d.empresa} · ${d.cif} · ${isoToEs(d.fechaServicio || calcularFechaServicio())} · ${eur(total)}`;
+      return { d, subject, bodyText: body.join("\n") };
+    }
+    async function sendEmailAutomatic(){
+      if(!emailJsConfigured()) throw new Error("EmailJS no está disponible.");
+      const payload=buildEmailPayload();
+      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
         cliente: payload.d.nombre,
         email: payload.d.email,
         telefono: payload.d.tel,
         cp: payload.d.cp,
-        pedido: payload.pedidoTexto
-      };
-      return await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params, { publicKey: EMAILJS_PUBLIC_KEY });
+        pedido: payload.bodyText,
+        subject: payload.subject,
+        to_email: EMAIL_TO,
+        reply_to: EMAIL_TO
+      });
+      return true;
     }
-    async function sendEmail(){
-      if(isSendingOrder) return;
-      if(!validateForm()) return;
-      if(ORDER.size===0){
-        showError("⚠️ Añade al menos un artículo antes de enviar el pedido.");
-        toast("Añade al menos un artículo.");
-        return;
-      }
-      const ok=window.confirm("¿Confirmar envío del pedido?
+    function openManualEmailFallback(){
+      const payload=buildEmailPayload();
+      const mailto=`mailto:${encodeURIComponent(EMAIL_TO)}?cc=${encodeURIComponent(payload.d.email)}&subject=${encodeURIComponent(payload.subject)}&body=${encodeURIComponent(payload.bodyText)}`;
+      window.location.href=mailto;
+    }
 
-El pedido solo se guardará cuando el email se haya enviado correctamente.");
-      if(!ok) return;
+    async function persistOrderInSupabase(){ if(!supabaseClient) throw new Error("No hay conexión con Supabase."); const signature=orderSignature(); if(signature===lastSavedSignature) return {reused:true}; const d=getForm(); const servicio=d.fechaServicio || calcularFechaServicio(); const lines=buildExpandedOrderLines(); const total=Number(lines.reduce((a,b)=>a+Number(b.importe||0),0).toFixed(2)); let reservations=[]; try{ if(currentMode==="stock"){ for(const line of lines) reservations.push(await decrementStockOptimistic(line.ref,line.talla,line.cantidad)); } const header={empresa:d.empresa,nombre_apellidos:d.nombre,cif:d.cif,cp:d.cp,poblacion:d.poblacion,provincia:d.provincia,telefono:d.tel,email:d.email,representante:d.rep||null,fecha_pedido:isoToEs(d.fechaPedido||isoToday()),fecha_servicio:isoToEs(servicio),observaciones:d.obs||null,modo:currentMode,total}; const {data:pedido,error:pedidoErr}=await supabaseClient.from("pedidos_ceremonia26").insert(header).select("id").single(); if(pedidoErr) throw pedidoErr; const payloadLines=lines.map(line=>({pedido_id:pedido.id,referencia:line.ref,descripcion:line.desc,talla:line.talla,cantidad:line.cantidad,precio:line.precio,importe:line.importe,modo:currentMode})); const {error:lineErr}=await supabaseClient.from("pedido_lineas_ceremonia26").insert(payloadLines); if(lineErr) throw lineErr; lastSavedSignature=signature; return {pedidoId:pedido.id,total}; }catch(err){ if(reservations.length) await restoreStock(reservations); throw err; } }
+    async function generatePDF(){ if(!validateForm()) return; const d=getForm(); const lines=buildOrderLines(); let total=0; const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"}); const margin=12; let y=14; doc.setFont("times","bold"); doc.setFontSize(16); doc.text(`ABUELA TATA · ${MODE_INFO[currentMode].title.toUpperCase()}`,margin,y); y+=7; doc.setFont("times","normal"); doc.setFontSize(11); doc.text("Importes NETOS antes de impuestos (IVA/RE según cliente)",margin,y); y+=8; doc.setFontSize(10); [ `Modo: ${MODE_INFO[currentMode].title}`, `Tienda/Empresa: ${d.empresa}`, `Nombre: ${d.nombre}`, `CIF/NIF: ${d.cif}`, `CP: ${d.cp} · Población: ${d.poblacion} · Provincia: ${d.provincia}`, `Tel: ${d.tel}`, `Email: ${d.email}`, d.rep ? `Representante: ${d.rep}` : null, `Fecha del pedido: ${isoToEs(d.fechaPedido || isoToday())}`, `Servicio previsto: ${isoToEs(d.fechaServicio || calcularFechaServicio())}` ].filter(Boolean).forEach(t=>{ doc.text(t,margin,y); y+=5; }); if(d.obs){ y+=2; doc.setFont("times","bold"); doc.text("Observaciones:",margin,y); y+=5; doc.setFont("times","normal"); const obsLines=doc.splitTextToSize(d.obs,180); doc.text(obsLines,margin,y); y+=obsLines.length*5; } y+=6; doc.setDrawColor(160); doc.line(margin,y,210-margin,y); y+=7; doc.setFont("times","bold"); doc.setFontSize(12); doc.text("MODELOS PEDIDOS",margin,y); y+=6; const X_IMG=margin, X_REF=margin+26, X_TALLAS=margin+92, W_REF=60, W_TALLAS=52, X_PRICE=176, X_IMPORTE=198; doc.setFontSize(9); doc.text("Imagen",X_IMG,y); doc.text("Ref / Descripción",X_REF,y); doc.text("Tallas",X_TALLAS,y); doc.text("Precio",X_PRICE,y,{align:"right"}); doc.text("Importe",X_IMPORTE,y,{align:"right"}); y+=5; doc.setDrawColor(200); doc.line(margin,y,210-margin,y); y+=5; doc.setFont("times","normal"); for(const ln of lines){ const refDesc=`${ln.ref} · ${ln.desc}`; const refLines=doc.splitTextToSize(refDesc,W_REF); const tallaLines=doc.splitTextToSize(ln.tallas||"",W_TALLAS); const maxLines=Math.max(refLines.length,tallaLines.length,1); const lineH=4.1, minRowH=22, padTop=3, padBottom=6; const rowH=Math.max(minRowH,padTop+(maxLines*lineH)+padBottom); if(y+rowH>287){ doc.addPage(); y=16; } let imgData=null; if(ln.imgUrl) imgData=await urlToDataURL(ln.imgUrl); if(imgData){ try{ doc.addImage(imgData,"JPEG",X_IMG,y-1,20,20); }catch(e){ try{ doc.addImage(imgData,"PNG",X_IMG,y-1,20,20); }catch(_){ } } } else { doc.setDrawColor(210); doc.rect(X_IMG,y-1,20,20); doc.setFontSize(7); doc.text("Sin foto",X_IMG+10,y+9,{align:"center"}); doc.setFontSize(9); } doc.text(refLines,X_REF,y+3); doc.text(tallaLines,X_TALLAS,y+3); doc.text(eur(ln.precio),X_PRICE,y+3,{align:"right"}); doc.setFont("times","bold"); doc.text(eur(ln.subtotal),X_IMPORTE,y+3,{align:"right"}); doc.setFont("times","normal"); if(ln.inc){ doc.setTextColor(192,57,43); doc.setFont("times","bold"); doc.text("+10% (1–2 uds)",X_REF,y+Math.min(18,rowH-5)); doc.setFont("times","normal"); doc.setTextColor(0,0,0); } total+=ln.subtotal; y+=rowH; doc.setDrawColor(235); doc.line(margin,y-2,210-margin,y-2); } if(y+30>287){ doc.addPage(); y=16; } y+=6; doc.setFont("times","bold"); doc.setFontSize(12); doc.text("TOTAL NETO (antes de impuestos): "+eur(total),margin,y); y+=8; doc.setFont("times","normal"); doc.setFontSize(9); doc.text(total>=SHIPPING_FREE_THRESHOLD ? `🚚 No se cargarán gastos de envío (pedido ≥ ${SHIPPING_FREE_THRESHOLD}€ netos).` : `🚚 Se cargarán gastos de envío (pedido < ${SHIPPING_FREE_THRESHOLD}€ netos).`,margin,y); doc.save(`ABUELA_TATA_${currentMode.toUpperCase()}_${(d.empresa||"PEDIDO").replace(/\s+/g,"_")}.pdf`); toast("PDF guardado."); }
+    async function sendEmail(){
+      if(!validateForm()) return;
       const btn=$("btnEmail");
-      isSendingOrder = true;
       setBtnBusy(btn,true,"ENVIANDO…");
       hideError();
       try{
-        const payload=buildEmailPayload();
-        await sendEmailReal(payload);
-        const saveRes=await persistOrderInSupabase();
-        toast(currentMode==="stock" ? "Pedido enviado y stock descontado." : "Pedido enviado correctamente.");
-        ORDER.clear();
-        clearDraft();
-        if(currentMode==="stock") await loadData();
-        render();
-        updateSummary();
-        if(saveRes?.pedidoId) console.log("Pedido guardado en Supabase con ID", saveRes.pedidoId);
+        await sendEmailAutomatic();
+        await persistOrderInSupabase();
+        toast(currentMode==="stock" ? "Pedido enviado, guardado y stock descontado correctamente." : "Pedido enviado y guardado correctamente.");
+        ORDER.clear(); clearDraft(); if(currentMode==="stock") await loadData(); render(); updateSummary();
       }catch(e){
         console.error(e);
-        showError(`⚠️ No se ha podido enviar el pedido. ${e.message||""}`);
-        toast("No se pudo enviar el pedido.");
+        try{ openManualEmailFallback(); }catch(_){}
+        showError(`⚠️ El envío automático ha fallado. Se ha abierto el email manual como respaldo. Si lo envías manualmente, este pedido no quedará guardado ni descontará stock hasta validación manual.`);
+        toast("Falló el envío automático. Se abrió el email manual.");
       }finally{
-        isSendingOrder = false;
         setBtnBusy(btn,false,"ENVIANDO…");
       }
     }
@@ -329,7 +355,7 @@ El pedido solo se guardará cuando el email se haya enviado correctamente.");
     function applyModeUI(){ const info=MODE_INFO[currentMode]; document.querySelectorAll(".modebtn").forEach(btn=>btn.classList.toggle("active", btn.dataset.mode===currentMode)); $("subTitle").textContent=info.subtitle; $("catalogTitle").textContent=info.catalogTitle; $("catalogNote").innerHTML=info.catalogNote; $("formNote").innerHTML=info.formNote; $("serviceLabel").textContent=info.serviceLabel; $("serviceBoxText").innerHTML=info.serviceBoxText; $("summaryFineprint").innerHTML=info.serviceFineprint; $("q").value=""; calcularFechaServicio(); }
     async function setMode(mode){ currentMode=mode; applyModeUI(); await loadData(); applySearch(); }
     $("q").addEventListener("input", applySearch); $("btnPdf").addEventListener("click", generatePDF); $("btnEmail").addEventListener("click", sendEmail); $("btnVaciar").addEventListener("click", vaciar); document.querySelectorAll(".modebtn").forEach(btn=>btn.addEventListener("click", ()=>setMode(btn.dataset.mode))); ["empresa","nombre","cif","cp","poblacion","provincia","tel","email","rep","obs"].forEach(id=>{ const el=$(id); el.addEventListener("input", saveDraftDebounced); el.addEventListener("change", saveDraftDebounced); }); $("modal").addEventListener("click", e=>{ if(e.target.id==="modal") closeModal(); }); $("modalX").addEventListener("click", closeModal); document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
-    (async function init(){ const fav=document.getElementById("favicon"); const test=new Image(); test.onerror=()=>{ fav.href="./images/logo.jpg"; }; test.src="./images/logo.png"; enforcePedidoHoy(); applyModeUI(); await loadData(); })();
+    (async function init(){ if(emailJsConfigured()){ try{ window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }catch(e){ console.error("EmailJS init", e); } } const fav=document.getElementById("favicon"); const test=new Image(); test.onerror=()=>{ fav.href="./images/logo.jpg"; }; test.src="./images/logo.png"; enforcePedidoHoy(); applyModeUI(); await loadData(); })();
   </script>
 </body>
 </html>
