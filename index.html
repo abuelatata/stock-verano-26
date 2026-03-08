@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Pedidos Ceremonia 26 · Abuela Tata</title>
+
+<link id="favicon" rel="icon" href="./images/logo.png"/>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- todo tu CSS permanece igual -->
+</head>
+
+<body>
+
+<!-- TODO EL CONTENIDO DE TU HTML SE MANTIENE EXACTAMENTE IGUAL -->
+
+<script>
+
+const IMAGE_BASE="./images/";
+const EMAIL_TO="info@abuelatata.com";
+
+/* -------- CORRECCIÓN DE SUPABASE -------- */
+
+const SUPABASE_URL="https://qoyrjhgitydbcnqfnyqn.supabase.co";
+const SUPABASE_KEY="sb_publishable_w1UF4CwiWSCD5Ykd5yejfw_O--zV3OL";
+
+const supabaseClient=(window.supabase && SUPABASE_URL && SUPABASE_KEY)
+? window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+: null;
+
+/* -------- RESTO DE TU SCRIPT SIGUE EXACTAMENTE IGUAL -------- */
+
+</script>
+
+</body>
+</html>
