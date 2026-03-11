@@ -1483,9 +1483,10 @@
     const NO_REPETIBLES = new Set(["404","407","409","410","411","412","414"]);
     const COLOR_MAP = {"00":"Blanco","01":"Rosa","04":"Celeste","05":"Beige","06":"Arena","09":"Verde agua","17":"Azul","22":"Azul","24":"Verde fuerte","25":"Maquillaje","33":"Celestón"};
     const TIPO_MAP = {"03":"Braguita niño","04":"Pantalón niño","08":"Diadema","11":"Pelele","12":"Jesusito con capota","13":"Jesusito sin capota","15":"Vestido evasé","22":"Abrigo","25":"Vestido","43":"Blusa","44":"Camisa","63":"Almirante","64":"Marinero"};
+    const FILTER_SIZES_MASTER = ["3M","6M","9M","12M","18M","2A","3A","4A","5A","6A","7A","8A","9A","10A","11A","12A","13A","14A","15A","16A","ÚNICA"];
     const SIZES_3M_4A = ["3M","6M","9M","12M","18M","2A","3A","4A"];
-    const SIZES_12M_12A = ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"];
-    const SIZES_NINO = ["2A","3A","4A","5A","6A","8A","10A","12A","14A","16A"];
+    const SIZES_12M_16A = ["12M","18M","2A","3A","4A","5A","6A","7A","8A","9A","10A","11A","12A","13A","14A","15A","16A"];
+    const SIZES_NINO = ["2A","3A","4A","5A","6A","7A","8A","9A","10A","11A","12A","13A","14A","15A","16A"];
     const SIZES_UNICA = ["ÚNICA"];
 
     let currentMode = "repeticiones";
@@ -1554,7 +1555,19 @@
     }
 
     function normalizeSizeKey(v){
-      return String(v||"").trim().toUpperCase().replace("MESES","M").replace("MES","M").replace("AÑOS","A").replace("AÑO","A").replace(/\s+/g,"");
+      return String(v||"")
+        .trim()
+        .toUpperCase()
+        .replace("MESES","M")
+        .replace("MES","M")
+        .replace("MONTHS","M")
+        .replace("MONTH","M")
+        .replace("AÑOS","A")
+        .replace("AÑO","A")
+        .replace("YEARS","A")
+        .replace("YEAR","A")
+        .replace(/\s+/g,"")
+        .replace(/Y$/,"A");
     }
 
     function isoToday(){
@@ -1642,8 +1655,8 @@
       if(tipo==="08") return SIZES_UNICA;
       if(["11","12","13","03"].includes(tipo)) return SIZES_3M_4A;
       if(["63","64","04","44"].includes(tipo)) return SIZES_NINO;
-      if(["15","22","25","43"].includes(tipo)) return SIZES_12M_12A;
-      return SIZES_12M_12A;
+      if(["15","22","25","43"].includes(tipo)) return SIZES_12M_16A;
+      return SIZES_12M_16A;
     }
 
     function isRepeatable(item){
@@ -2360,19 +2373,14 @@
 
     function refreshFilterOptions(){
       const base=[...ALL];
-      const sizeSet=new Set();
       const colorSet=new Set();
 
       base.forEach(item=>{
-        getSizes(item).forEach(sz=>{
-          const norm=normalizeSizeKey(sz);
-          if(norm) sizeSet.add(norm);
-        });
         const color=parseRef(item.referencia).colorName;
         if(color) colorSet.add(color);
       });
 
-      const sizes=Array.from(sizeSet).sort((a,b)=>a.localeCompare(b,"es",{numeric:true,sensitivity:"base"}));
+      const sizes=FILTER_SIZES_MASTER.filter(sz=>sz!=="ÚNICA");
       const colors=Array.from(colorSet).sort((a,b)=>a.localeCompare(b,"es",{sensitivity:"base"}));
 
       fillSelectOptions("filterSize", sizes, "Todas las tallas", normalizeSizeKey);
