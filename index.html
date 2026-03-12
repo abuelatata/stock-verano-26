@@ -318,7 +318,7 @@
       max-width:100%;
     }
 
-    .thumb{
+    .thumb{cursor:pointer;
       position:relative;
       aspect-ratio:0.72 / 1;
       background:#fff;
@@ -1059,8 +1059,8 @@
       body[data-mode="stock"] .cards,
       .cards{
         grid-template-columns:repeat(2, minmax(0,1fr));
-        gap:8px;
-        padding:8px;
+        gap:10px;
+        padding:10px;
       }
 
       .card{
@@ -1071,17 +1071,17 @@
         grid-column:1 / -1;
       }
 
-      .thumb{
-        aspect-ratio:0.80 / 1;
+      .thumb{cursor:pointer;
+        aspect-ratio:0.68 / 1;
       }
 
-      .card.open .thumb{
-        aspect-ratio:0.92 / 1;
+      .card.open .thumb{cursor:pointer;
+        aspect-ratio:0.78 / 1;
       }
 
       .body{
-        padding:7px 7px 9px;
-        gap:6px;
+        padding:8px 8px 10px;
+        gap:7px;
       }
 
       .tag{
@@ -1104,15 +1104,15 @@
         gap:4px;
       }
 
-      .ref{font-size:10.5px}
+      .ref{font-size:11px}
       .price{
-        font-size:10.5px;
+        font-size:11px;
         text-align:left;
         min-width:0;
       }
 
       .openhint{font-size:10px;padding-top:6px}
-      .chip{padding:5px 8px;font-size:9.5px}
+      .chip{padding:5px 8px;font-size:10px}
       .modebadge{font-size:10px;padding:7px 9px}
       .sizes{gap:6px}
 
@@ -1121,7 +1121,7 @@
       }
 
       .card.open .body{
-        padding:10px 9px 12px;
+        padding:10px 10px 12px;
         gap:8px;
       }
 
@@ -1201,33 +1201,33 @@
       body[data-mode="stock"] .cards,
       .cards{
         grid-template-columns:repeat(2, minmax(0,1fr));
-        gap:6px;
-        padding:6px;
+        gap:8px;
+        padding:8px;
       }
 
       .card.open{
         grid-column:1 / -1;
       }
 
-      .thumb{
-        aspect-ratio:0.82 / 1;
+      .thumb{cursor:pointer;
+        aspect-ratio:0.67 / 1;
       }
 
-      .card.open .thumb{
-        aspect-ratio:0.95 / 1;
+      .card.open .thumb{cursor:pointer;
+        aspect-ratio:0.8 / 1;
       }
 
       .body{
-        padding:6px 6px 8px;
+        padding:7px 7px 9px;
       }
 
       .card.open .body{
-        padding:9px 8px 11px;
+        padding:10px 9px 12px;
       }
 
-      .ref{font-size:10px}
-      .price{font-size:10px}
-      .chip{font-size:9px}
+      .ref{font-size:10.5px}
+      .price{font-size:10.5px}
+      .chip{font-size:9.5px}
 
       .size{
         grid-template-columns:1fr;
@@ -1242,21 +1242,11 @@
       body[data-mode="repeticiones"] .cards,
       body[data-mode="stock"] .cards,
       .cards{
-        grid-template-columns:repeat(2, minmax(0,1fr));
-        gap:6px;
-        padding:6px;
+        grid-template-columns:1fr;
       }
 
       .card.open{
-        grid-column:1 / -1;
-      }
-
-      .thumb{
-        aspect-ratio:0.84 / 1;
-      }
-
-      .card.open .thumb{
-        aspect-ratio:0.96 / 1;
+        grid-column:auto;
       }
 
       .step{
@@ -3190,5 +3180,16 @@
       showScreen("datos");
     })();
   </script>
+
+<script>
+document.addEventListener("click",function(e){
+  const t = e.target.closest(".thumb");
+  if(!t) return;
+  const card = t.closest(".card");
+  if(!card) return;
+  card.classList.toggle("open");
+});
+</script>
+
 </body>
 </html>
