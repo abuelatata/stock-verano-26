@@ -42,6 +42,11 @@
       color:var(--ink);
     }
 
+    body.modal-open{
+      overflow:hidden;
+      touch-action:none;
+    }
+
     .wrap{
       width:min(1820px, calc(100vw - 24px));
       max-width:1820px;
@@ -194,6 +199,32 @@
       min-width:0;
     }
 
+    .filterwrap{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      min-width:0;
+    }
+
+    .filterwrap select,
+    .clearbtn{
+      min-height:34px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      font-size:12px;
+      font-weight:700;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .clearbtn{
+      cursor:pointer;
+      box-shadow:0 5px 12px rgba(0,0,0,.05);
+    }
+
     .backbtn{
       border:1px solid var(--line);
       background:#fff;
@@ -286,43 +317,6 @@
       display:none;
     }
 
-    .filterwrap{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      min-width:0;
-    }
-
-    .filterwrap select,
-    .filterwrap .clearbtn{
-      min-height:34px;
-      border-radius:12px;
-      font-size:12px;
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    }
-
-    .filterwrap select{
-      width:auto;
-      min-width:120px;
-      max-width:180px;
-      padding:8px 10px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--ink);
-    }
-
-    .clearbtn{
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--ink);
-      padding:8px 12px;
-      cursor:pointer;
-      font-weight:800;
-      box-shadow:0 5px 12px rgba(0,0,0,.05);
-    }
-
     .cards{
       padding:14px;
       display:grid;
@@ -333,8 +327,8 @@
     }
 
     body[data-mode="repeticiones"] .cards{
-      grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));
-      gap:20px;
+      grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+      gap:16px;
     }
 
     body[data-mode="stock"] .cards{
@@ -355,7 +349,6 @@
     }
 
     .thumb{
-      cursor:pointer;
       position:relative;
       aspect-ratio:0.72 / 1;
       background:#fff;
@@ -364,7 +357,7 @@
       align-items:center;
       justify-content:center;
       overflow:hidden;
-      touch-action:manipulation;
+      cursor:pointer;
     }
 
     .thumb img{
@@ -373,7 +366,11 @@
       object-fit:cover;
       object-position:center top;
       display:block;
-      pointer-events:none;
+      transition:transform .25s ease;
+    }
+
+    .thumb:hover img{
+      transform:scale(1.02);
     }
 
     .nofoto{
@@ -397,52 +394,36 @@
       font-size:10px;
       z-index:2;
       max-width:calc(100% - 16px);
+    }
+
+    .thumbcta{
+      position:absolute;
+      right:8px;
+      bottom:8px;
+      z-index:2;
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(255,255,255,.94);
+      border:1px solid var(--line);
+      color:var(--accent);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:10px;
+      box-shadow:0 8px 16px rgba(0,0,0,.08);
       pointer-events:none;
     }
 
     .body{
-      padding:12px 12px 14px;
+      padding:10px 10px 12px;
       display:grid;
       gap:8px;
       min-width:0;
       overflow:hidden;
     }
 
-    .row1{
-      display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:12px;
-      align-items:start;
+    .producthead{
+      display:block;
       min-width:0;
-    }
-
-    .row1 > div:first-child{
-      min-width:0;
-    }
-
-    .ref{
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      font-weight:900;
-      font-size:13px;
-      line-height:1.25;
-      word-break:break-word;
-      overflow-wrap:anywhere;
-    }
-
-    .desc{
-      display:none;
-    }
-
-    .price{
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      font-weight:900;
-      font-size:13px;
-      text-align:right;
-      white-space:nowrap;
-      flex:0 0 auto;
-      min-width:96px;
-      max-width:100%;
-      align-self:start;
     }
 
     .openhint{
@@ -461,15 +442,70 @@
 
     .openhint b{
       color:var(--accent);
-      font-size:10px;
+      font-size:10px
     }
 
-    .meta,
-    .modebadge,
-    .sizes,
-    .modeltotal,
-    .observaciones-modelo{
+    .card .desc,
+    .card .meta,
+    .card .modebadge,
+    .card .sizes,
+    .card .modeltotal,
+    .card .observaciones-modelo{
       display:none;
+    }
+
+    .row1{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:10px;
+      align-items:start;
+      min-width:0;
+    }
+
+    .row1 > div:first-child{
+      min-width:0;
+    }
+
+    .ref{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:13px;
+      line-height:1.25;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+
+    .desc{
+      margin-top:4px;
+      font-size:11px;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      line-height:1.3;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+
+    .price{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:13px;
+      text-align:right;
+      white-space:nowrap;
+      flex:0 0 auto;
+      min-width:96px;
+      max-width:100%;
+      align-self:start;
+    }
+
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--muted);
+      min-width:0;
     }
 
     .chip{
@@ -492,6 +528,42 @@
       border-color:rgba(192,57,43,.3);
       background:rgba(192,57,43,.08);
       color:var(--danger);
+    }
+
+    .modebadge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.2px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      max-width:100%;
+      width:max-content;
+    }
+
+    .modebadge.stock{
+      background:rgba(31,122,59,.10);
+      border-color:rgba(31,122,59,.28);
+      color:var(--ok);
+    }
+
+    .modebadge.rep{
+      background:rgba(47,127,117,.10);
+      border-color:rgba(47,127,117,.28);
+      color:var(--accent);
+    }
+
+    .sizes{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:stretch;
+      width:100%;
+      min-width:0;
     }
 
     .size{
@@ -539,6 +611,7 @@
       align-items:center;
       gap:6px;
       flex:0 0 auto;
+      flex-shrink:0;
       width:auto;
     }
 
@@ -552,6 +625,7 @@
       font-weight:900;
       font-size:16px;
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      flex:0 0 auto;
       padding:0;
       line-height:1;
       display:flex;
@@ -575,6 +649,40 @@
       font-weight:900;
       font-size:13px;
       flex:0 0 auto;
+    }
+
+    .modeltotal{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:12px;
+      padding-top:8px;
+      border-top:1px dashed #dccbbb;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      min-width:0;
+      width:100%;
+    }
+
+    .modeltotal > div{
+      min-width:0;
+    }
+
+    .modeltotal .k{
+      color:var(--muted);
+      font-weight:700;
+      white-space:normal;
+      word-break:normal;
+      overflow-wrap:anywhere;
+    }
+
+    .modeltotal .amt{
+      font-weight:900;
+      font-size:13px;
+      white-space:nowrap;
+      flex:0 0 auto;
+      text-align:right;
+      min-width:120px;
     }
 
     .warn{
@@ -795,15 +903,14 @@
       flex-wrap:wrap;
     }
 
-    /* MODAL PRODUCTO */
     .modal{
       position:fixed;
       inset:0;
       background:rgba(0,0,0,.78);
       display:none;
-      align-items:center;
+      align-items:stretch;
       justify-content:center;
-      padding:16px;
+      padding:14px;
       z-index:9999;
     }
 
@@ -811,199 +918,198 @@
       display:flex;
     }
 
-    .product-modal{
-      width:min(1160px, 100%);
-      height:min(92vh, 900px);
-      background:#fffaf4;
-      border:1px solid var(--line);
+    .productmodal{
+      width:min(1320px, 100%);
+      height:min(calc(100vh - 28px), 960px);
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.14);
       border-radius:22px;
-      box-shadow:0 22px 50px rgba(0,0,0,.22);
-      overflow:hidden;
+      box-shadow:0 24px 50px rgba(0,0,0,.30);
       display:grid;
-      grid-template-columns:minmax(320px, 48%) minmax(0, 1fr);
+      grid-template-columns:minmax(320px, 0.95fr) minmax(340px, 1.05fr);
+      overflow:hidden;
       position:relative;
     }
 
-    .product-modal-media{
+    .productmodal-close{
+      position:absolute;
+      right:14px;
+      top:14px;
+      z-index:5;
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      border:none;
+      cursor:pointer;
       background:#fff;
-      border-right:1px solid var(--line);
+      color:var(--ink);
+      font-weight:900;
+      box-shadow:0 12px 20px rgba(0,0,0,.25);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .productmodal-media{
+      background:#f2eadf;
+      min-width:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      overflow:hidden;
-      min-width:0;
-      min-height:0;
+      padding:18px;
+      position:relative;
     }
 
-    .product-modal-media img{
+    .productmodal-media img{
       width:100%;
       height:100%;
       object-fit:contain;
-      display:block;
+      object-position:center top;
+      border-radius:18px;
       background:#fff;
+      display:block;
+      box-shadow:0 12px 24px rgba(0,0,0,.08);
     }
 
-    .product-modal-nofoto{
+    .productmodal-nofoto{
       width:100%;
       height:100%;
-      display:none;
+      min-height:300px;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid var(--line);
+      display:flex;
       align-items:center;
       justify-content:center;
       color:var(--muted);
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      padding:24px;
+      font-weight:700;
       text-align:center;
+      padding:20px;
     }
 
-    .product-modal-panel{
+    .productmodal-panel{
       min-width:0;
-      min-height:0;
-      display:grid;
-      grid-template-rows:auto auto auto minmax(0,1fr) auto auto;
-      gap:12px;
-      padding:18px 18px 16px;
+      display:flex;
+      flex-direction:column;
+      background:#fffdf9;
+    }
+
+    .productmodal-scroll{
+      padding:20px 20px 18px;
       overflow:auto;
-    }
-
-    .product-modal-head{
+      min-height:0;
+      height:100%;
       display:grid;
-      gap:6px;
-      padding-right:42px;
+      gap:14px;
+      align-content:start;
     }
 
-    .product-modal-ref{
+    .productmodal-head{
+      display:grid;
+      gap:8px;
+      padding-right:54px;
+    }
+
+    .productmodal-title{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:12px;
+      align-items:start;
+    }
+
+    .productmodal-ref{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:20px;
+      font-weight:900;
+      line-height:1.15;
+      word-break:break-word;
+    }
+
+    .productmodal-price{
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       font-size:19px;
       font-weight:900;
-      line-height:1.2;
-      color:var(--ink);
-      overflow-wrap:anywhere;
-    }
-
-    .product-modal-desc{
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      font-size:13px;
-      line-height:1.35;
-      color:var(--muted);
-      overflow-wrap:anywhere;
-    }
-
-    .product-modal-price{
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      font-size:18px;
-      font-weight:900;
-      color:var(--ink);
-    }
-
-    .product-modal-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-
-    .product-modal-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.2px;
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      width:max-content;
-      max-width:100%;
-    }
-
-    .product-modal-badge.stock{
-      background:rgba(31,122,59,.10);
-      border-color:rgba(31,122,59,.28);
-      color:var(--ok);
-    }
-
-    .product-modal-badge.rep{
-      background:rgba(47,127,117,.10);
-      border-color:rgba(47,127,117,.28);
-      color:var(--accent);
-    }
-
-    .product-modal-sizes{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      min-width:0;
-      min-height:0;
-    }
-
-    .product-modal-obs{
-      display:grid;
-      gap:6px;
-    }
-
-    .product-modal-obs label{
-      font-size:12px;
-      color:var(--muted);
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    }
-
-    .product-modal-obs textarea{
-      min-height:78px;
-      resize:vertical;
-    }
-
-    .product-modal-total{
-      display:grid;
-      gap:6px;
-      padding-top:12px;
-      border-top:1px dashed #dccbbb;
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    }
-
-    .product-modal-total-line{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-      font-size:13px;
-    }
-
-    .product-modal-total-line .k{
-      color:var(--muted);
-      font-weight:700;
-    }
-
-    .product-modal-total-line .v{
-      font-weight:900;
+      white-space:nowrap;
       text-align:right;
     }
 
-    .product-modal-warning{
-      color:var(--danger);
-      font-weight:900;
-      font-size:12px;
-      display:none;
-    }
-
-    .product-modal-warning.show{
-      display:block;
-    }
-
-    .modal .x{
-      position:absolute;
-      top:12px;
-      right:12px;
-      width:40px;
-      height:40px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      cursor:pointer;
-      background:#fff;
-      font-weight:900;
-      box-shadow:0 12px 20px rgba(0,0,0,.18);
+    .productmodal-desc{
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      z-index:20;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .productmodal-chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .choosebox{
+      padding:14px 14px 12px;
+      border-radius:16px;
+      border:1px solid rgba(47,127,117,.25);
+      background:rgba(47,127,117,.07);
+      display:grid;
+      gap:6px;
+    }
+
+    .choosebox-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:13px;
+      font-weight:900;
+      color:var(--accent);
+    }
+
+    .choosebox-sub{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .observaciones-modelo{
+      margin-top:0;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      width:100%;
+      min-width:0;
+    }
+
+    .observaciones-modelo label{
+      font-size:12px;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .obs-modelo{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:8px;
+      font-size:13px;
+      resize:vertical;
+      min-height:72px;
+      background:#fff;
+      color:var(--ink);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .resume-obs{
+      padding:8px 10px;
+      border-radius:10px;
+      background:rgba(47,127,117,.06);
+      border:1px solid rgba(47,127,117,.18);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--ink);
+      line-height:1.35;
+      overflow-wrap:anywhere;
     }
 
     .toast{
@@ -1032,7 +1138,7 @@
       }
 
       body[data-mode="repeticiones"] .cards{
-        grid-template-columns:repeat(auto-fill, minmax(330px, 1fr));
+        grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
       }
     }
 
@@ -1042,7 +1148,7 @@
       }
 
       body[data-mode="repeticiones"] .cards{
-        grid-template-columns:repeat(auto-fill, minmax(310px, 1fr));
+        grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
       }
 
       body[data-mode="stock"] .cards{
@@ -1052,30 +1158,33 @@
 
     @media (max-width: 1200px){
       .cards{
-        grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
       }
 
       body[data-mode="repeticiones"] .cards{
-        grid-template-columns:repeat(auto-fill, minmax(290px, 1fr));
+        grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
       }
 
       .price{
         min-width:88px;
+      }
+
+      .productmodal{
+        grid-template-columns:minmax(300px, .88fr) minmax(340px, 1.12fr);
       }
     }
 
     @media (max-width: 980px){
       .resume-layout{grid-template-columns:1fr}
 
-      .product-modal{
+      .productmodal{
         grid-template-columns:1fr;
-        grid-template-rows:40vh minmax(0,1fr);
-        height:94vh;
+        height:min(calc(100vh - 28px), 1000px);
       }
 
-      .product-modal-media{
-        border-right:none;
-        border-bottom:1px solid var(--line);
+      .productmodal-media{
+        min-height:38vh;
+        max-height:46vh;
       }
     }
 
@@ -1094,7 +1203,7 @@
       body[data-mode="repeticiones"] .cards,
       body[data-mode="stock"] .cards,
       .cards{
-        grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+        grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
       }
     }
 
@@ -1148,18 +1257,13 @@
 
       .filterwrap{
         grid-column:1 / -1;
-        justify-content:flex-start;
-        gap:6px;
       }
 
-      .filterwrap select{
-        min-width:0;
-        max-width:none;
-        flex:1 1 calc(50% - 6px);
-      }
-
-      .filterwrap .clearbtn{
-        flex:1 1 100%;
+      .filterwrap select,
+      .clearbtn{
+        min-height:31px;
+        font-size:11.5px;
+        padding:6px 8px;
       }
 
       .form{
@@ -1171,8 +1275,8 @@
       body[data-mode="stock"] .cards,
       .cards{
         grid-template-columns:repeat(2, minmax(0,1fr));
-        gap:8px;
-        padding:8px;
+        gap:10px;
+        padding:10px;
       }
 
       .card{
@@ -1180,12 +1284,12 @@
       }
 
       .thumb{
-        aspect-ratio:0.80 / 1;
+        aspect-ratio:0.68 / 1;
       }
 
       .body{
-        padding:7px 7px 9px;
-        gap:6px;
+        padding:8px 8px 10px;
+        gap:7px;
       }
 
       .tag{
@@ -1195,61 +1299,29 @@
         font-size:9.5px;
       }
 
+      .thumbcta{
+        right:6px;
+        bottom:6px;
+        padding:5px 7px;
+        font-size:9px;
+      }
+
       .row1{
         grid-template-columns:minmax(0,1fr);
         gap:4px;
       }
 
-      .ref{font-size:10.5px}
+      .ref{font-size:11px}
       .price{
-        font-size:10.5px;
+        font-size:11px;
         text-align:left;
         min-width:0;
       }
 
       .openhint{font-size:10px;padding-top:6px}
-
-      .resume-card{
-        grid-template-columns:74px 1fr;
-        gap:10px;
-      }
-
-      .resume-thumb{
-        width:74px;
-        height:106px;
-      }
-
-      .actionbar-btns .btn,
-      .summary-actions .btn{
-        flex:1 1 calc(50% - 8px);
-        text-align:center;
-      }
-
-      .modal{
-        padding:0;
-      }
-
-      .product-modal{
-        width:100vw;
-        height:100vh;
-        max-width:none;
-        border-radius:0;
-        border:none;
-        box-shadow:none;
-        grid-template-rows:42vh minmax(0,1fr);
-      }
-
-      .product-modal-panel{
-        padding:14px 12px 14px;
-      }
-
-      .product-modal-ref{
-        font-size:17px;
-      }
-
-      .product-modal-price{
-        font-size:16px;
-      }
+      .chip{padding:5px 8px;font-size:10px}
+      .modebadge{font-size:10px;padding:7px 9px}
+      .sizes{gap:6px}
 
       .size{
         padding:9px 10px;
@@ -1279,6 +1351,71 @@
         font-size:12px;
         padding:4px 2px;
       }
+
+      .modeltotal{
+        grid-template-columns:1fr;
+        align-items:flex-start;
+        gap:6px;
+        font-size:11px;
+      }
+
+      .modeltotal .amt{
+        min-width:0;
+        text-align:left;
+        white-space:normal;
+      }
+
+      .resume-card{
+        grid-template-columns:74px 1fr;
+        gap:10px;
+      }
+
+      .resume-thumb{
+        width:74px;
+        height:106px;
+      }
+
+      .actionbar-btns .btn,
+      .summary-actions .btn{
+        flex:1 1 calc(50% - 8px);
+        text-align:center;
+      }
+
+      .modal{
+        padding:8px;
+      }
+
+      .productmodal{
+        width:100%;
+        height:calc(100vh - 16px);
+        border-radius:18px;
+      }
+
+      .productmodal-media{
+        padding:10px;
+        min-height:34vh;
+        max-height:42vh;
+      }
+
+      .productmodal-scroll{
+        padding:14px 12px 14px;
+        gap:12px;
+      }
+
+      .productmodal-ref{
+        font-size:16px;
+      }
+
+      .productmodal-price{
+        font-size:16px;
+      }
+
+      .productmodal-close{
+        right:10px;
+        top:10px;
+        width:40px;
+        height:40px;
+      }
     }
 
     @media (max-width: 430px){
@@ -1298,20 +1435,21 @@
       body[data-mode="stock"] .cards,
       .cards{
         grid-template-columns:repeat(2, minmax(0,1fr));
-        gap:6px;
-        padding:6px;
+        gap:8px;
+        padding:8px;
       }
 
       .thumb{
-        aspect-ratio:0.82 / 1;
+        aspect-ratio:0.67 / 1;
       }
 
       .body{
-        padding:6px 6px 8px;
+        padding:7px 7px 9px;
       }
 
-      .ref{font-size:10px}
-      .price{font-size:10px}
+      .ref{font-size:10.5px}
+      .price{font-size:10.5px}
+      .chip{font-size:9.5px}
 
       .size{
         grid-template-columns:1fr;
@@ -1321,12 +1459,13 @@
         justify-self:start;
       }
 
-      .filterwrap select{
-        flex:1 1 100%;
+      .productmodal-title{
+        grid-template-columns:1fr;
+        gap:6px;
       }
 
-      .product-modal{
-        grid-template-rows:38vh minmax(0,1fr);
+      .productmodal-price{
+        text-align:left;
       }
     }
 
@@ -1334,30 +1473,12 @@
       body[data-mode="repeticiones"] .cards,
       body[data-mode="stock"] .cards,
       .cards{
-        grid-template-columns:repeat(2, minmax(0,1fr));
-        gap:6px;
-        padding:6px;
-      }
-
-      .thumb{
-        aspect-ratio:0.84 / 1;
+        grid-template-columns:1fr;
       }
 
       .step{
         justify-self:start;
       }
-    }
-
-    .resume-obs{
-      padding:8px 10px;
-      border-radius:10px;
-      background:rgba(47,127,117,.06);
-      border:1px solid rgba(47,127,117,.18);
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      font-size:12px;
-      color:var(--ink);
-      line-height:1.35;
-      overflow-wrap:anywhere;
     }
   </style>
 </head>
@@ -1533,42 +1654,11 @@
   </div>
 
   <div class="modal" id="modal">
-    <div class="product-modal">
-      <button class="x" id="modalX" type="button">X</button>
-
-      <div class="product-modal-media">
-        <img id="modalImg" alt="Vista ampliada del producto" />
-        <div class="product-modal-nofoto" id="modalNoFoto">Sin foto disponible</div>
-      </div>
-
-      <div class="product-modal-panel">
-        <div class="product-modal-head">
-          <div class="product-modal-ref" id="modalRef"></div>
-          <div class="product-modal-desc" id="modalDesc"></div>
-          <div class="product-modal-price" id="modalPrice"></div>
-        </div>
-
-        <div class="product-modal-meta" id="modalMeta"></div>
-        <div class="product-modal-badge" id="modalModeBadge"></div>
-
-        <div class="product-modal-sizes" id="modalSizes"></div>
-
-        <div class="product-modal-obs">
-          <label for="modalObs">Observaciones sobre este modelo</label>
-          <textarea id="modalObs" placeholder="Escribe aquí cualquier comentario o duda sobre este modelo (opcional)"></textarea>
-        </div>
-
-        <div class="product-modal-total">
-          <div class="product-modal-total-line">
-            <span class="k">Unidades modelo</span>
-            <span class="v" id="modalUnits">0</span>
-          </div>
-          <div class="product-modal-total-line">
-            <span class="k">Importe modelo</span>
-            <span class="v" id="modalSubtotal">0,00 €</span>
-          </div>
-          <div class="product-modal-warning" id="modalWarn">⚠️ 1–2 uds: +10% aplicado</div>
-        </div>
+    <div class="productmodal" id="productModalBox" role="dialog" aria-modal="true" aria-label="Producto a pantalla completa">
+      <button class="productmodal-close" id="modalX" type="button">✕</button>
+      <div class="productmodal-media" id="modalMedia"></div>
+      <div class="productmodal-panel">
+        <div class="productmodal-scroll" id="modalContent"></div>
       </div>
     </div>
   </div>
@@ -1634,9 +1724,8 @@
     let ALL = [], VIEW = [];
     const ORDER = new Map();
     let lastSavedSignature = null;
-
-    let modalItem = null;
-    let modalImageUrl = "";
+    let activeModalRef = null;
+    let activeModalImageUrl = "";
 
     const $ = (id)=>document.getElementById(id);
 
@@ -2007,13 +2096,13 @@
 
     async function loadData(){
       hideError();
-      closeModal();
       $("countPill").textContent="Cargando…";
       ORDER.clear();
       ALL=[];
       VIEW=[];
       $("cards").innerHTML="";
       $("resumeList").innerHTML="";
+      closeModal(true);
 
       try{
         ALL=currentMode==="stock" ? await loadStockFromSupabase() : await loadRepeatData();
@@ -2121,12 +2210,38 @@
 
     function updateModelTotals(ref){
       const u=modelUnits(ref), sub=modelSubtotal(ref);
+      const warnShow = currentMode==="repeticiones" && (u===1 || u===2);
+
       const uEl=document.getElementById("u_"+ref),
             mEl=document.getElementById("m_"+ref),
-            wEl=document.getElementById("w_"+ref);
+            wEl=document.getElementById("w_"+ref),
+            muEl=document.getElementById("modal_u_"+ref),
+            mmEl=document.getElementById("modal_m_"+ref),
+            mwEl=document.getElementById("modal_w_"+ref);
+
       if(uEl) uEl.textContent=String(u);
       if(mEl) mEl.textContent=eur(sub);
-      if(wEl) wEl.classList.toggle("show", currentMode==="repeticiones" && (u===1 || u===2));
+      if(wEl) wEl.classList.toggle("show", warnShow);
+
+      if(muEl) muEl.textContent=String(u);
+      if(mmEl) mmEl.textContent=eur(sub);
+      if(mwEl) mwEl.classList.toggle("show", warnShow);
+    }
+
+    function updateCatalogOrderBadge(ref){
+      const el=document.getElementById("cat_qty_"+ref);
+      if(el) el.textContent=String(modelUnits(ref));
+    }
+
+    function updateModelUI(ref){
+      updateModelTotals(ref);
+      updateCatalogOrderBadge(ref);
+    }
+
+    function updateAllCatalogBadges(){
+      for(const item of VIEW){
+        updateCatalogOrderBadge(item.referencia);
+      }
     }
 
     function updateSummary(){
@@ -2253,6 +2368,213 @@
         .replace(/'/g, "&#039;");
     }
 
+    function buildSizeRow(item, talla, imageUrl){
+      const s=document.createElement("div");
+      s.className="size";
+
+      const sizeLeft=document.createElement("div");
+      sizeLeft.className="size-left";
+
+      const b=document.createElement("b");
+      b.textContent=talla;
+      sizeLeft.appendChild(b);
+
+      const stock=getStockFor(item,talla);
+      if(stock!=null){
+        const stok=document.createElement("span");
+        stok.className="stok";
+        stok.textContent=`Stock: ${stock}`;
+        sizeLeft.appendChild(stok);
+      }
+
+      const step=document.createElement("div");
+      step.className="step";
+
+      const minus=document.createElement("button");
+      minus.type="button";
+      minus.textContent="−";
+
+      const inp=document.createElement("input");
+      inp.type="number";
+      inp.min="0";
+      inp.step="1";
+      inp.inputMode="numeric";
+      inp.value=String(getQty(item.referencia,talla));
+
+      const plus=document.createElement("button");
+      plus.type="button";
+      plus.textContent="+";
+
+      if(stock!=null){
+        inp.max=String(stock);
+        if(stock<=0){
+          s.classList.add("out");
+          plus.disabled=true;
+          inp.disabled=true;
+          minus.disabled=true;
+        }
+      }
+
+      const commitVal=(v)=>{
+        let nv=Math.max(0,Math.floor(Number(v||0)));
+        if(stock!=null) nv=Math.min(nv,stock);
+        inp.value=String(nv);
+        setQty(item,talla,nv,imageUrl||null);
+        updateModelUI(item.referencia);
+      };
+
+      minus.addEventListener("click", ()=>commitVal(Number(inp.value)-1));
+      plus.addEventListener("click", ()=>commitVal(Number(inp.value)+1));
+      inp.addEventListener("change", ()=>commitVal(inp.value));
+
+      step.appendChild(minus);
+      step.appendChild(inp);
+      step.appendChild(plus);
+
+      s.appendChild(sizeLeft);
+      s.appendChild(step);
+
+      return s;
+    }
+
+    function renderProductModal(ref, imageUrl){
+      const item = ALL.find(x=>x.referencia===ref) || VIEW.find(x=>x.referencia===ref);
+      if(!item) return;
+
+      activeModalRef = ref;
+      activeModalImageUrl = imageUrl || "";
+
+      const p=parseRef(item.referencia);
+      const modal=$("modal");
+      const media=$("modalMedia");
+      const content=$("modalContent");
+
+      media.innerHTML="";
+      content.innerHTML="";
+
+      if(imageUrl){
+        const img=document.createElement("img");
+        img.src=imageUrl;
+        img.alt=item.referencia;
+        media.appendChild(img);
+      }else{
+        const nofoto=document.createElement("div");
+        nofoto.className="productmodal-nofoto";
+        nofoto.textContent="Sin foto disponible";
+        media.appendChild(nofoto);
+      }
+
+      const titleWrap=document.createElement("div");
+      titleWrap.className="productmodal-head";
+      titleWrap.innerHTML = `
+        <div class="productmodal-title">
+          <div class="productmodal-ref">${escapeHtml(item.referencia)}</div>
+          <div class="productmodal-price">${eur(item.precio)}</div>
+        </div>
+        <div class="productmodal-desc">${escapeHtml(item.descripcion || p.tipoName)}</div>
+      `;
+      content.appendChild(titleWrap);
+
+      const chips=document.createElement("div");
+      chips.className="productmodal-chips";
+      let stockChip="";
+      if(currentMode!=="repeticiones"){
+        const totalStock=Object.values(item.stockMap||{}).reduce((a,b)=>a+Number(b||0),0);
+        stockChip=`<span class="chip ${totalStock>0?"stockok":"stockno"}">${totalStock>0?"Stock total: "+totalStock:"Agotado"}</span>`;
+      }
+      chips.innerHTML = `
+        <span class="chip">Familia ${escapeHtml(p.familia)}</span>
+        <span class="chip">${escapeHtml(p.tipoName)}</span>
+        <span class="chip">Color: ${escapeHtml(p.colorName)}</span>
+        ${stockChip}
+      `;
+      content.appendChild(chips);
+
+      const modeBadge=document.createElement("div");
+      modeBadge.className=`modebadge ${currentMode==="stock"?"stock":"rep"}`;
+      modeBadge.textContent=currentMode==="stock" ? "⚡ ENTREGA INMEDIATA" : "🧵 PRODUCCIÓN";
+      content.appendChild(modeBadge);
+
+      const chooseBox=document.createElement("div");
+      chooseBox.className="choosebox";
+      chooseBox.innerHTML = `
+        <div class="choosebox-title">
+          <span>Elegir talla</span>
+          <span>Unidades seleccionadas: <b id="modal_u_${item.referencia}">0</b></span>
+        </div>
+        <div class="choosebox-sub">Aquí es donde aparecen las tallas del modelo y los botones para sumar o restar cantidades.</div>
+      `;
+      content.appendChild(chooseBox);
+
+      const sizes=document.createElement("div");
+      sizes.className="sizes";
+      const sizeList=getSizes(item);
+      for(const talla of sizeList){
+        sizes.appendChild(buildSizeRow(item, talla, imageUrl));
+      }
+      content.appendChild(sizes);
+
+      const obsWrap=document.createElement("div");
+      obsWrap.className="observaciones-modelo";
+
+      const obsLabel=document.createElement("label");
+      obsLabel.textContent="Observaciones sobre este modelo";
+
+      const obsInput=document.createElement("textarea");
+      obsInput.className="obs-modelo";
+      obsInput.placeholder="Escribe aquí cualquier comentario o duda sobre este modelo (opcional)";
+      obsInput.value=(ORDER.get(item.referencia)?.obs)||"";
+      obsInput.addEventListener("input", ()=>{
+        const o=ensureOrder(item.referencia,item,imageUrl||null);
+        o.obs=obsInput.value.trim();
+        if(!modelUnits(item.referencia) && !o.obs){
+          ORDER.delete(item.referencia);
+        }
+        updateModelUI(item.referencia);
+        updateSummary();
+        renderSummaryScreen();
+        saveDraftDebounced();
+      });
+
+      obsWrap.appendChild(obsLabel);
+      obsWrap.appendChild(obsInput);
+      content.appendChild(obsWrap);
+
+      const modeltotal=document.createElement("div");
+      modeltotal.className="modeltotal";
+
+      const leftWrap=document.createElement("div");
+      leftWrap.style.display="grid";
+      leftWrap.style.gap="4px";
+      leftWrap.style.minWidth="0";
+
+      const unitsLine=document.createElement("div");
+      unitsLine.innerHTML=`<span class="k">Unidades modelo:</span> <b id="u_${item.referencia}" style="display:none">0</b><b id="modal_u_shadow_${item.referencia}" style="display:none">0</b>`;
+
+      const warn=document.createElement("div");
+      warn.className="warn";
+      warn.id=`modal_w_${item.referencia}`;
+      warn.textContent="⚠️ 1–2 uds: +10% aplicado";
+
+      leftWrap.innerHTML = `
+        <div><span class="k">Resumen del modelo</span></div>
+        <div class="warn" id="modal_w_${item.referencia}">⚠️ 1–2 uds: +10% aplicado</div>
+      `;
+
+      const amt=document.createElement("div");
+      amt.className="amt";
+      amt.innerHTML=`<span class="k">Importe modelo:</span> <b id="modal_m_${item.referencia}">${eur(0)}</b>`;
+
+      modeltotal.appendChild(leftWrap);
+      modeltotal.appendChild(amt);
+      content.appendChild(modeltotal);
+
+      updateModelTotals(item.referencia);
+
+      modal.classList.add("show");
+      document.body.classList.add("modal-open");
+    }
+
     function render(){
       const cards=$("cards");
       cards.innerHTML="";
@@ -2269,6 +2591,11 @@
         tag.className="tag";
         tag.textContent=p.familia;
         thumb.appendChild(tag);
+
+        const cta=document.createElement("div");
+        cta.className="thumbcta";
+        cta.textContent="Ver";
+        thumb.appendChild(cta);
 
         const smart=createSmartImg(item.referencia);
         const img=smart.imgEl;
@@ -2287,6 +2614,7 @@
           if(url){
             thumb.appendChild(img);
             thumb.dataset.full=url;
+            thumb.appendChild(cta);
 
             const orderItem=ORDER.get(item.referencia);
             if(orderItem && !orderItem.imgUrl){
@@ -2300,14 +2628,14 @@
         });
 
         thumb.addEventListener("click", ()=>{
-          openProductModal(item, thumb.dataset.full || "");
+          openModal(item.referencia, thumb.dataset.full || "");
         });
 
         const body=document.createElement("div");
         body.className="body";
 
         const row1=document.createElement("div");
-        row1.className="row1";
+        row1.className="row1 producthead";
 
         const left=document.createElement("div");
 
@@ -2315,12 +2643,7 @@
         ref.className="ref";
         ref.textContent=item.referencia;
 
-        const desc=document.createElement("div");
-        desc.className="desc";
-        desc.textContent=item.descripcion || p.tipoName;
-
         left.appendChild(ref);
-        left.appendChild(desc);
 
         const price=document.createElement("div");
         price.className="price";
@@ -2331,7 +2654,7 @@
 
         const openHint=document.createElement("div");
         openHint.className="openhint";
-        openHint.innerHTML='<span>Toca la foto para ver tallas</span><b>Abrir</b>';
+        openHint.innerHTML=`<span>Toca la imagen para abrir a pantalla completa</span><b>${modelUnits(item.referencia)>0 ? `Seleccionado: <span id="cat_qty_${item.referencia}">${modelUnits(item.referencia)}</span>` : `Seleccionado: <span id="cat_qty_${item.referencia}">0</span>`}</b>`;
 
         body.appendChild(row1);
         body.appendChild(openHint);
@@ -2340,162 +2663,8 @@
         card.appendChild(body);
 
         cards.appendChild(card);
-        updateModelTotals(item.referencia);
+        updateCatalogOrderBadge(item.referencia);
       }
-    }
-
-    function openProductModal(item, imageUrl){
-      modalItem=item;
-      modalImageUrl=imageUrl || "";
-      renderProductModal();
-      $("modal").classList.add("show");
-      document.body.style.overflow="hidden";
-    }
-
-    function closeModal(){
-      $("modal").classList.remove("show");
-      $("modalImg").src="";
-      document.body.style.overflow="";
-      modalItem=null;
-      modalImageUrl="";
-    }
-
-    function updateProductModalTotals(){
-      if(!modalItem) return;
-      const ref=modalItem.referencia;
-      const u=modelUnits(ref);
-      $("modalUnits").textContent=String(u);
-      $("modalSubtotal").textContent=eur(modelSubtotal(ref));
-      $("modalWarn").classList.toggle("show", currentMode==="repeticiones" && (u===1 || u===2));
-    }
-
-    function renderProductModal(){
-      if(!modalItem) return;
-
-      const item=modalItem;
-      const ref=item.referencia;
-      const p=parseRef(ref);
-
-      const modalImg=$("modalImg");
-      const modalNoFoto=$("modalNoFoto");
-      if(modalImageUrl){
-        modalImg.src=modalImageUrl;
-        modalImg.style.display="block";
-        modalNoFoto.style.display="none";
-      } else {
-        modalImg.src="";
-        modalImg.style.display="none";
-        modalNoFoto.style.display="flex";
-      }
-
-      $("modalRef").textContent=ref;
-      $("modalDesc").textContent=item.descripcion || p.tipoName;
-      $("modalPrice").textContent=eur(item.precio);
-
-      let stockChip="";
-      if(currentMode!=="repeticiones"){
-        const totalStock=Object.values(item.stockMap||{}).reduce((a,b)=>a+Number(b||0),0);
-        stockChip=`<span class="chip ${totalStock>0?"stockok":"stockno"}">${totalStock>0?"Stock total: "+totalStock:"Agotado"}</span>`;
-      }
-
-      $("modalMeta").innerHTML=`
-        <span class="chip">${p.tipoName}</span>
-        <span class="chip">Color: ${p.colorName}</span>
-        <span class="chip">Familia: ${p.familia}</span>
-        ${stockChip}
-      `;
-
-      const badge=$("modalModeBadge");
-      badge.className=`product-modal-badge ${currentMode==="stock"?"stock":"rep"}`;
-      badge.textContent=currentMode==="stock" ? "⚡ ENTREGA INMEDIATA" : "🧵 PRODUCCIÓN";
-
-      const sizesBox=$("modalSizes");
-      sizesBox.innerHTML="";
-
-      const sizeList=getSizes(item);
-      for(const talla of sizeList){
-        const s=document.createElement("div");
-        s.className="size";
-
-        const sizeLeft=document.createElement("div");
-        sizeLeft.className="size-left";
-
-        const b=document.createElement("b");
-        b.textContent=talla;
-        sizeLeft.appendChild(b);
-
-        const stock=getStockFor(item,talla);
-        if(stock!=null){
-          const stok=document.createElement("span");
-          stok.className="stok";
-          stok.textContent=`Stock: ${stock}`;
-          sizeLeft.appendChild(stok);
-        }
-
-        const step=document.createElement("div");
-        step.className="step";
-
-        const minus=document.createElement("button");
-        minus.type="button";
-        minus.textContent="−";
-
-        const inp=document.createElement("input");
-        inp.type="number";
-        inp.min="0";
-        inp.step="1";
-        inp.inputMode="numeric";
-        inp.value=String(getQty(ref,talla));
-
-        const plus=document.createElement("button");
-        plus.type="button";
-        plus.textContent="+";
-
-        if(stock!=null){
-          inp.max=String(stock);
-          if(stock<=0){
-            s.classList.add("out");
-            plus.disabled=true;
-            inp.disabled=true;
-            minus.disabled=true;
-          }
-        }
-
-        const commitVal=(v)=>{
-          let nv=Math.max(0,Math.floor(Number(v||0)));
-          if(stock!=null) nv=Math.min(nv,stock);
-          inp.value=String(nv);
-          setQty(item,talla,nv,modalImageUrl || null);
-          updateProductModalTotals();
-        };
-
-        minus.addEventListener("click", ()=>commitVal(Number(inp.value)-1));
-        plus.addEventListener("click", ()=>commitVal(Number(inp.value)+1));
-        inp.addEventListener("change", ()=>commitVal(inp.value));
-
-        step.appendChild(minus);
-        step.appendChild(inp);
-        step.appendChild(plus);
-
-        s.appendChild(sizeLeft);
-        s.appendChild(step);
-        sizesBox.appendChild(s);
-      }
-
-      const obsInput=$("modalObs");
-      obsInput.value=(ORDER.get(ref)?.obs)||"";
-      obsInput.oninput=()=>{
-        const o=ensureOrder(ref,item,modalImageUrl || null);
-        o.obs=obsInput.value.trim();
-        if(!modelUnits(ref) && !o.obs){
-          ORDER.delete(ref);
-        }
-        renderSummaryScreen();
-        updateSummary();
-        saveDraftDebounced();
-        updateProductModalTotals();
-      };
-
-      updateProductModalTotals();
     }
 
     function applySeasonFilter(){
@@ -2582,6 +2751,25 @@
 
       VIEW=filtered;
       updateCountAndRender();
+      if(activeModalRef && !VIEW.some(x=>x.referencia===activeModalRef) && !ALL.some(x=>x.referencia===activeModalRef)){
+        closeModal();
+      }
+    }
+
+    function openModal(ref, imageUrl){
+      renderProductModal(ref, imageUrl || "");
+    }
+
+    function closeModal(silent=false){
+      $("modal").classList.remove("show");
+      document.body.classList.remove("modal-open");
+      $("modalMedia").innerHTML="";
+      $("modalContent").innerHTML="";
+      activeModalRef = null;
+      activeModalImageUrl = "";
+      if(!silent){
+        saveDraftDebounced();
+      }
     }
 
     function showScreen(name){
@@ -3095,7 +3283,7 @@
         );
         ORDER.clear();
         clearDraft();
-        closeModal();
+        closeModal(true);
         if(currentMode==="stock") await loadData();
         render();
         updateSummary();
@@ -3114,10 +3302,10 @@
 
     function vaciar(){
       ORDER.clear();
+      closeModal(true);
       render();
       updateSummary();
       renderSummaryScreen();
-      if(modalItem) renderProductModal();
       clearDraft();
       toast("Pedido vaciado.");
     }
@@ -3166,7 +3354,6 @@
       if(!validateFormFields()) return;
       if(!validateOrder()) return;
       calcularFechaServicio();
-      closeModal();
       updateSummary();
       renderSummaryScreen();
       showScreen("resumen");
@@ -3189,14 +3376,8 @@
     $("btnVaciar").addEventListener("click", vaciar);
 
     $("btnContinuar").addEventListener("click", continuarADetalle);
-    $("btnBackToDatos").addEventListener("click", ()=>{
-      closeModal();
-      showScreen("datos");
-    });
-    $("btnBackToProductos").addEventListener("click", ()=>{
-      closeModal();
-      showScreen("productos");
-    });
+    $("btnBackToDatos").addEventListener("click", ()=>showScreen("datos"));
+    $("btnBackToProductos").addEventListener("click", ()=>showScreen("productos"));
     $("btnResumen").addEventListener("click", abrirResumen);
 
     document.querySelectorAll(".modebtn").forEach(btn=>{
