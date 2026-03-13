@@ -22,6 +22,7 @@
       --ok:#1f7a3b;
       --shadow:0 10px 24px rgba(0,0,0,.08);
       --radius:18px;
+      --modal-confirm-h:72px;
     }
 
     *{box-sizing:border-box}
@@ -607,23 +608,23 @@
 
     .step{
       display:grid;
-      grid-template-columns:34px 54px 34px;
+      grid-template-columns:38px 62px 38px;
       align-items:center;
-      gap:6px;
+      gap:8px;
       flex:0 0 auto;
       flex-shrink:0;
       width:auto;
     }
 
     .step button{
-      width:34px;
-      height:34px;
-      border-radius:10px;
+      width:38px;
+      height:38px;
+      border-radius:12px;
       border:1px solid var(--line);
       background:#fff;
       cursor:pointer;
       font-weight:900;
-      font-size:16px;
+      font-size:18px;
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       flex:0 0 auto;
       padding:0;
@@ -631,6 +632,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.04);
     }
 
     .step button:disabled{
@@ -639,15 +641,15 @@
     }
 
     .step input{
-      width:54px;
-      min-width:54px;
-      height:34px;
+      width:62px;
+      min-width:62px;
+      height:38px;
       text-align:center;
       padding:6px 4px;
-      border-radius:10px;
+      border-radius:12px;
       border:1px solid var(--line);
       font-weight:900;
-      font-size:13px;
+      font-size:14px;
       flex:0 0 auto;
     }
 
@@ -912,6 +914,7 @@
       justify-content:center;
       padding:14px;
       z-index:9999;
+      overscroll-behavior:contain;
     }
 
     .modal.show{
@@ -919,38 +922,22 @@
     }
 
     .productmodal{
-      width:min(1320px, 100%);
-      height:min(calc(100vh - 28px), 960px);
+      width:min(1360px, 100%);
+      height:min(calc(100vh - 28px), 980px);
       background:var(--card);
       border:1px solid rgba(255,255,255,.14);
       border-radius:22px;
       box-shadow:0 24px 50px rgba(0,0,0,.30);
       display:grid;
-      grid-template-columns:minmax(320px, 0.95fr) minmax(340px, 1.05fr);
+      grid-template-columns:minmax(360px, .95fr) minmax(380px, 1.05fr);
       overflow:hidden;
       position:relative;
-    }
-
-    .productmodal-close{
-      position:absolute;
-      right:14px;
-      top:14px;
-      z-index:5;
-      width:44px;
-      height:44px;
-      border-radius:999px;
-      border:none;
-      cursor:pointer;
-      background:#fff;
-      color:var(--ink);
-      font-weight:900;
-      box-shadow:0 12px 20px rgba(0,0,0,.25);
-      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
     .productmodal-media{
       background:#f2eadf;
       min-width:0;
+      min-height:0;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -988,25 +975,28 @@
 
     .productmodal-panel{
       min-width:0;
-      display:flex;
-      flex-direction:column;
+      min-height:0;
+      display:grid;
+      grid-template-rows:minmax(0,1fr) auto;
       background:#fffdf9;
     }
 
     .productmodal-scroll{
-      padding:20px 20px 18px;
+      padding:18px 18px 18px;
       overflow:auto;
       min-height:0;
       height:100%;
       display:grid;
       gap:14px;
       align-content:start;
+      overscroll-behavior:contain;
+      scrollbar-gutter:stable both-edges;
     }
 
     .productmodal-head{
       display:grid;
-      gap:8px;
-      padding-right:54px;
+      gap:10px;
+      padding-right:0;
     }
 
     .productmodal-title{
@@ -1018,7 +1008,7 @@
 
     .productmodal-ref{
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      font-size:20px;
+      font-size:21px;
       font-weight:900;
       line-height:1.15;
       word-break:break-word;
@@ -1026,7 +1016,7 @@
 
     .productmodal-price{
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      font-size:19px;
+      font-size:20px;
       font-weight:900;
       white-space:nowrap;
       text-align:right;
@@ -1076,7 +1066,7 @@
       margin-top:0;
       display:flex;
       flex-direction:column;
-      gap:4px;
+      gap:6px;
       width:100%;
       min-width:0;
     }
@@ -1085,16 +1075,17 @@
       font-size:12px;
       color:var(--muted);
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:800;
     }
 
     .obs-modelo{
       width:100%;
       border:1px solid var(--line);
-      border-radius:10px;
-      padding:8px;
+      border-radius:12px;
+      padding:10px 10px;
       font-size:13px;
       resize:vertical;
-      min-height:72px;
+      min-height:88px;
       background:#fff;
       color:var(--ink);
       font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -1110,6 +1101,35 @@
       color:var(--ink);
       line-height:1.35;
       overflow-wrap:anywhere;
+    }
+
+    .productmodal-footer{
+      border-top:1px solid var(--line);
+      background:rgba(255,253,249,.97);
+      backdrop-filter:blur(8px);
+      padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      min-height:var(--modal-confirm-h);
+      position:relative;
+      z-index:3;
+    }
+
+    .productmodal-confirm{
+      width:100%;
+      max-width:340px;
+      min-height:48px;
+      border:none;
+      border-radius:14px;
+      background:var(--accent);
+      color:#fff;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:.2px;
+      cursor:pointer;
+      box-shadow:0 12px 20px rgba(47,127,117,.22);
     }
 
     .toast{
@@ -1170,7 +1190,7 @@
       }
 
       .productmodal{
-        grid-template-columns:minmax(300px, .88fr) minmax(340px, 1.12fr);
+        grid-template-columns:minmax(320px, .9fr) minmax(360px, 1.1fr);
       }
     }
 
@@ -1179,12 +1199,13 @@
 
       .productmodal{
         grid-template-columns:1fr;
+        grid-template-rows:minmax(260px, 40vh) minmax(0,1fr);
         height:min(calc(100vh - 28px), 1000px);
       }
 
       .productmodal-media{
-        min-height:38vh;
-        max-height:46vh;
+        min-height:0;
+        max-height:none;
       }
     }
 
@@ -1208,6 +1229,10 @@
     }
 
     @media (max-width: 700px){
+      :root{
+        --modal-confirm-h:84px;
+      }
+
       .wrap{
         width:100%;
         max-width:100%;
@@ -1321,7 +1346,7 @@
       .openhint{font-size:10px;padding-top:6px}
       .chip{padding:5px 8px;font-size:10px}
       .modebadge{font-size:10px;padding:7px 9px}
-      .sizes{gap:6px}
+      .sizes{gap:7px}
 
       .size{
         padding:9px 10px;
@@ -1329,26 +1354,26 @@
         grid-template-columns:minmax(0,1fr) auto;
       }
 
-      .size b{font-size:11px}
+      .size b{font-size:11.5px}
       .size .stok{font-size:10px}
 
       .step{
-        grid-template-columns:32px 48px 32px;
+        grid-template-columns:40px 58px 40px;
         justify-self:end;
-        gap:5px;
+        gap:6px;
       }
 
       .step button{
-        width:32px;
-        height:32px;
-        font-size:15px;
+        width:40px;
+        height:40px;
+        font-size:18px;
       }
 
       .step input{
-        width:48px;
-        min-width:48px;
-        height:32px;
-        font-size:12px;
+        width:58px;
+        min-width:58px;
+        height:40px;
+        font-size:14px;
         padding:4px 2px;
       }
 
@@ -1389,16 +1414,16 @@
         width:100%;
         height:calc(100vh - 16px);
         border-radius:18px;
+        grid-template-columns:1fr;
+        grid-template-rows:minmax(250px, 38vh) minmax(0,1fr);
       }
 
       .productmodal-media{
         padding:10px;
-        min-height:34vh;
-        max-height:42vh;
       }
 
       .productmodal-scroll{
-        padding:14px 12px 14px;
+        padding:12px 12px 10px;
         gap:12px;
       }
 
@@ -1410,11 +1435,24 @@
         font-size:16px;
       }
 
-      .productmodal-close{
-        right:10px;
-        top:10px;
-        width:40px;
-        height:40px;
+      .productmodal-footer{
+        position:sticky;
+        bottom:0;
+        left:0;
+        right:0;
+        padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+        background:rgba(255,253,249,.98);
+      }
+
+      .productmodal-confirm{
+        width:100%;
+        max-width:none;
+        min-height:50px;
+        font-size:16px;
+      }
+
+      .obs-modelo{
+        min-height:84px;
       }
     }
 
@@ -1452,11 +1490,24 @@
       .chip{font-size:9.5px}
 
       .size{
-        grid-template-columns:1fr;
+        padding:8px 9px;
+        grid-template-columns:minmax(0,1fr) auto;
       }
 
       .step{
-        justify-self:start;
+        grid-template-columns:38px 54px 38px;
+        gap:5px;
+      }
+
+      .step button{
+        width:38px;
+        height:38px;
+      }
+
+      .step input{
+        width:54px;
+        min-width:54px;
+        height:38px;
       }
 
       .productmodal-title{
@@ -1467,6 +1518,11 @@
       .productmodal-price{
         text-align:left;
       }
+
+      .choosebox-title{
+        flex-direction:column;
+        align-items:flex-start;
+      }
     }
 
     @media (max-width: 360px){
@@ -1474,10 +1530,6 @@
       body[data-mode="stock"] .cards,
       .cards{
         grid-template-columns:1fr;
-      }
-
-      .step{
-        justify-self:start;
       }
     }
   </style>
@@ -1655,10 +1707,12 @@
 
   <div class="modal" id="modal">
     <div class="productmodal" id="productModalBox" role="dialog" aria-modal="true" aria-label="Producto a pantalla completa">
-      <button class="productmodal-close" id="modalX" type="button">✕</button>
       <div class="productmodal-media" id="modalMedia"></div>
       <div class="productmodal-panel">
         <div class="productmodal-scroll" id="modalContent"></div>
+        <div class="productmodal-footer">
+          <button class="productmodal-confirm" id="modalX" type="button">Confirmar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2502,7 +2556,7 @@
           <span>Elegir talla</span>
           <span>Unidades seleccionadas: <b id="modal_u_${item.referencia}">0</b></span>
         </div>
-        <div class="choosebox-sub">Aquí es donde aparecen las tallas del modelo y los botones para sumar o restar cantidades.</div>
+        <div class="choosebox-sub">Selecciona aquí las tallas del modelo. Todas las cantidades y observaciones quedan guardadas en el pedido.</div>
       `;
       content.appendChild(chooseBox);
 
@@ -2547,15 +2601,6 @@
       leftWrap.style.display="grid";
       leftWrap.style.gap="4px";
       leftWrap.style.minWidth="0";
-
-      const unitsLine=document.createElement("div");
-      unitsLine.innerHTML=`<span class="k">Unidades modelo:</span> <b id="u_${item.referencia}" style="display:none">0</b><b id="modal_u_shadow_${item.referencia}" style="display:none">0</b>`;
-
-      const warn=document.createElement("div");
-      warn.className="warn";
-      warn.id=`modal_w_${item.referencia}`;
-      warn.textContent="⚠️ 1–2 uds: +10% aplicado";
-
       leftWrap.innerHTML = `
         <div><span class="k">Resumen del modelo</span></div>
         <div class="warn" id="modal_w_${item.referencia}">⚠️ 1–2 uds: +10% aplicado</div>
@@ -2573,6 +2618,7 @@
 
       modal.classList.add("show");
       document.body.classList.add("modal-open");
+      requestAnimationFrame(()=>content.scrollTop=0);
     }
 
     function render(){
