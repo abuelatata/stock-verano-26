@@ -1881,6 +1881,25 @@
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
       : null;
 
+async function requireAuth(){
+  try{
+    if(!supabaseClient){
+      window.location.href = "./index.html";
+      return;
+    }
+
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if(error || !data?.session){
+      window.location.href = "./index.html";
+      return;
+    }
+
+  }catch(e){
+    window.location.href = "./index.html";
+  }
+}
+  
     const DATA_SOURCES = { repeticiones: "./data/tarifa.json" };
 
     const MODE_INFO = {
@@ -3958,6 +3977,9 @@
     });
 
     (async function init(){
+
+  await requireAuth(); // 🔐 aquí
+
       if(emailJsConfigured()){
         try{
           window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
