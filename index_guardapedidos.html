@@ -1,0 +1,3986 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Ceremonia 26 · Abuela Tata</title>
+
+  <link id="favicon" rel="icon" href="./images/logo.png" />
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f5efe6;
+      --card:#fffaf4;
+      --ink:#5b3f2d;
+      --muted:#8b6f5b;
+      --line:#e7d9cc;
+      --accent:#2f7f75;
+      --danger:#c0392b;
+      --ok:#1f7a3b;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --radius:18px;
+      --modal-confirm-h:72px;
+    }
+
+    *{box-sizing:border-box}
+
+    html,body{
+      margin:0;
+      padding:0;
+      width:100%;
+      max-width:100%;
+      overflow-x:hidden;
+    }
+
+    body{
+      font-family:ui-serif, Georgia, "Times New Roman", serif;
+      background:var(--bg);
+      background-image:radial-gradient(#e8dfd3 1px, transparent 1px);
+      background-size:18px 18px;
+      color:var(--ink);
+    }
+
+    body.modal-open{
+      overflow:hidden;
+      touch-action:none;
+    }
+
+    .wrap{
+      width:min(1820px, calc(100vw - 24px));
+      max-width:1820px;
+      margin:auto;
+      padding:8px 12px 92px;
+    }
+
+    .screen{display:none}
+    .screen.active{display:block}
+
+    .panel{
+      background:rgba(255,255,255,.70);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      min-width:0;
+    }
+
+    .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .hd h2{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+
+    .hd .note{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      line-height:1.35;
+    }
+
+    .bd{
+      padding:14px;
+      min-width:0;
+    }
+
+    .form{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .form .full{
+      grid-column:1/-1;
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    input, textarea, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      outline:none;
+      font-size:14px;
+      color:var(--ink);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    .req{
+      color:var(--danger);
+      font-weight:900;
+      margin-left:4px
+    }
+
+    #fechaPedido, #fechaServicio{
+      background:#f8f4ef
+    }
+
+    #fechaPedido{
+      pointer-events:none;
+      user-select:none;
+    }
+
+    .btns{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 14px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.2px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      box-shadow:0 10px 18px rgba(0,0,0,.10);
+      user-select:none;
+    }
+
+    .btn.primary{background:var(--accent);color:#fff}
+    .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+    .btn.danger{background:var(--danger);color:#fff}
+
+    .errorbox{
+      display:none;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(192,57,43,.35);
+      background:rgba(192,57,43,.06);
+      color:var(--danger);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:800;
+      font-size:13px;
+      text-align:left;
+    }
+
+    .controls{
+      position:sticky;
+      top:4px;
+      z-index:70;
+      padding:6px;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:0 6px 16px rgba(0,0,0,.05);
+      margin-bottom:8px;
+      overflow:hidden;
+    }
+
+    .controlsbar{
+      display:grid;
+      grid-template-columns:auto auto minmax(280px,1fr) auto;
+      gap:8px;
+      align-items:center;
+      min-width:0;
+    }
+
+    .filterwrap{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      min-width:0;
+    }
+
+    .filterwrap select,
+    .clearbtn{
+      min-height:34px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      font-size:12px;
+      font-weight:700;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .clearbtn{
+      cursor:pointer;
+      box-shadow:0 5px 12px rgba(0,0,0,.05);
+    }
+
+    .backbtn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      padding:6px 10px;
+      font-size:11px;
+      border-radius:999px;
+      cursor:pointer;
+      text-decoration:none;
+      font-weight:900;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      box-shadow:0 5px 12px rgba(0,0,0,.05);
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:32px;
+      line-height:1;
+    }
+
+    .modebar{
+      display:flex;
+      gap:6px;
+      flex-wrap:nowrap;
+      min-width:0;
+    }
+
+    .modebtn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      padding:6px 11px;
+      font-size:11px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:900;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      box-shadow:0 5px 12px rgba(0,0,0,.05);
+      white-space:nowrap;
+      min-height:32px;
+      line-height:1;
+    }
+
+    .modebtn.active{
+      background:var(--accent);
+      color:#fff;
+      border-color:var(--accent);
+    }
+
+    .search{
+      min-width:0;
+      width:100%;
+    }
+
+    .search input{
+      width:100%;
+      padding:8px 11px;
+      border-radius:12px;
+      border:2px solid var(--accent);
+      outline:none;
+      background:#fff;
+      font-size:13px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      box-shadow:0 5px 12px rgba(47,127,117,.10);
+      min-height:34px;
+    }
+
+    .search input::placeholder{
+      color:#7d8f8b;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      justify-content:center;
+      min-height:32px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:11px;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .sub{
+      display:none;
+    }
+
+    .cards{
+      padding:14px;
+      display:grid;
+      gap:18px;
+      align-items:start;
+      min-width:0;
+      grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    body[data-mode="repeticiones"] .cards{
+      grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+      gap:16px;
+    }
+
+    body[data-mode="stock"] .cards{
+      grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 10px 20px rgba(0,0,0,.06);
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      width:100%;
+      max-width:100%;
+    }
+
+    .thumb{
+      position:relative;
+      aspect-ratio:0.72 / 1;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      cursor:pointer;
+    }
+
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center top;
+      display:block;
+      transition:transform .25s ease;
+    }
+
+    .thumb:hover img{
+      transform:scale(1.02);
+    }
+
+    .nofoto{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--muted);
+      padding:10px 12px;
+      text-align:center;
+    }
+
+    .tag{
+      position:absolute;
+      left:8px;
+      top:8px;
+      padding:5px 8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      border:1px solid var(--line);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:10px;
+      z-index:2;
+      max-width:calc(100% - 16px);
+    }
+
+    .thumbcta{
+      position:absolute;
+      right:8px;
+      bottom:8px;
+      z-index:2;
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(255,255,255,.94);
+      border:1px solid var(--line);
+      color:var(--accent);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:10px;
+      box-shadow:0 8px 16px rgba(0,0,0,.08);
+      pointer-events:none;
+    }
+
+    .body{
+      padding:10px 10px 12px;
+      display:grid;
+      gap:8px;
+      min-width:0;
+      overflow:hidden;
+    }
+
+    .producthead{
+      display:block;
+      min-width:0;
+    }
+
+    .openhint{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:10px;
+      color:var(--muted);
+      border-top:1px dashed #dccbbb;
+      padding-top:8px;
+      font-weight:700;
+      min-width:0;
+    }
+
+    .openhint b{
+      color:var(--accent);
+      font-size:10px
+    }
+
+    .card .desc,
+    .card .meta,
+    .card .modebadge,
+    .card .sizes,
+    .card .modeltotal,
+    .card .observaciones-modelo{
+      display:none;
+    }
+
+    .row1{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:10px;
+      align-items:start;
+      min-width:0;
+    }
+
+    .row1 > div:first-child{
+      min-width:0;
+    }
+
+    .ref{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:13px;
+      line-height:1.25;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+
+    .desc{
+      margin-top:4px;
+      font-size:11px;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      line-height:1.3;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+
+    .price{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:13px;
+      text-align:right;
+      white-space:nowrap;
+      flex:0 0 auto;
+      min-width:96px;
+      max-width:100%;
+      align-self:start;
+    }
+
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--muted);
+      min-width:0;
+    }
+
+    .chip{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:800;
+      max-width:100%;
+      overflow-wrap:anywhere;
+    }
+
+    .chip.stockok{
+      border-color:rgba(31,122,59,.3);
+      background:rgba(31,122,59,.08);
+      color:var(--ok);
+    }
+
+    .chip.stockno{
+      border-color:rgba(192,57,43,.3);
+      background:rgba(192,57,43,.08);
+      color:var(--danger);
+    }
+
+    .modebadge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.2px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      max-width:100%;
+      width:max-content;
+    }
+
+    .modebadge.stock{
+      background:rgba(31,122,59,.10);
+      border-color:rgba(31,122,59,.28);
+      color:var(--ok);
+    }
+
+    .modebadge.rep{
+      background:rgba(47,127,117,.10);
+      border-color:rgba(47,127,117,.28);
+      color:var(--accent);
+    }
+
+    .sizes{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:stretch;
+      width:100%;
+      min-width:0;
+    }
+
+    .size{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:10px 11px;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:12px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      width:100%;
+      min-width:0;
+      max-width:100%;
+    }
+
+    .size-left{
+      display:grid;
+      gap:3px;
+      min-width:0;
+      flex:1 1 auto;
+    }
+
+    .size b{
+      font-size:12px;
+      line-height:1.2;
+    }
+
+    .size .stok{
+      font-size:11px;
+      color:var(--muted);
+      font-weight:700;
+      line-height:1.25;
+      overflow-wrap:anywhere;
+    }
+
+    .size.out{
+      opacity:.55;
+    }
+
+    .step{
+      display:grid;
+      grid-template-columns:38px 62px 38px;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+      flex-shrink:0;
+      width:auto;
+    }
+
+    .step button{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      font-size:18px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      flex:0 0 auto;
+      padding:0;
+      line-height:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.04);
+    }
+
+    .step button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .step input{
+      width:62px;
+      min-width:62px;
+      height:38px;
+      text-align:center;
+      padding:6px 4px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      font-weight:900;
+      font-size:14px;
+      flex:0 0 auto;
+    }
+
+    .modeltotal{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:12px;
+      padding-top:8px;
+      border-top:1px dashed #dccbbb;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      min-width:0;
+      width:100%;
+    }
+
+    .modeltotal > div{
+      min-width:0;
+    }
+
+    .modeltotal .k{
+      color:var(--muted);
+      font-weight:700;
+      white-space:normal;
+      word-break:normal;
+      overflow-wrap:anywhere;
+    }
+
+    .modeltotal .amt{
+      font-weight:900;
+      font-size:13px;
+      white-space:nowrap;
+      flex:0 0 auto;
+      text-align:right;
+      min-width:120px;
+    }
+
+    .warn{
+      color:var(--danger);
+      font-weight:900;
+      font-size:12px;
+      display:none;
+      overflow-wrap:anywhere;
+    }
+
+    .warn.show{
+      display:block;
+    }
+
+    .actionbar{
+      position:sticky;
+      bottom:8px;
+      z-index:60;
+      margin-top:10px;
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:0 10px 20px rgba(0,0,0,.08);
+      padding:8px;
+      display:grid;
+      gap:8px;
+      overflow:hidden;
+    }
+
+    .actionbar-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .quicksum{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .actionbar-btns{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .summary{
+      display:grid;
+      gap:10px;
+    }
+
+    .servicebox, .ship{
+      padding:10px 12px;
+      border-radius:14px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+
+    .servicebox{
+      border:1px solid rgba(47,127,117,.35);
+      background:rgba(47,127,117,.10);
+    }
+
+    .servicebox small,.ship small{
+      font-weight:700;
+      color:var(--muted)
+    }
+
+    .ship{
+      border:1px solid var(--line);
+      background:#fff
+    }
+
+    .ship.red{
+      border-color:rgba(192,57,43,.35);
+      color:var(--danger);
+      background:rgba(192,57,43,.06)
+    }
+
+    .ship.green{
+      border-color:rgba(31,122,59,.35);
+      color:var(--ok);
+      background:rgba(31,122,59,.06)
+    }
+
+    .sumrow{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:10px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .sumrow .k{
+      color:var(--muted);
+      font-size:12px
+    }
+
+    .sumrow .v{
+      font-weight:900
+    }
+
+    .fineprint{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .resume-layout{
+      display:grid;
+      grid-template-columns:340px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+
+    .resume-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .resume-card{
+      display:grid;
+      grid-template-columns:88px 1fr;
+      gap:12px;
+      padding:10px;
+      border-radius:16px;
+      background:var(--card);
+      border:1px solid var(--line);
+      box-shadow:0 8px 18px rgba(0,0,0,.04);
+    }
+
+    .resume-thumb{
+      width:88px;
+      height:124px;
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+      border:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .resume-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .resume-thumb .nofoto{
+      font-size:11px;
+      padding:8px;
+    }
+
+    .resume-info{
+      display:grid;
+      gap:6px;
+      min-width:0;
+    }
+
+    .resume-ref{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:13px;
+      font-weight:900;
+      line-height:1.25;
+    }
+
+    .resume-desc{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.3;
+    }
+
+    .resume-meta{
+      display:grid;
+      gap:4px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+    }
+
+    .resume-meta b{
+      color:var(--ink);
+    }
+
+    .resume-total{
+      font-weight:900;
+      font-size:13px;
+    }
+
+    .empty-state{
+      padding:26px 18px;
+      text-align:center;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      border:1px dashed var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.6);
+    }
+
+    .summary-actions{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.78);
+      display:none;
+      align-items:stretch;
+      justify-content:center;
+      padding:14px;
+      z-index:9999;
+      overscroll-behavior:contain;
+    }
+
+    .modal.show{
+      display:flex;
+    }
+
+    .productmodal{
+      width:min(1360px, 100%);
+      height:min(calc(100vh - 28px), 980px);
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:22px;
+      box-shadow:0 24px 50px rgba(0,0,0,.30);
+      display:grid;
+      grid-template-columns:minmax(360px, .95fr) minmax(380px, 1.05fr);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .productmodal-media{
+      background:#f2eadf;
+      min-width:0;
+      min-height:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      position:relative;
+      cursor:zoom-in;
+    }
+
+    .productmodal-media.has-zoom::after{
+      content:"Ampliar";
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      z-index:2;
+      padding:7px 11px;
+      border-radius:999px;
+      background:rgba(255,255,255,.95);
+      border:1px solid var(--line);
+      color:var(--accent);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:900;
+      font-size:11px;
+      box-shadow:0 10px 18px rgba(0,0,0,.10);
+      pointer-events:none;
+    }
+
+    .productmodal-media img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      object-position:center top;
+      border-radius:18px;
+      background:#fff;
+      display:block;
+      box-shadow:0 12px 24px rgba(0,0,0,.08);
+    }
+
+    .productmodal-nofoto{
+      width:100%;
+      height:100%;
+      min-height:300px;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:700;
+      text-align:center;
+      padding:20px;
+    }
+
+    .productmodal-panel{
+      min-width:0;
+      min-height:0;
+      display:grid;
+      grid-template-rows:minmax(0,1fr) auto;
+      background:#fffdf9;
+    }
+
+    .productmodal-scroll{
+      padding:18px 18px 18px;
+      overflow:auto;
+      min-height:0;
+      height:100%;
+      display:grid;
+      gap:14px;
+      align-content:start;
+      overscroll-behavior:contain;
+      scrollbar-gutter:stable both-edges;
+    }
+
+    .productmodal-head{
+      display:grid;
+      gap:10px;
+      padding-right:0;
+    }
+
+    .productmodal-title{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:12px;
+      align-items:start;
+    }
+
+    .productmodal-ref{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:21px;
+      font-weight:900;
+      line-height:1.15;
+      word-break:break-word;
+    }
+
+    .productmodal-price{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:20px;
+      font-weight:900;
+      white-space:nowrap;
+      text-align:right;
+    }
+
+    .productmodal-desc{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .productmodal-chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .choosebox{
+      padding:14px 14px 12px;
+      border-radius:16px;
+      border:1px solid rgba(47,127,117,.25);
+      background:rgba(47,127,117,.07);
+      display:grid;
+      gap:6px;
+    }
+
+    .choosebox-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:13px;
+      font-weight:900;
+      color:var(--accent);
+    }
+
+    .choosebox-sub{
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .observaciones-modelo{
+      margin-top:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      width:100%;
+      min-width:0;
+    }
+
+    .observaciones-modelo label{
+      font-size:12px;
+      color:var(--muted);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-weight:800;
+    }
+
+    .obs-modelo{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 10px;
+      font-size:13px;
+      resize:vertical;
+      min-height:88px;
+      background:#fff;
+      color:var(--ink);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    .resume-obs{
+      padding:8px 10px;
+      border-radius:10px;
+      background:rgba(47,127,117,.06);
+      border:1px solid rgba(47,127,117,.18);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      color:var(--ink);
+      line-height:1.35;
+      overflow-wrap:anywhere;
+    }
+
+    .productmodal-footer{
+      border-top:1px solid var(--line);
+      background:rgba(255,253,249,.97);
+      backdrop-filter:blur(8px);
+      padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      min-height:var(--modal-confirm-h);
+      position:relative;
+      z-index:3;
+    }
+
+    .productmodal-confirm{
+      width:100%;
+      max-width:340px;
+      min-height:48px;
+      border:none;
+      border-radius:14px;
+      background:var(--accent);
+      color:#fff;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:.2px;
+      cursor:pointer;
+      box-shadow:0 12px 20px rgba(47,127,117,.22);
+    }
+
+    .imagezoom-box{
+      width:min(100vw - 16px, 1400px);
+      height:min(100vh - 16px, 1000px);
+      margin:auto;
+      background:#111;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:22px;
+      box-shadow:0 24px 50px rgba(0,0,0,.36);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .imagezoom-stage{
+      width:100%;
+      height:100%;
+      padding:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#111;
+    }
+
+    .imagezoom-stage img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      object-position:center;
+      display:block;
+    }
+
+    .imagezoom-close{
+      position:absolute;
+      right:14px;
+      top:14px;
+      z-index:4;
+      min-height:44px;
+      padding:0 16px;
+      border:none;
+      border-radius:999px;
+      background:#fff;
+      color:var(--ink);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 12px 20px rgba(0,0,0,.25);
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:18px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      box-shadow:var(--shadow);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:13px;
+      display:none;
+      z-index:10000;
+    }
+
+    .toast.show{
+      display:block;
+    }
+
+    .history-card{
+      display:grid;
+      gap:10px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:var(--card);
+      box-shadow:0 8px 18px rgba(0,0,0,.04);
+    }
+
+    .history-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .history-lines{
+      display:grid;
+      gap:6px;
+      margin-top:8px;
+    }
+
+    .history-line{
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#fff;
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    @media (max-width: 1600px){
+      .wrap{
+        width:min(1680px, calc(100vw - 22px));
+      }
+
+      body[data-mode="repeticiones"] .cards{
+        grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+
+    @media (max-width: 1400px){
+      .wrap{
+        width:min(1540px, calc(100vw - 18px));
+      }
+
+      body[data-mode="repeticiones"] .cards{
+        grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+      }
+
+      body[data-mode="stock"] .cards{
+        grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 1200px){
+      .cards{
+        grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+      }
+
+      body[data-mode="repeticiones"] .cards{
+        grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+      }
+
+      .price{
+        min-width:88px;
+      }
+
+      .productmodal{
+        grid-template-columns:minmax(320px, .9fr) minmax(360px, 1.1fr);
+      }
+    }
+
+    @media (max-width: 980px){
+      .resume-layout{grid-template-columns:1fr}
+
+      .productmodal{
+        grid-template-columns:1fr;
+        grid-template-rows:minmax(260px, 40vh) minmax(0,1fr);
+        height:min(calc(100vh - 28px), 1000px);
+      }
+
+      .productmodal-media{
+        min-height:0;
+        max-height:none;
+      }
+    }
+
+    @media (max-width: 900px){
+      .controlsbar{
+        grid-template-columns:auto auto 1fr;
+      }
+
+      .filterwrap{
+        grid-column:1 / -1;
+        justify-content:flex-start;
+      }
+
+      .pill{display:none}
+
+      body[data-mode="repeticiones"] .cards,
+      body[data-mode="stock"] .cards,
+      .cards{
+        grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+      }
+    }
+
+    @media (max-width: 700px){
+      :root{
+        --modal-confirm-h:84px;
+      }
+
+      .wrap{
+        width:100%;
+        max-width:100%;
+        padding:4px 6px 84px;
+      }
+
+      .controls{
+        top:2px;
+        padding:4px;
+        border-radius:13px;
+        margin-bottom:7px;
+      }
+
+      .controlsbar{
+        grid-template-columns:auto 1fr;
+        gap:5px;
+        align-items:stretch;
+      }
+
+      .backbtn{
+        min-height:29px;
+        padding:5px 8px;
+        font-size:10.5px;
+      }
+
+      .modebar{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:5px;
+      }
+
+      .modebtn{
+        min-height:29px;
+        padding:5px 7px;
+        font-size:10.5px;
+      }
+
+      .search{
+        grid-column:1 / -1;
+      }
+
+      .search input{
+        min-height:31px;
+        padding:6px 10px;
+        font-size:12.5px;
+      }
+
+      .filterwrap{
+        grid-column:1 / -1;
+      }
+
+      .filterwrap select,
+      .clearbtn{
+        min-height:31px;
+        font-size:11.5px;
+        padding:6px 8px;
+      }
+
+      .form{
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+      }
+
+      body[data-mode="repeticiones"] .cards,
+      body[data-mode="stock"] .cards,
+      .cards{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+        gap:10px;
+        padding:10px;
+      }
+
+      .card{
+        border-radius:15px;
+      }
+
+      .thumb{
+        aspect-ratio:0.68 / 1;
+      }
+
+      .body{
+        padding:8px 8px 10px;
+        gap:7px;
+      }
+
+      .tag{
+        left:6px;
+        top:6px;
+        padding:5px 7px;
+        font-size:9.5px;
+      }
+
+      .thumbcta{
+        right:6px;
+        bottom:6px;
+        padding:5px 7px;
+        font-size:9px;
+      }
+
+      .row1{
+        grid-template-columns:minmax(0,1fr);
+        gap:4px;
+      }
+
+      .ref{font-size:11px}
+      .price{
+        font-size:11px;
+        text-align:left;
+        min-width:0;
+      }
+
+      .openhint{font-size:10px;padding-top:6px}
+      .chip{padding:5px 8px;font-size:10px}
+      .modebadge{font-size:10px;padding:7px 9px}
+      .sizes{gap:7px}
+
+      .size{
+        padding:9px 10px;
+        gap:8px;
+        grid-template-columns:minmax(0,1fr) auto;
+      }
+
+      .size b{font-size:11.5px}
+      .size .stok{font-size:10px}
+
+      .step{
+        grid-template-columns:40px 58px 40px;
+        justify-self:end;
+        gap:6px;
+      }
+
+      .step button{
+        width:40px;
+        height:40px;
+        font-size:18px;
+      }
+
+      .step input{
+        width:58px;
+        min-width:58px;
+        height:40px;
+        font-size:14px;
+        padding:4px 2px;
+      }
+
+      .modeltotal{
+        grid-template-columns:1fr;
+        align-items:flex-start;
+        gap:6px;
+        font-size:11px;
+      }
+
+      .modeltotal .amt{
+        min-width:0;
+        text-align:left;
+        white-space:normal;
+      }
+
+      .resume-card{
+        grid-template-columns:74px 1fr;
+        gap:10px;
+      }
+
+      .resume-thumb{
+        width:74px;
+        height:106px;
+      }
+
+      .actionbar-btns .btn,
+      .summary-actions .btn,
+      .btns .btn{
+        flex:1 1 calc(50% - 8px);
+        text-align:center;
+      }
+
+      .modal{
+        padding:8px;
+      }
+
+      .productmodal{
+        width:100%;
+        height:calc(100vh - 16px);
+        border-radius:18px;
+        grid-template-columns:1fr;
+        grid-template-rows:minmax(250px, 38vh) minmax(0,1fr);
+      }
+
+      .productmodal-media{
+        padding:10px;
+      }
+
+      .productmodal-scroll{
+        padding:12px 12px 10px;
+        gap:12px;
+      }
+
+      .productmodal-ref{
+        font-size:16px;
+      }
+
+      .productmodal-price{
+        font-size:16px;
+      }
+
+      .productmodal-footer{
+        position:sticky;
+        bottom:0;
+        left:0;
+        right:0;
+        padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+        background:rgba(255,253,249,.98);
+      }
+
+      .productmodal-confirm{
+        width:100%;
+        max-width:none;
+        min-height:50px;
+        font-size:16px;
+      }
+
+      .obs-modelo{
+        min-height:84px;
+      }
+
+      .imagezoom-box{
+        width:calc(100vw - 10px);
+        height:calc(100vh - 10px);
+        border-radius:18px;
+      }
+
+      .imagezoom-stage{
+        padding:10px;
+      }
+
+      .imagezoom-close{
+        right:10px;
+        top:10px;
+        min-height:42px;
+        padding:0 14px;
+        font-size:13px;
+      }
+    }
+
+    @media (max-width: 430px){
+      .form{
+        grid-template-columns:1fr;
+      }
+
+      .controlsbar{
+        grid-template-columns:auto 1fr;
+      }
+
+      .modebar{
+        grid-template-columns:1fr 1fr;
+      }
+
+      body[data-mode="repeticiones"] .cards,
+      body[data-mode="stock"] .cards,
+      .cards{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+        gap:8px;
+        padding:8px;
+      }
+
+      .thumb{
+        aspect-ratio:0.67 / 1;
+      }
+
+      .body{
+        padding:7px 7px 9px;
+      }
+
+      .ref{font-size:10.5px}
+      .price{font-size:10.5px}
+      .chip{font-size:9.5px}
+
+      .size{
+        padding:8px 9px;
+        grid-template-columns:minmax(0,1fr) auto;
+      }
+
+      .step{
+        grid-template-columns:38px 54px 38px;
+        gap:5px;
+      }
+
+      .step button{
+        width:38px;
+        height:38px;
+      }
+
+      .step input{
+        width:54px;
+        min-width:54px;
+        height:38px;
+      }
+
+      .productmodal-title{
+        grid-template-columns:1fr;
+        gap:6px;
+      }
+
+      .productmodal-price{
+        text-align:left;
+      }
+
+      .choosebox-title{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+    }
+
+    @media (max-width: 360px){
+      body[data-mode="repeticiones"] .cards,
+      body[data-mode="stock"] .cards,
+      .cards{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body data-mode="repeticiones">
+  <div class="wrap">
+
+    <section class="screen active" id="screenDatos">
+      <section class="panel">
+        <div class="hd">
+          <h2>Datos del pedido</h2>
+          <div class="note" id="formNote">Se enviará a <b>info@abuelatata.com</b> con copia al email del cliente.</div>
+        </div>
+
+        <div class="bd">
+          <div class="form">
+            <div class="full"><label>Tienda / Empresa <span class="req">*</span></label><input id="empresa" placeholder="Tienda / Empresa" /></div>
+            <div class="full"><label>Nombre y apellidos <span class="req">*</span></label><input id="nombre" placeholder="Nombre y apellidos" /></div>
+            <div class="full"><label>CIF / NIF <span class="req">*</span></label><input id="cif" placeholder="CIF / NIF" /></div>
+            <div><label>Código Postal <span class="req">*</span></label><input id="cp" inputmode="numeric" placeholder="Código Postal" /></div>
+            <div><label>Población <span class="req">*</span></label><input id="poblacion" placeholder="Población" /></div>
+            <div><label>Provincia <span class="req">*</span></label><input id="provincia" placeholder="Provincia" /></div>
+            <div><label>Teléfono <span class="req">*</span></label><input id="tel" inputmode="tel" placeholder="Teléfono" /></div>
+            <div class="full"><label>Email (cliente) <span class="req">*</span></label><input id="email" inputmode="email" placeholder="Email" /></div>
+            <div class="full"><label>Representante (opcional)</label><input id="rep" placeholder="Nombre del representante (si aplica)" /></div>
+            <div><label>Fecha del pedido</label><input id="fechaPedido" type="date" readonly /></div>
+            <div><label id="serviceLabel">Fecha estimada de servicio</label><input id="fechaServicio" readonly /></div>
+            <div class="full"><label>Observaciones</label><textarea id="obs" placeholder="Observaciones"></textarea></div>
+          </div>
+
+          <div class="btns">
+            <a class="btn ghost" href="https://abuelatata.github.io/area-profesional-ceremonia-26-abuela-tata/">← Área profesional</a>
+            <button class="btn ghost" id="btnPedidosRealizados" type="button">Pedidos realizados</button>
+            <button class="btn primary" id="btnContinuar" type="button">Continuar →</button>
+          </div>
+
+          <div class="errorbox" id="errorBoxDatos"></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="screen" id="screenProductos">
+      <section class="controls">
+        <div class="controlsbar">
+          <button class="backbtn" id="btnBackToDatos" type="button">← Volver a datos</button>
+
+          <div class="modebar">
+            <button class="modebtn active" data-mode="repeticiones" type="button">Repeticiones</button>
+            <button class="modebtn" data-mode="stock" type="button">Stock disponible</button>
+          </div>
+
+          <div class="search search-main">
+            <input id="q" type="text" placeholder="Buscar por referencia..." />
+          </div>
+
+          <div class="filterwrap">
+            <select id="filterSize" aria-label="Filtrar por talla">
+              <option value="">Todas las tallas</option>
+            </select>
+            <select id="filterColor" aria-label="Filtrar por color">
+              <option value="">Todos los colores</option>
+            </select>
+            <button class="clearbtn" id="btnClearFilters" type="button">Limpiar</button>
+          </div>
+
+          <span class="pill" id="countPill">Cargando…</span>
+        </div>
+
+        <div class="sub" id="subTitle">Repeticiones y stock disponible de Ceremonia 26</div>
+        <div class="errorbox" id="errorBox"></div>
+      </section>
+
+      <section class="panel">
+        <div class="hd">
+          <h2 id="catalogTitle">Artículos repetibles</h2>
+          <div class="note" id="catalogNote">Se muestran los artículos repetibles de continuidad y también niño/accesorios.</div>
+        </div>
+        <div class="cards" id="cards"></div>
+      </section>
+
+      <section class="actionbar">
+        <div class="actionbar-top">
+          <div class="quicksum">
+            <span>Modelos: <b id="sumModelosMini">0</b></span>
+            <span>Unidades: <b id="sumUnidadesMini">0</b></span>
+            <span>Total: <b id="sumTotalMini">0,00 €</b></span>
+          </div>
+        </div>
+
+        <div class="actionbar-btns">
+          <button class="btn ghost" id="btnResumen" type="button">Resumen</button>
+          <button class="btn primary" id="btnPdf" type="button">Generar PDF</button>
+          <button class="btn primary" id="btnEmail" type="button">Enviar pedido</button>
+          <button class="btn danger" id="btnVaciar" type="button">Vaciar</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="screen" id="screenResumen">
+      <div class="resume-layout">
+        <section class="panel">
+          <div class="hd">
+            <h2>Resumen del pedido</h2>
+            <div class="note">Revisa todo antes de generar PDF o enviar el pedido.</div>
+          </div>
+
+          <div class="bd">
+            <div class="summary">
+              <div class="servicebox" id="serviceBox" style="display:none;">
+                <span id="serviceBoxText">📅 Fecha estimada de servicio<br><small>Según calendario de repeticiones</small></span>
+                <span id="serviceBoxDate">—</span>
+              </div>
+
+              <div class="ship" id="shipProgress" style="display:none;">
+                <span id="shipProgressText">—</span>
+                <small id="shipProgressNote">—</small>
+              </div>
+
+              <div class="ship" id="breakdownBox" style="display:none;">
+                <span>📊 Resumen rápido</span>
+                <small id="breakdownNote">Por tipos y familias</small>
+              </div>
+
+              <div class="fineprint" id="breakdownLines" style="display:none;"></div>
+
+              <div class="ship red" id="shipBox">
+                <span>🚚 Se cargarán gastos de envío</span>
+                <small id="shipNote">Pedido inferior a 250 € netos</small>
+              </div>
+
+              <div class="sumrow">
+                <div>
+                  <div class="k">Modelos pedidos</div>
+                  <div class="v" id="sumModelos">0</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="k">Unidades totales</div>
+                  <div class="v" id="sumUnidades">0</div>
+                </div>
+              </div>
+
+              <div class="sumrow">
+                <div class="k">TOTAL NETO (antes de impuestos)</div>
+                <div class="v" id="sumTotal">0,00 €</div>
+              </div>
+
+              <div class="fineprint" id="summaryFineprint">
+                * +10% automático por modelo si el total del modelo es <b>1–2 uds</b>. Con <b>3 o más</b> no aplica.<br>
+                * Envío: solo se indica si se cargará o no.
+              </div>
+            </div>
+
+            <div class="summary-actions">
+              <button class="btn ghost" id="btnBackToProductos" type="button">← Volver a selección</button>
+              <button class="btn primary" id="btnPdfResumen" type="button">Generar PDF</button>
+              <button class="btn primary" id="btnEnviarResumen" type="button">Confirmar y enviar</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="hd">
+            <h2>Artículos seleccionados</h2>
+            <div class="note" id="resumeCustomerLine">Aquí verás el detalle completo del pedido.</div>
+          </div>
+          <div class="bd">
+            <div class="resume-list" id="resumeList"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen" id="screenHistorial">
+      <section class="panel">
+        <div class="hd">
+          <h2>Pedidos realizados</h2>
+          <div class="note">Consulta el histórico de pedidos guardados en Supabase.</div>
+        </div>
+
+        <div class="bd">
+          <div class="form">
+            <div><label>CIF / NIF</label><input id="histCif" placeholder="CIF / NIF" /></div>
+            <div><label>Email</label><input id="histEmail" placeholder="Email" /></div>
+          </div>
+
+          <div class="btns">
+            <button class="btn primary" id="btnBuscarHistorial" type="button">Buscar</button>
+            <button class="btn ghost" id="btnBackFromHistorial" type="button">← Volver</button>
+          </div>
+
+          <div class="errorbox" id="errorBoxHistorial"></div>
+          <div id="historialList" style="margin-top:14px; display:grid; gap:12px;"></div>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="productmodal" id="productModalBox" role="dialog" aria-modal="true" aria-label="Producto a pantalla completa">
+      <div class="productmodal-media" id="modalMedia"></div>
+      <div class="productmodal-panel">
+        <div class="productmodal-scroll" id="modalContent"></div>
+        <div class="productmodal-footer">
+          <button class="productmodal-confirm" id="modalX" type="button">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="imageZoomModal" aria-hidden="true">
+    <div class="imagezoom-box" id="imageZoomBox" role="dialog" aria-modal="true" aria-label="Imagen ampliada del producto">
+      <button class="imagezoom-close" id="imageZoomClose" type="button">Cerrar</button>
+      <div class="imagezoom-stage" id="imageZoomStage"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const IMAGE_BASE = "./images/";
+    const EMAIL_TO = "info@abuelatata.com";
+    const EMAILJS_PUBLIC_KEY = "w9oca5obX66kstcBb";
+    const EMAILJS_SERVICE_ID = "service_vooz9gy";
+    const EMAILJS_TEMPLATE_ID = "template_5933w4y";
+    const SUPABASE_URL = "https://qoyrjhgjtydbcnqgfnyqn.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_w1UF4CwiWSCD5Ykd5yejfw_O--zV3OL";
+    const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_KEY)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+      : null;
+
+    const DATA_SOURCES = { repeticiones: "./data/tarifa.json" };
+
+    const MODE_INFO = {
+      repeticiones: {
+        title: "Ceremonia 26 · Repeticiones",
+        subtitle: "Artículos repetibles según familias de continuidad",
+        catalogTitle: "Artículos repetibles",
+        catalogNote: "Se muestran los artículos repetibles (familias de continuidad) y también niño/accesorios.",
+        formNote: "Se enviará a <b>info@abuelatata.com</b> con copia al email del cliente. El pedido queda guardado automáticamente en Supabase.",
+        serviceLabel: "Fecha estimada de servicio",
+        serviceBoxText: "📅 Fecha estimada de servicio<br><small>Según calendario de repeticiones</small>",
+        serviceFineprint: "* +10% automático por modelo si el total del modelo es <b>1–2 uds</b>. Con <b>3 o más</b> no aplica.<br>* Envío: solo se indica si se cargará o no."
+      },
+      stock: {
+        title: "Ceremonia 26 · Stock disponible",
+        subtitle: "Stock real conectado con Supabase",
+        catalogTitle: "Stock disponible Ceremonia 26",
+        catalogNote: "Aquí solo se puede pedir lo que exista en stock. Al confirmar el pedido, el stock se descuenta automáticamente en Supabase.",
+        formNote: "Se enviará a <b>info@abuelatata.com</b> con copia al email del cliente. Pedido sujeto a comprobación final de stock y guardado automático en Supabase.",
+        serviceLabel: "Servicio previsto",
+        serviceBoxText: "📦 Servicio previsto<br><small>Disponible inmediato sujeto a validación final</small>",
+        serviceFineprint: "* En stock disponible no se aplica el +10% de repetición.<br>* Las cantidades quedan limitadas al stock real cargado en Supabase."
+      }
+    };
+
+    const CALENDARIO_REPETICIONES = [
+      { cierre: "2026-04-10", servicio: "2026-04-30" },
+      { cierre: "2026-05-10", servicio: "2026-05-30" },
+      { cierre: "2026-06-10", servicio: "2026-06-30" },
+      { cierre: "2026-07-10", servicio: "2026-07-30" }
+    ];
+
+    const SHIPPING_FREE_THRESHOLD = 250;
+    const DRAFT_KEY_PREFIX = "AT_CEREMONIA26_PEDIDOS_MULTI_";
+    const CUSTOMER_PROFILE_KEY = "AT_CEREMONIA26_CLIENTE";
+    const CUSTOMER_PROFILE_FIELDS = ["empresa","nombre","cif","cp","poblacion","provincia","tel","email","rep"];
+
+    const CONTINUIDAD_OK = new Set(["401","402","403","405","406","408","413"]);
+    const NO_REPETIBLES = new Set(["404","407","409","410","411","412","414"]);
+    const COLOR_MAP = {"00":"Blanco","01":"Rosa","04":"Celeste","05":"Beige","06":"Arena","09":"Verde agua","17":"Azul","24":"Verde menta","25":"Maquillaje","31":"Vino","32":"Verde oliva","34":"Verde fuerte"};
+    const TIPO_MAP = {"03":"Braguita niño","04":"Pantalón niño","08":"Diadema","11":"Pelele","12":"Jesusito con capota","13":"Jesusito sin capota","15":"Vestido evasé","22":"Abrigo","25":"Vestido","43":"Blusa","44":"Camisa","63":"Almirante","64":"Marinero"};
+    const FILTER_SIZES_MASTER = ["3M","6M","9M","12M","18M","2A","3A","4A","5A","6A","7A","8A","9A","10A","11A","12A","13A","14A","15A","16A","ÚNICA"];
+    const SIZES_3M_4A = ["3M","6M","9M","12M","18M","2A","3A","4A"];
+    const SIZES_12M_16A = ["12M","18M","2A","3A","4A","5A","6A","7A","8A","9A","10A","11A","12A","13A","14A","15A","16A"];
+    const SIZES_NINO = ["12M","18M","2A","3A","4A","5A","6A","8A","10A","12A"];
+    const SIZES_UNICA = ["ÚNICA"];
+
+    let currentMode = "repeticiones";
+    let currentScreen = "datos";
+    let ALL = [], VIEW = [];
+    const ORDER = new Map();
+    let lastSavedSignature = null;
+    let activeModalRef = null;
+    let activeModalImageUrl = "";
+    let zoomedImageUrl = "";
+
+    const $ = (id)=>document.getElementById(id);
+
+    function markOrderDirty(){
+      lastSavedSignature = null;
+    }
+
+    function toast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._tm);
+      toast._tm = setTimeout(()=>t.classList.remove("show"),2600);
+    }
+
+    function showError(msg, targetId="errorBox"){
+      const b = $(targetId);
+      if(!b) return;
+      b.style.display = "block";
+      b.textContent = msg;
+    }
+
+    function hideError(targetId="errorBox"){
+      const b = $(targetId);
+      if(!b) return;
+      b.style.display = "none";
+      b.textContent = "";
+    }
+
+    function hideAllErrors(){
+      hideError("errorBox");
+      hideError("errorBoxDatos");
+      hideError("errorBoxHistorial");
+    }
+
+    function setBtnBusy(btn,busy,labelBusy){
+      if(!btn) return;
+      if(busy){
+        btn.dataset.originalText = btn.textContent;
+        btn.disabled = true;
+        btn.style.opacity = ".72";
+        btn.textContent = labelBusy;
+      } else {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.textContent = btn.dataset.originalText || btn.textContent;
+      }
+    }
+
+    function eur(n){
+      const v = Number(n||0);
+      return v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
+    }
+
+    function toNumberPrice(p){
+      if(typeof p==="number") return p;
+      const s = String(p ?? "").trim().replace(/\./g,"").replace(",",".");
+      const v = Number(s);
+      return isNaN(v) ? 0 : v;
+    }
+
+    function cleanQuery(q){
+      return String(q||"").trim().toUpperCase().replace(/\s+/g,"").replace(/-/g,"");
+    }
+
+    function normalizeSizeKey(v){
+      return String(v||"")
+        .trim()
+        .toUpperCase()
+        .replace("MESES","M")
+        .replace("MES","M")
+        .replace("MONTHS","M")
+        .replace("MONTH","M")
+        .replace("AÑOS","A")
+        .replace("AÑO","A")
+        .replace("YEARS","A")
+        .replace("YEAR","A")
+        .replace(/\s+/g,"")
+        .replace(/^UNICA$/,"ÚNICA")
+        .replace(/Y$/,"A");
+    }
+
+    function buildSizeAliases(talla){
+      const n = normalizeSizeKey(talla);
+      const set = new Set([n]);
+
+      if(/^\d+A$/.test(n)) set.add(n.replace(/A$/,"Y"));
+      if(/^\d+M$/.test(n)){
+        const num = n.replace("M","");
+        set.add(`${num} MES`);
+        set.add(`${num} MESES`);
+      }
+      if(n==="ÚNICA"){
+        set.add("UNICA");
+        set.add("ÚNICA");
+      }
+      return [...set];
+    }
+
+    function isoToday(){
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function isoToEs(iso){
+      if(!iso) return "";
+      if(["Consultar disponibilidad","Disponible inmediato"].includes(iso)) return iso;
+      const [y,m,d] = String(iso).split("-");
+      if(!y || !m || !d) return iso;
+      return `${d}/${m}/${y}`;
+    }
+
+    function normalizeDateForDb(value){
+      if(!value) return null;
+      if(["Consultar disponibilidad","Disponible inmediato"].includes(value)) return value;
+      const v = String(value).trim();
+      if(/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+      if(/^\d{2}\/\d{2}\/\d{4}$/.test(v)){
+        const [d,m,y] = v.split("/");
+        return `${y}-${m}-${d}`;
+      }
+      return v;
+    }
+
+    function getServiceForDate(isoDate){
+      let servicio = "Disponible inmediato";
+      if(currentMode==="repeticiones"){
+        servicio = null;
+        const pedido = new Date(isoDate+"T00:00:00");
+        for(const tramo of CALENDARIO_REPETICIONES){
+          const cierre = new Date(tramo.cierre+"T23:59:59");
+          if(pedido<=cierre){
+            servicio = tramo.servicio;
+            break;
+          }
+        }
+        if(!servicio) servicio = "Consultar disponibilidad";
+      }
+      return servicio;
+    }
+
+    function enforcePedidoHoy(){
+      const hoy = isoToday();
+      const el = $("fechaPedido");
+      el.value = hoy;
+      el.readOnly = true;
+      el.setAttribute("readonly","readonly");
+      el.setAttribute("min",hoy);
+      el.setAttribute("max",hoy);
+      const lock = ()=>{ if(el.value!==hoy) el.value=hoy; };
+      el.addEventListener("input",lock);
+      el.addEventListener("change",lock);
+      el.addEventListener("keydown",e=>e.preventDefault());
+      el.addEventListener("paste",e=>e.preventDefault());
+      el.addEventListener("drop",e=>e.preventDefault());
+      el.addEventListener("mousedown",e=>e.preventDefault());
+      el.addEventListener("touchstart",e=>e.preventDefault(),{passive:false});
+      return hoy;
+    }
+
+    function calcularFechaServicio(){
+      const fp = enforcePedidoHoy();
+      const servicio = getServiceForDate(fp);
+      $("fechaServicio").value = servicio;
+      const box = $("serviceBox"), boxDate = $("serviceBoxDate");
+      if(box && boxDate){
+        box.style.display = "flex";
+        boxDate.textContent = isoToEs(servicio);
+      }
+      return servicio;
+    }
+
+    function parseRef(refRaw){
+      const ref = String(refRaw||"").trim();
+      const tipo = ref.slice(0,2);
+      const familia = ref.slice(-3);
+      let colorCode = "";
+      let is8 = false;
+
+      if(ref.length===8 && ref[2]==="0"){
+        is8 = true;
+        colorCode = ref.slice(3,5);
+      } else {
+        colorCode = ref.slice(2,4);
+      }
+
+      return {
+        ref,tipo,familia,colorCode,
+        colorName: COLOR_MAP[colorCode] || colorCode,
+        tipoName: TIPO_MAP[tipo] || tipo,
+        isVariant: is8
+      };
+    }
+
+    function inferSizesByRef(ref){
+      const tipo = String(ref||"").slice(0,2);
+      if(tipo==="08") return SIZES_UNICA;
+      if(["11","12","13","03"].includes(tipo)) return SIZES_3M_4A;
+      if(["63","64","04","44"].includes(tipo)) return SIZES_NINO;
+      if(["15","22","25","43"].includes(tipo)) return SIZES_12M_16A;
+      return SIZES_12M_16A;
+    }
+
+    function isRepeatable(item){
+      const {familia} = parseRef(item.referencia);
+      const famNum = Number(familia);
+      const inColeccion = famNum>=401 && famNum<=414;
+
+      if(inColeccion){
+        if(NO_REPETIBLES.has(familia)) return false;
+        return CONTINUIDAD_OK.has(familia);
+      }
+      return true;
+    }
+
+    function buildImageCandidates(ref){
+      return [
+        IMAGE_BASE+ref+".jpg",
+        IMAGE_BASE+ref+".jpeg",
+        IMAGE_BASE+ref+".png",
+        IMAGE_BASE+ref+".webp",
+        IMAGE_BASE+ref+".JPG",
+        IMAGE_BASE+ref+".JPEG",
+        IMAGE_BASE+ref+".PNG",
+        IMAGE_BASE+ref+".WEBP"
+      ];
+    }
+
+    function createSmartImg(ref){
+      const candidates = buildImageCandidates(ref);
+      const img = document.createElement("img");
+      img.alt = ref;
+      let idx = 0;
+
+      const resolve = ()=>new Promise(resolveDone=>{
+        function tryNext(){
+          if(idx>=candidates.length){
+            resolveDone(null);
+            return;
+          }
+          const url = candidates[idx++];
+          img.src = url;
+          img.onload = ()=>resolveDone(url);
+          img.onerror = ()=>tryNext();
+        }
+        tryNext();
+      });
+
+      return { imgEl:img, resolveUrl:resolve };
+    }
+
+    function draftKey(){
+      return DRAFT_KEY_PREFIX+currentMode;
+    }
+
+    function serializeOrder(){
+      const out = {};
+      for(const [ref,o] of ORDER){
+        out[ref] = { sizes:o.sizes||{}, obs:o.obs||"" };
+      }
+      return out;
+    }
+
+    function applySerializedOrder(obj){
+      if(!obj || typeof obj!=="object") return;
+      for(const ref of Object.keys(obj)){
+        const it = ALL.find(x=>x.referencia===ref) || VIEW.find(x=>x.referencia===ref);
+        if(!it) continue;
+        const sizes = obj[ref]?.sizes || {};
+        const o = ensureOrder(ref,it,null);
+        o.sizes = {};
+        o.obs = String(obj[ref]?.obs || "").trim();
+        for(const [t,q] of Object.entries(sizes)){
+          const nv = Math.max(0,Math.floor(Number(q||0)));
+          if(nv>0) o.sizes[t] = nv;
+        }
+        if(Object.keys(o.sizes).length===0 && !(o.obs||"").trim()) ORDER.delete(ref);
+      }
+      markOrderDirty();
+    }
+
+    function getCustomerProfile(){
+      const data = {};
+      CUSTOMER_PROFILE_FIELDS.forEach(id=>{
+        data[id] = ($(id)?.value || "").trim();
+      });
+      return data;
+    }
+
+    function saveCustomerProfile(){
+      try{
+        localStorage.setItem(CUSTOMER_PROFILE_KEY, JSON.stringify({
+          v:1,
+          savedAt:new Date().toISOString(),
+          data:getCustomerProfile()
+        }));
+      }catch(e){
+        console.error("No se pudo guardar el perfil del cliente", e);
+      }
+    }
+
+    function loadCustomerProfile(){
+      try{
+        const raw = localStorage.getItem(CUSTOMER_PROFILE_KEY);
+        if(!raw) return false;
+        const payload = JSON.parse(raw);
+        const data = payload?.data || {};
+        CUSTOMER_PROFILE_FIELDS.forEach(id=>{
+          if($(id)) $(id).value = data[id] || "";
+        });
+        return true;
+      }catch(e){
+        console.error("No se pudo cargar el perfil del cliente", e);
+        return false;
+      }
+    }
+
+    function clearCustomerProfile(){
+      try{
+        localStorage.removeItem(CUSTOMER_PROFILE_KEY);
+      }catch(e){
+        console.error("No se pudo borrar el perfil del cliente", e);
+      }
+    }
+
+    function saveDraft(){
+      try{
+        localStorage.setItem(draftKey(), JSON.stringify({
+          v:1,
+          savedAt:new Date().toISOString(),
+          form:getForm(),
+          order:serializeOrder(),
+          mode:currentMode
+        }));
+      }catch(e){}
+    }
+
+    let _saveTm = null;
+    function saveDraftDebounced(){
+      clearTimeout(_saveTm);
+      _saveTm = setTimeout(saveDraft,250);
+    }
+
+    function loadDraft(){
+      try{
+        const raw = localStorage.getItem(draftKey());
+        if(!raw) return false;
+        const payload = JSON.parse(raw);
+        const f = payload?.form || {};
+
+        ["empresa","nombre","cif","cp","poblacion","provincia","tel","email","rep","obs"].forEach(id=>{
+          if(!$(id)) return;
+          const incoming = f[id] || "";
+          if(id==="obs"){
+            $(id).value = incoming;
+            return;
+          }
+          if(incoming){
+            $(id).value = incoming;
+          }
+        });
+
+        applySerializedOrder(payload?.order || {});
+        return true;
+      }catch(e){
+        return false;
+      }
+    }
+
+    function clearDraft(){
+      try{ localStorage.removeItem(draftKey()); }catch(e){}
+    }
+
+    function clearOrderButKeepCustomer(){
+      ORDER.clear();
+      clearDraft();
+      markOrderDirty();
+      if($("obs")) $("obs").value = "";
+      calcularFechaServicio();
+      closeModal(true);
+      closeImageZoom();
+      render();
+      updateSummary();
+      renderSummaryScreen();
+    }
+
+    const pick = (obj,aliases)=>{
+      if(!obj || typeof obj!=="object") return undefined;
+      const keys = Object.keys(obj);
+      const norm = s=>String(s).trim().toLowerCase();
+
+      for(const a of aliases){
+        const hit = keys.find(k=>norm(k)===norm(a));
+        if(hit!=null) return obj[hit];
+      }
+      for(const a of aliases){
+        const hit = keys.find(k=>norm(k).includes(norm(a)));
+        if(hit!=null) return obj[hit];
+      }
+      return undefined;
+    };
+
+    function readStockMap(x){
+      const raw = pick(x,["stock","disponible","existencias","cantidades","qty","quantities"]);
+      const out = {};
+      if(raw && typeof raw==="object" && !Array.isArray(raw)){
+        for(const [k,v] of Object.entries(raw)){
+          out[normalizeSizeKey(k)] = Math.max(0,Math.floor(Number(v||0)));
+        }
+        return out;
+      }
+      return null;
+    }
+
+    function normalizeSeason(v){
+      const s = String(v||"").trim().toUpperCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+      if(s.includes("VERANO")) return "VERANO";
+      if(s.includes("INVIERNO")) return "INVIERNO";
+      if(s.includes("COMUNION")) return "COMUNION";
+      if(s.includes("CEREMONIA")) return "CEREMONIA";
+      return "SIN DEFINIR";
+    }
+
+    async function loadStockFromSupabase(){
+      if(!supabaseClient) throw new Error("Supabase no está disponible en este navegador.");
+
+      const {data,error} = await supabaseClient
+        .from("stock_ceremonia26")
+        .select("id, referencia, descripcion, precio, talla, stock")
+        .order("referencia",{ascending:true});
+
+      if(error) throw error;
+
+      const grouped = new Map();
+
+      for(const row of (data||[])){
+        const referencia = String(row.referencia||"").trim();
+        if(!referencia) continue;
+
+        const talla = normalizeSizeKey(row.talla);
+        const stock = Math.max(0,Math.floor(Number(row.stock||0)));
+
+        if(!grouped.has(referencia)){
+          grouped.set(referencia,{
+            referencia,
+            descripcion:String(row.descripcion||"").trim(),
+            precio:toNumberPrice(row.precio),
+            tallas:[],
+            stockMap:{},
+            temporada:"CEREMONIA"
+          });
+        }
+
+        const item = grouped.get(referencia);
+        item.descripcion = item.descripcion || String(row.descripcion||"").trim();
+        item.precio = item.precio || toNumberPrice(row.precio);
+        item.stockMap[talla] = stock;
+      }
+
+      return [...grouped.values()]
+        .filter(it=>Object.values(it.stockMap).some(v=>Number(v||0)>0))
+        .sort((a,b)=>a.referencia.localeCompare(b.referencia,"es"));
+    }
+
+    async function loadRepeatData(){
+      const res = await fetch(DATA_SOURCES.repeticiones,{cache:"no-store"});
+      if(!res.ok) throw new Error("HTTP "+res.status);
+
+      const json = await res.json();
+      const items = Array.isArray(json) ? json : (json.items || json.articulos || json.data || []);
+
+      let normItems = items.map(x=>({
+        referencia:String(pick(x,["referencia","ref","reference","codigo","código","sku","id"]) ?? "").trim(),
+        descripcion:String(pick(x,["descripcion","descripción","desc","description","nombre","name"]) ?? "").trim(),
+        precio:toNumberPrice(pick(x,["precio","pvp","price","importe","neto","precio_neto","precio neto","precio (€)"])),
+        tallas:pick(x,["tallas","talla","sizes","size"]),
+        stockMap:readStockMap(x),
+        temporada:normalizeSeason(pick(x,["temporada","season","campaña","campana","coleccion","colección"]))
+      })).filter(x=>x.referencia);
+
+      normItems = normItems.filter(isRepeatable);
+      return normItems.sort((a,b)=>a.referencia.localeCompare(b.referencia,"es"));
+    }
+
+    async function loadData(){
+      hideError();
+      $("countPill").textContent = "Cargando…";
+      ORDER.clear();
+      ALL = [];
+      VIEW = [];
+      $("cards").innerHTML = "";
+      $("resumeList").innerHTML = "";
+      closeModal(true);
+      closeImageZoom();
+
+      try{
+        ALL = currentMode==="stock" ? await loadStockFromSupabase() : await loadRepeatData();
+        VIEW = [...ALL];
+        $("countPill").textContent = `${VIEW.length} artículos`;
+        const hadDraft = loadDraft();
+        render();
+        updateSummary();
+        renderSummaryScreen();
+        if(hadDraft){
+          render();
+          updateSummary();
+          renderSummaryScreen();
+          toast("Borrador recuperado.");
+        }
+      }catch(e){
+        console.error(e);
+        showError(
+          currentMode==="stock"
+            ? `⚠️ No se han podido cargar los datos de Supabase. Revisa la conexión o el fichero. ${e.message||""}`
+            : `⚠️ No se ha podido cargar tarifa.json. Súbelo a GitHub dentro de /data y revisa que sea JSON válido.`,
+          "errorBox"
+        );
+        $("countPill").textContent = "Error";
+      }
+    }
+
+    function getSizes(item){
+      if(item.stockMap && Object.keys(item.stockMap).length){
+        const preferred = inferSizesByRef(item.referencia).map(normalizeSizeKey);
+        const actual = Object.keys(item.stockMap).map(normalizeSizeKey);
+        const ordered = preferred.filter(s=>actual.includes(s));
+        const extras = actual.filter(s=>!ordered.includes(s)).sort();
+        return [...ordered,...extras];
+      }
+      if(Array.isArray(item.tallas) && item.tallas.length) return item.tallas.map(normalizeSizeKey);
+      if(typeof item.tallas==="string" && item.tallas.trim()) return item.tallas.split(/[;,|]/).map(normalizeSizeKey).filter(Boolean);
+      return inferSizesByRef(item.referencia);
+    }
+
+    function ensureOrder(ref,item,imgUrl){
+      if(!ORDER.has(ref)){
+        ORDER.set(ref,{
+          ref,
+          desc:item.descripcion || parseRef(ref).tipoName,
+          precio:toNumberPrice(item.precio),
+          sizes:{},
+          obs:"",
+          imgUrl:imgUrl || null,
+          temporada:item.temporada || ""
+        });
+      } else if(!ORDER.get(ref).imgUrl && imgUrl){
+        ORDER.get(ref).imgUrl = imgUrl;
+      }
+      return ORDER.get(ref);
+    }
+
+    function getQty(ref,talla){
+      const o = ORDER.get(ref);
+      return o ? Number(o.sizes[talla] || 0) : 0;
+    }
+
+    function modelUnits(ref){
+      const o = ORDER.get(ref);
+      return o ? Object.values(o.sizes).reduce((a,b)=>a+Number(b||0),0) : 0;
+    }
+
+    function modelUnitPrice(ref){
+      const o = ORDER.get(ref);
+      if(!o) return 0;
+      const units = modelUnits(ref);
+      const inc = (currentMode==="repeticiones" && (units===1 || units===2)) ? 1.10 : 1.00;
+      return (o.precio||0) * inc;
+    }
+
+    function modelSubtotal(ref){
+      return modelUnits(ref) * modelUnitPrice(ref);
+    }
+
+    function getStockFor(item,talla){
+      if(!item.stockMap) return null;
+      const v = item.stockMap[normalizeSizeKey(talla)];
+      return v==null ? 0 : Math.max(0,Number(v||0));
+    }
+
+    function setQty(item,talla,qty,imgUrl){
+      const ref = item.referencia;
+      const o = ensureOrder(ref,item,imgUrl);
+      let nv = Math.max(0,Math.floor(Number(qty||0)));
+
+      if(currentMode!=="repeticiones"){
+        const stock = getStockFor(item,talla);
+        if(stock!=null) nv = Math.min(nv,stock);
+      }
+
+      if(nv<=0) delete o.sizes[talla];
+      else o.sizes[talla] = nv;
+
+      if(Object.keys(o.sizes).length===0 && !(o.obs||"").trim()) ORDER.delete(ref);
+
+      markOrderDirty();
+      updateModelTotals(ref);
+      updateSummary();
+      renderSummaryScreen();
+      saveDraftDebounced();
+    }
+
+    function updateModelTotals(ref){
+      const u = modelUnits(ref), sub = modelSubtotal(ref);
+      const warnShow = currentMode==="repeticiones" && (u===1 || u===2);
+
+      const uEl=document.getElementById("u_"+ref),
+            mEl=document.getElementById("m_"+ref),
+            wEl=document.getElementById("w_"+ref),
+            muEl=document.getElementById("modal_u_"+ref),
+            mmEl=document.getElementById("modal_m_"+ref),
+            mwEl=document.getElementById("modal_w_"+ref);
+
+      if(uEl) uEl.textContent = String(u);
+      if(mEl) mEl.textContent = eur(sub);
+      if(wEl) wEl.classList.toggle("show", warnShow);
+
+      if(muEl) muEl.textContent = String(u);
+      if(mmEl) mmEl.textContent = eur(sub);
+      if(mwEl) mwEl.classList.toggle("show", warnShow);
+    }
+
+    function updateCatalogOrderBadge(ref){
+      const el = document.getElementById("cat_qty_"+ref);
+      if(el) el.textContent = String(modelUnits(ref));
+    }
+
+    function updateModelUI(ref){
+      updateModelTotals(ref);
+      updateCatalogOrderBadge(ref);
+    }
+
+    function updateAllCatalogBadges(){
+      for(const item of VIEW){
+        updateCatalogOrderBadge(item.referencia);
+      }
+    }
+
+    function updateSummary(){
+      let modelos = 0, unidades = 0, total = 0;
+      const byType = {}, byFam = {};
+
+      for(const [ref] of ORDER){
+        const u = modelUnits(ref);
+        if(u>0){
+          modelos++;
+          unidades += u;
+          total += modelSubtotal(ref);
+          const p = parseRef(ref);
+          byType[p.tipo] = (byType[p.tipo]||0)+u;
+          byFam[p.familia] = (byFam[p.familia]||0)+u;
+        }
+      }
+
+      if($("sumModelos")) $("sumModelos").textContent = String(modelos);
+      if($("sumUnidades")) $("sumUnidades").textContent = String(unidades);
+      if($("sumTotal")) $("sumTotal").textContent = eur(total);
+      if($("sumModelosMini")) $("sumModelosMini").textContent = String(modelos);
+      if($("sumUnidadesMini")) $("sumUnidadesMini").textContent = String(unidades);
+      if($("sumTotalMini")) $("sumTotalMini").textContent = eur(total);
+
+      const prog = $("shipProgress"), progText = $("shipProgressText"), progNote = $("shipProgressNote");
+      if(prog && progText && progNote){
+        prog.style.display = "flex";
+        const diff = SHIPPING_FREE_THRESHOLD-total;
+
+        if(diff>0){
+          prog.classList.remove("green");
+          prog.classList.add("red");
+          progText.textContent = `🧺 Te faltan ${eur(diff)} para no pagar envío`;
+          progNote.textContent = `Umbral envío: ${eur(SHIPPING_FREE_THRESHOLD)} netos`;
+        } else {
+          prog.classList.remove("red");
+          prog.classList.add("green");
+          progText.textContent = `✅ Envío sin cargo (superado el umbral)`;
+          progNote.textContent = `Umbral envío: ${eur(SHIPPING_FREE_THRESHOLD)} netos`;
+        }
+      }
+
+      const bBox = $("breakdownBox"), bLines = $("breakdownLines");
+      const any = Object.keys(byType).length || Object.keys(byFam).length;
+
+      if(bBox && bLines){
+        if(any){
+          bBox.style.display = "flex";
+          bLines.style.display = "block";
+          const typeLines = Object.keys(byType).sort().map(k=>`• ${TIPO_MAP[k]||k}: ${byType[k]} uds`).join("<br>");
+          const famLines = Object.keys(byFam).sort().slice(0,8).map(k=>`• Familia ${k}: ${byFam[k]} uds`).join("<br>");
+          bLines.innerHTML = `<b>Tipos</b><br>${typeLines||"—"}<br><br><b>Familias</b><br>${famLines||"—"}${Object.keys(byFam).length>8?"<br>…":""}`;
+        } else {
+          bBox.style.display = "none";
+          bLines.style.display = "none";
+          bLines.innerHTML = "";
+        }
+      }
+
+      const shipBox = $("shipBox"), shipNote = $("shipNote");
+      if(shipBox && shipNote){
+        if(total>=SHIPPING_FREE_THRESHOLD){
+          shipBox.classList.remove("red");
+          shipBox.classList.add("green");
+          shipBox.firstElementChild.textContent = "🚚 No se cargarán gastos de envío";
+          shipNote.textContent = `Pedido igual o superior a ${eur(SHIPPING_FREE_THRESHOLD)} netos`;
+        } else {
+          shipBox.classList.remove("green");
+          shipBox.classList.add("red");
+          shipBox.firstElementChild.textContent = "🚚 Se cargarán gastos de envío";
+          shipNote.textContent = `Pedido inferior a ${eur(SHIPPING_FREE_THRESHOLD)} netos`;
+        }
+      }
+    }
+
+    function renderSummaryScreen(){
+      const box = $("resumeList");
+      if(!box) return;
+
+      const lines = buildOrderLines();
+      const d = getForm();
+
+      $("resumeCustomerLine").innerHTML = `
+        <b>${d.empresa || "Sin tienda"}</b> · ${d.nombre || "Sin nombre"}<br>
+        ${d.email || "Sin email"}${d.tel ? " · " + d.tel : ""}<br>
+        Servicio: <b>${isoToEs(d.fechaServicio || calcularFechaServicio())}</b>
+      `;
+
+      if(!lines.length){
+        box.innerHTML = `<div class="empty-state">Aún no hay artículos en el pedido.</div>`;
+        return;
+      }
+
+      box.innerHTML = lines.map(ln=>{
+        const foto = ln.imgUrl
+          ? `<img src="${ln.imgUrl}" alt="${ln.ref}">`
+          : `<div class="nofoto">Sin foto</div>`;
+
+        return `
+          <article class="resume-card">
+            <div class="resume-thumb">${foto}</div>
+            <div class="resume-info">
+              <div class="resume-ref">${ln.ref}</div>
+              <div class="resume-desc">${escapeHtml(ln.desc || "")}</div>
+              <div class="resume-meta">
+                <div><b>Tallas:</b> ${escapeHtml(ln.tallas || "—")}</div>
+                <div><b>Unidades:</b> ${ln.units}</div>
+                <div><b>Precio unidad:</b> ${eur(ln.precio)}${ln.inc ? " (+10%)" : ""}</div>
+                <div class="resume-total"><b>Importe modelo:</b> ${eur(ln.subtotal)}</div>
+                ${ln.obs ? `<div class="resume-obs"><b>Observaciones:</b> ${escapeHtml(ln.obs)}</div>` : ""}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(str){
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+        function buildSizeRow(item, talla, imageUrl){
+      const s = document.createElement("div");
+      s.className = "size";
+
+      const sizeLeft = document.createElement("div");
+      sizeLeft.className = "size-left";
+
+      const b = document.createElement("b");
+      b.textContent = talla;
+      sizeLeft.appendChild(b);
+
+      const stock = getStockFor(item,talla);
+      if(stock!=null){
+        const stok = document.createElement("span");
+        stok.className = "stok";
+        stok.textContent = `Stock: ${stock}`;
+        sizeLeft.appendChild(stok);
+      }
+
+      const step = document.createElement("div");
+      step.className = "step";
+
+      const minus = document.createElement("button");
+      minus.type = "button";
+      minus.textContent = "−";
+
+      const inp = document.createElement("input");
+      inp.type = "number";
+      inp.min = "0";
+      inp.step = "1";
+      inp.inputMode = "numeric";
+      inp.value = String(getQty(item.referencia,talla));
+
+      const plus = document.createElement("button");
+      plus.type = "button";
+      plus.textContent = "+";
+
+      if(stock!=null){
+        inp.max = String(stock);
+        if(stock<=0){
+          s.classList.add("out");
+          plus.disabled = true;
+          inp.disabled = true;
+          minus.disabled = true;
+        }
+      }
+
+      const commitVal = (v)=>{
+        let nv = Math.max(0,Math.floor(Number(v||0)));
+        if(stock!=null) nv = Math.min(nv,stock);
+        inp.value = String(nv);
+        setQty(item,talla,nv,imageUrl||null);
+        updateModelUI(item.referencia);
+      };
+
+      minus.addEventListener("click", ()=>commitVal(Number(inp.value)-1));
+      plus.addEventListener("click", ()=>commitVal(Number(inp.value)+1));
+      inp.addEventListener("change", ()=>commitVal(inp.value));
+
+      step.appendChild(minus);
+      step.appendChild(inp);
+      step.appendChild(plus);
+
+      s.appendChild(sizeLeft);
+      s.appendChild(step);
+
+      return s;
+    }
+
+    function openImageZoom(url){
+      if(!url) return;
+      zoomedImageUrl = url;
+      const modal = $("imageZoomModal");
+      const stage = $("imageZoomStage");
+      stage.innerHTML = `<img src="${url}" alt="Imagen ampliada del producto">`;
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden","false");
+      document.body.classList.add("modal-open");
+    }
+
+    function closeImageZoom(){
+      const modal = $("imageZoomModal");
+      const stage = $("imageZoomStage");
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden","true");
+      stage.innerHTML = "";
+      zoomedImageUrl = "";
+      if(!$("modal").classList.contains("show")){
+        document.body.classList.remove("modal-open");
+      }
+    }
+
+    function renderProductModal(ref, imageUrl){
+      const item = ALL.find(x=>x.referencia===ref) || VIEW.find(x=>x.referencia===ref);
+      if(!item) return;
+
+      activeModalRef = ref;
+      activeModalImageUrl = imageUrl || "";
+
+      const p = parseRef(item.referencia);
+      const modal = $("modal");
+      const media = $("modalMedia");
+      const content = $("modalContent");
+
+      media.innerHTML = "";
+      content.innerHTML = "";
+      media.classList.remove("has-zoom");
+
+      if(imageUrl){
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = item.referencia;
+        media.appendChild(img);
+        media.classList.add("has-zoom");
+        media.onclick = ()=>openImageZoom(imageUrl);
+      } else {
+        const nofoto = document.createElement("div");
+        nofoto.className = "productmodal-nofoto";
+        nofoto.textContent = "Sin foto disponible";
+        media.appendChild(nofoto);
+        media.onclick = null;
+      }
+
+      const titleWrap = document.createElement("div");
+      titleWrap.className = "productmodal-head";
+      titleWrap.innerHTML = `
+        <div class="productmodal-title">
+          <div class="productmodal-ref">${escapeHtml(item.referencia)}</div>
+          <div class="productmodal-price">${eur(item.precio)}</div>
+        </div>
+        <div class="productmodal-desc">${escapeHtml(item.descripcion || p.tipoName)}</div>
+      `;
+      content.appendChild(titleWrap);
+
+      const chips = document.createElement("div");
+      chips.className = "productmodal-chips";
+      let stockChip = "";
+      if(currentMode!=="repeticiones"){
+        const totalStock = Object.values(item.stockMap||{}).reduce((a,b)=>a+Number(b||0),0);
+        stockChip = `<span class="chip ${totalStock>0?"stockok":"stockno"}">${totalStock>0 ? "Stock total: "+totalStock : "Agotado"}</span>`;
+      }
+      chips.innerHTML = `
+        <span class="chip">Familia ${escapeHtml(p.familia)}</span>
+        <span class="chip">${escapeHtml(p.tipoName)}</span>
+        <span class="chip">Color: ${escapeHtml(p.colorName)}</span>
+        ${stockChip}
+      `;
+      content.appendChild(chips);
+
+      const modeBadge = document.createElement("div");
+      modeBadge.className = `modebadge ${currentMode==="stock" ? "stock" : "rep"}`;
+      modeBadge.textContent = currentMode==="stock" ? "⚡ ENTREGA INMEDIATA" : "🧵 PRODUCCIÓN";
+      content.appendChild(modeBadge);
+
+      const chooseBox = document.createElement("div");
+      chooseBox.className = "choosebox";
+      chooseBox.innerHTML = `
+        <div class="choosebox-title">
+          <span>Elegir talla</span>
+          <span>Unidades seleccionadas: <b id="modal_u_${item.referencia}">0</b></span>
+        </div>
+        <div class="choosebox-sub">Selecciona aquí las tallas del modelo. Puedes tocar la foto para verla a pantalla completa.</div>
+      `;
+      content.appendChild(chooseBox);
+
+      const sizes = document.createElement("div");
+      sizes.className = "sizes";
+      const sizeList = getSizes(item);
+      for(const talla of sizeList){
+        sizes.appendChild(buildSizeRow(item, talla, imageUrl));
+      }
+      content.appendChild(sizes);
+
+      const obsWrap = document.createElement("div");
+      obsWrap.className = "observaciones-modelo";
+
+      const obsLabel = document.createElement("label");
+      obsLabel.textContent = "Observaciones sobre este modelo";
+
+      const obsInput = document.createElement("textarea");
+      obsInput.className = "obs-modelo";
+      obsInput.placeholder = "Escribe aquí cualquier comentario o duda sobre este modelo (opcional)";
+      obsInput.value = (ORDER.get(item.referencia)?.obs) || "";
+      obsInput.addEventListener("input", ()=>{
+        const o = ensureOrder(item.referencia,item,imageUrl||null);
+        o.obs = obsInput.value.trim();
+        if(!modelUnits(item.referencia) && !o.obs){
+          ORDER.delete(item.referencia);
+        }
+        markOrderDirty();
+        updateModelUI(item.referencia);
+        updateSummary();
+        renderSummaryScreen();
+        saveDraftDebounced();
+      });
+
+      obsWrap.appendChild(obsLabel);
+      obsWrap.appendChild(obsInput);
+      content.appendChild(obsWrap);
+
+      const modeltotal = document.createElement("div");
+      modeltotal.className = "modeltotal";
+
+      const leftWrap = document.createElement("div");
+      leftWrap.style.display = "grid";
+      leftWrap.style.gap = "4px";
+      leftWrap.style.minWidth = "0";
+      leftWrap.innerHTML = `
+        <div><span class="k">Resumen del modelo</span></div>
+        <div class="warn" id="modal_w_${item.referencia}">⚠️ 1–2 uds: +10% aplicado</div>
+      `;
+
+      const amt = document.createElement("div");
+      amt.className = "amt";
+      amt.innerHTML = `<span class="k">Importe modelo:</span> <b id="modal_m_${item.referencia}">${eur(0)}</b>`;
+
+      modeltotal.appendChild(leftWrap);
+      modeltotal.appendChild(amt);
+      content.appendChild(modeltotal);
+
+      updateModelTotals(item.referencia);
+
+      modal.classList.add("show");
+      document.body.classList.add("modal-open");
+      requestAnimationFrame(()=>content.scrollTop=0);
+    }
+
+    function render(){
+      const cards = $("cards");
+      cards.innerHTML = "";
+
+      for(const item of VIEW){
+        const p = parseRef(item.referencia);
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const thumb = document.createElement("div");
+        thumb.className = "thumb";
+
+        const tag = document.createElement("div");
+        tag.className = "tag";
+        tag.textContent = p.familia;
+        thumb.appendChild(tag);
+
+        const cta = document.createElement("div");
+        cta.className = "thumbcta";
+        cta.textContent = "Ver";
+        thumb.appendChild(cta);
+
+        const smart = createSmartImg(item.referencia);
+        const img = smart.imgEl;
+        const nofoto = document.createElement("div");
+        nofoto.className = "nofoto";
+        nofoto.textContent = "Sin foto disponible";
+
+        thumb.appendChild(nofoto);
+
+        smart.resolveUrl().then(url=>{
+          if(!thumb.isConnected) return;
+
+          thumb.innerHTML = "";
+          thumb.appendChild(tag);
+
+          if(url){
+            thumb.appendChild(img);
+            thumb.dataset.full = url;
+            thumb.appendChild(cta);
+
+            const orderItem = ORDER.get(item.referencia);
+            if(orderItem && !orderItem.imgUrl){
+              orderItem.imgUrl = url;
+              renderSummaryScreen();
+            }
+          } else {
+            thumb.appendChild(nofoto);
+            thumb.dataset.full = "";
+          }
+        });
+
+        thumb.addEventListener("click", ()=>{
+          openModal(item.referencia, thumb.dataset.full || "");
+        });
+
+        const body = document.createElement("div");
+        body.className = "body";
+
+        const row1 = document.createElement("div");
+        row1.className = "row1 producthead";
+
+        const left = document.createElement("div");
+
+        const ref = document.createElement("div");
+        ref.className = "ref";
+        ref.textContent = item.referencia;
+
+        left.appendChild(ref);
+
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = eur(item.precio);
+
+        row1.appendChild(left);
+        row1.appendChild(price);
+
+        const openHint = document.createElement("div");
+        openHint.className = "openhint";
+        openHint.innerHTML = `<span>Toca la imagen para abrir a pantalla completa</span><b>${modelUnits(item.referencia)>0 ? `Seleccionado: <span id="cat_qty_${item.referencia}">${modelUnits(item.referencia)}</span>` : `Seleccionado: <span id="cat_qty_${item.referencia}">0</span>`}</b>`;
+
+        body.appendChild(row1);
+        body.appendChild(openHint);
+
+        card.appendChild(thumb);
+        card.appendChild(body);
+
+        cards.appendChild(card);
+        updateCatalogOrderBadge(item.referencia);
+      }
+    }
+
+    function applySeasonFilter(){
+      VIEW = [...ALL];
+    }
+
+    function fillSelectOptions(selectId, values, firstLabel, normalizer=(v)=>v){
+      const select = $(selectId);
+      if(!select) return;
+      const current = normalizer(select.value || "");
+      const options = [`<option value="">${firstLabel}</option>`];
+      values.forEach(v=>{
+        const safe = escapeHtml(v);
+        options.push(`<option value="${safe}">${safe}</option>`);
+      });
+      select.innerHTML = options.join("");
+      const exists = values.some(v=>normalizer(v)===current);
+      select.value = exists ? values.find(v=>normalizer(v)===current) : "";
+    }
+
+    function refreshFilterOptions(){
+      const base = [...ALL];
+      const colorSet = new Set();
+
+      base.forEach(item=>{
+        const color = parseRef(item.referencia).colorName;
+        if(color) colorSet.add(color);
+      });
+
+      const sizes = FILTER_SIZES_MASTER.filter(sz=>sz!=="ÚNICA");
+      const colors = Array.from(colorSet).sort((a,b)=>a.localeCompare(b,"es",{sensitivity:"base"}));
+
+      fillSelectOptions("filterSize", sizes, "Todas las tallas", normalizeSizeKey);
+      fillSelectOptions("filterColor", colors, "Todos los colores", v=>String(v||"").trim().toUpperCase());
+    }
+
+    function resetFiltersUI(){
+      if($("q")) $("q").value = "";
+      if($("filterSize")) $("filterSize").value = "";
+      if($("filterColor")) $("filterColor").value = "";
+    }
+
+    function updateCountAndRender(){
+      $("countPill").textContent = `${VIEW.length} ${VIEW.length===1 ? "artículo" : "artículos"}`;
+      render();
+    }
+
+    function applySearch(){
+      const q = cleanQuery($("q").value);
+      const talla = normalizeSizeKey($("filterSize")?.value || "");
+      const color = String($("filterColor")?.value || "").trim().toUpperCase();
+
+      applySeasonFilter();
+
+      let filtered = [...VIEW];
+      const onlyDigits = /^[0-9]+$/.test(q);
+
+      if(q){
+        if(onlyDigits && (q.length===7 || q.length===8)){
+          filtered = filtered.filter(it=>cleanQuery(it.referencia)===q);
+        } else if(onlyDigits && q.length>=2){
+          filtered = filtered.filter(it=>String(it.referencia).startsWith(q) || parseRef(it.referencia).familia===q);
+        } else {
+          filtered = filtered.filter(it=>{
+            const p = parseRef(it.referencia);
+            return (
+              (it.referencia||"").toUpperCase().includes(q) ||
+              (it.descripcion||"").toUpperCase().includes(q) ||
+              (p.colorName||"").toUpperCase().includes(q) ||
+              (p.tipoName||"").toUpperCase().includes(q) ||
+              (p.familia||"").includes(q) ||
+              (it.temporada||"").toUpperCase().includes(q)
+            );
+          });
+        }
+      }
+
+      if(talla){
+        filtered = filtered.filter(it=>{
+          const sizes = getSizes(it).map(normalizeSizeKey);
+          return sizes.some(sz=>buildSizeAliases(sz).includes(talla));
+        });
+      }
+
+      if(color){
+        filtered = filtered.filter(it=>String(parseRef(it.referencia).colorName || "").trim().toUpperCase()===color);
+      }
+
+      VIEW = filtered;
+      updateCountAndRender();
+
+      if(activeModalRef && !VIEW.some(x=>x.referencia===activeModalRef) && !ALL.some(x=>x.referencia===activeModalRef)){
+        closeModal();
+      }
+    }
+
+    function openModal(ref, imageUrl){
+      renderProductModal(ref, imageUrl || "");
+    }
+
+    function closeModal(silent=false){
+      $("modal").classList.remove("show");
+      $("modalMedia").innerHTML = "";
+      $("modalContent").innerHTML = "";
+      $("modalMedia").onclick = null;
+      $("modalMedia").classList.remove("has-zoom");
+      activeModalRef = null;
+      activeModalImageUrl = "";
+      if(!$("imageZoomModal").classList.contains("show")){
+        document.body.classList.remove("modal-open");
+      }
+      if(!silent){
+        saveDraftDebounced();
+      }
+    }
+
+    function showScreen(name){
+      currentScreen = name;
+      $("screenDatos").classList.toggle("active", name==="datos");
+      $("screenProductos").classList.toggle("active", name==="productos");
+      $("screenResumen").classList.toggle("active", name==="resumen");
+      $("screenHistorial").classList.toggle("active", name==="historial");
+
+      if(name==="resumen"){
+        updateSummary();
+        renderSummaryScreen();
+      }
+
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function getForm(){
+      return {
+        empresa:$("empresa").value.trim(),
+        nombre:$("nombre").value.trim(),
+        cif:$("cif").value.trim(),
+        cp:$("cp").value.trim(),
+        poblacion:$("poblacion").value.trim(),
+        provincia:$("provincia").value.trim(),
+        tel:$("tel").value.trim(),
+        email:$("email").value.trim(),
+        rep:$("rep").value.trim(),
+        fechaPedido:$("fechaPedido").value.trim(),
+        fechaServicio:$("fechaServicio").value.trim(),
+        obs:$("obs").value.trim()
+      };
+    }
+
+    function validateFormFields(){
+      const d = getForm(), missing = [];
+
+      if(!d.empresa) missing.push("Tienda/Empresa");
+      if(!d.nombre) missing.push("Nombre y apellidos");
+      if(!d.cif) missing.push("CIF/NIF");
+      if(!d.cp) missing.push("Código postal");
+      if(!d.poblacion) missing.push("Población");
+      if(!d.provincia) missing.push("Provincia");
+      if(!d.tel) missing.push("Teléfono");
+      if(!d.email) missing.push("Email");
+
+      if(missing.length){
+        const msg = "Faltan: "+missing.join(", ");
+        toast(msg);
+        showError(msg, "errorBoxDatos");
+        return false;
+      }
+
+      hideError("errorBoxDatos");
+      return true;
+    }
+
+    function validateOrder(){
+      if(ORDER.size===0){
+        toast("Añade al menos un modelo.");
+        return false;
+      }
+      return true;
+    }
+
+    function validateFormAndOrder(){
+      if(!validateFormFields()) return false;
+      if(!validateOrder()) return false;
+      if(currentMode==="repeticiones" && calcularFechaServicio()==="Consultar disponibilidad"){
+        toast("⚠️ Fuera de calendario: consúltanos. El pedido se enviará igualmente.");
+      }
+      return true;
+    }
+
+    async function urlToDataURL(url){
+      try{
+        const res = await fetch(url,{cache:"no-store"});
+        const blob = await res.blob();
+        return await new Promise(resolve=>{
+          const fr = new FileReader();
+          fr.onload = ()=>resolve(fr.result);
+          fr.onerror = ()=>resolve(null);
+          fr.readAsDataURL(blob);
+        });
+      }catch(e){
+        return null;
+      }
+    }
+
+    function buildOrderLines(){
+      const lines = [];
+      for(const [ref,o] of ORDER){
+        const units = modelUnits(ref);
+        if(units<=0) continue;
+
+        const parts = Object.entries(o.sizes)
+          .sort((a,b)=>String(a[0]).localeCompare(String(b[0]),"es"))
+          .map(([t,q])=>`${t}: ${q}`)
+          .join(" · ");
+
+        const inc = (currentMode==="repeticiones" && (units===1 || units===2));
+        lines.push({
+          ref,
+          desc:o.desc,
+          precio:o.precio,
+          units,
+          tallas:parts,
+          inc,
+          subtotal:modelSubtotal(ref),
+          obs:o.obs||"",
+          imgUrl:o.imgUrl,
+          temporada:o.temporada
+        });
+      }
+      return lines.sort((a,b)=>a.ref.localeCompare(b.ref,"es"));
+    }
+
+    function buildExpandedOrderLines(){
+      const rows = [];
+      for(const [ref,o] of ORDER){
+        const finalUnitPrice = modelUnitPrice(ref);
+        for(const [talla,cantidadRaw] of Object.entries(o.sizes)){
+          const cantidad = Math.max(0,Math.floor(Number(cantidadRaw||0)));
+          if(!cantidad) continue;
+          rows.push({
+            ref,
+            desc:o.desc,
+            talla:normalizeSizeKey(talla),
+            cantidad,
+            precio:finalUnitPrice,
+            importe:Number((finalUnitPrice*cantidad).toFixed(2)),
+            modo:currentMode
+          });
+        }
+      }
+      return rows;
+    }
+
+    function orderSignature(){
+      return JSON.stringify({
+        mode:currentMode,
+        form:getForm(),
+        order:serializeOrder(),
+        total:buildOrderLines().map(x=>x.subtotal).reduce((a,b)=>a+b,0)
+      });
+    }
+
+    async function decrementStockOptimistic(ref,talla,qty){
+      const tallaAliases = buildSizeAliases(talla);
+
+      for(let attempt=0; attempt<3; attempt++){
+        const {data:rows,error:readErr} = await supabaseClient
+          .from("stock_ceremonia26")
+          .select("id, referencia, talla, stock")
+          .eq("referencia",ref)
+          .in("talla", tallaAliases);
+
+        if(readErr) throw readErr;
+
+        const row = (rows||[]).find(r=>buildSizeAliases(r.talla).includes(normalizeSizeKey(talla)));
+        if(!row) throw new Error(`No existe ${ref} talla ${talla} en stock.`);
+
+        const currentStock = Math.max(0,Number(row.stock||0));
+        if(currentStock<qty) throw new Error(`Stock insuficiente en ${ref} talla ${talla}. Disponible: ${currentStock}.`);
+
+        const nextStock = currentStock-qty;
+        const {data:updated,error:updateErr} = await supabaseClient
+          .from("stock_ceremonia26")
+          .update({stock:nextStock})
+          .eq("id",row.id)
+          .eq("stock",currentStock)
+          .select("id,stock");
+
+        if(updateErr) throw updateErr;
+        if(updated && updated.length===1){
+          return {
+            id:row.id,
+            ref,
+            talla:row.talla,
+            requestedTalla:talla,
+            previousStock:currentStock,
+            nextStock,
+            qty
+          };
+        }
+      }
+
+      throw new Error(`No se ha podido reservar ${ref} talla ${talla}. Inténtalo de nuevo.`);
+    }
+
+    async function restoreStock(reservations){
+      for(const r of reservations.reverse()){
+        try{
+          await supabaseClient
+            .from("stock_ceremonia26")
+            .update({stock:r.previousStock})
+            .eq("id",r.id)
+            .eq("stock",r.nextStock);
+        }catch(e){
+          console.error("Rollback stock", e);
+        }
+      }
+    }
+
+    function emailJsConfigured(){
+      return !!(window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID);
+    }
+
+    function buildEmailPayload(){
+      const d = getForm();
+      const lines = buildOrderLines();
+      let total = 0, totalUnits = 0, modelos = 0;
+      const body = [];
+
+      body.push(`ABUELA TATA · ${MODE_INFO[currentMode].title.toUpperCase()}`);
+      body.push("IMPORTES NETOS ANTES DE IMPUESTOS (IVA / RE no incluidos)");
+      body.push("");
+      body.push(`Modo: ${MODE_INFO[currentMode].title}`);
+      body.push(`Tienda/Empresa: ${d.empresa}`);
+      body.push(`Nombre: ${d.nombre}`);
+      body.push(`CIF/NIF: ${d.cif}`);
+      body.push(`CP: ${d.cp} · Población: ${d.poblacion} · Provincia: ${d.provincia}`);
+      body.push(`Tel: ${d.tel}`);
+      body.push(`Email: ${d.email}`);
+      if(d.rep) body.push(`Representante: ${d.rep}`);
+      body.push(`Fecha del pedido: ${isoToEs(d.fechaPedido || isoToday())}`);
+      body.push(`Servicio previsto: ${isoToEs(d.fechaServicio || calcularFechaServicio())}`);
+      body.push("");
+
+      if(d.obs){
+        body.push("Observaciones:");
+        body.push(d.obs);
+        body.push("");
+      }
+
+      body.push("MODELOS PEDIDOS:");
+      body.push("");
+
+      for(const ln of lines){
+        modelos++;
+        totalUnits += ln.units;
+        total += ln.subtotal;
+        body.push(`${ln.ref} · ${ln.desc}`);
+        body.push(`Tallas: ${ln.tallas}`);
+        body.push(`Unidades: ${ln.units} · Precio: ${eur(ln.precio)} · Importe modelo: ${eur(ln.subtotal)}${ln.inc ? " (incluye +10%)" : ""}`);
+        if(ln.obs) body.push(`Observaciones modelo: ${ln.obs}`);
+        body.push("");
+      }
+
+      body.push(`Modelos: ${modelos} · Unidades totales: ${totalUnits}`);
+      body.push(`TOTAL NETO (antes de impuestos): ${eur(total)}`);
+      body.push("");
+      body.push(
+        total>=SHIPPING_FREE_THRESHOLD
+          ? `🚚 No se cargarán gastos de envío (pedido ≥ ${SHIPPING_FREE_THRESHOLD}€ netos).`
+          : `🚚 Se cargarán gastos de envío (pedido < ${SHIPPING_FREE_THRESHOLD}€ netos).`
+      );
+
+      const subject = `${MODE_INFO[currentMode].title} · ${d.empresa} · ${d.cif} · ${isoToEs(d.fechaServicio || calcularFechaServicio())} · ${eur(total)}`;
+      return { d, subject, bodyText: body.join("\n") };
+    }
+
+    async function sendEmailAutomatic(){
+      if(!emailJsConfigured()) throw new Error("EmailJS no está disponible.");
+      const payload = buildEmailPayload();
+
+      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        cliente: payload.d.nombre,
+        email: payload.d.email,
+        telefono: payload.d.tel,
+        cp: payload.d.cp,
+        pedido: payload.bodyText,
+        subject: payload.subject,
+        to_email: EMAIL_TO,
+        reply_to: payload.d.email || EMAIL_TO
+      });
+
+      return true;
+    }
+
+    function openManualEmailFallback(){
+      const payload = buildEmailPayload();
+      const mailto = `mailto:${encodeURIComponent(EMAIL_TO)}?cc=${encodeURIComponent(payload.d.email)}&subject=${encodeURIComponent(payload.subject)}&body=${encodeURIComponent(payload.bodyText)}`;
+      window.location.href = mailto;
+    }
+
+    async function persistOrderInSupabase(){
+      if(!supabaseClient) throw new Error("No hay conexión con Supabase.");
+
+      const signature = orderSignature();
+      if(signature===lastSavedSignature) return {reused:true};
+
+      const d = getForm();
+      const servicio = d.fechaServicio || calcularFechaServicio();
+      const lines = buildExpandedOrderLines();
+      if(!lines.length) throw new Error("No hay líneas de pedido para guardar.");
+
+      const total = Number(lines.reduce((a,b)=>a+Number(b.importe||0),0).toFixed(2));
+      let reservations = [];
+      let pedidoId = null;
+
+      try{
+        if(currentMode==="stock"){
+          for(const line of lines){
+            reservations.push(await decrementStockOptimistic(line.ref,line.talla,line.cantidad));
+          }
+        }
+
+        const header = {
+          empresa:d.empresa,
+          nombre_apellidos:d.nombre,
+          cif:d.cif,
+          cp:d.cp,
+          poblacion:d.poblacion,
+          provincia:d.provincia,
+          telefono:d.tel,
+          email:d.email,
+          representante:d.rep||null,
+          fecha_pedido:normalizeDateForDb(d.fechaPedido||isoToday()),
+          fecha_servicio:normalizeDateForDb(servicio),
+          observaciones:d.obs||null,
+          modo:currentMode,
+          total
+        };
+
+        const {data:pedido,error:pedidoErr} = await supabaseClient
+          .from("pedidos_ceremonia26")
+          .insert(header)
+          .select("id")
+          .single();
+
+        if(pedidoErr) throw pedidoErr;
+        pedidoId = pedido.id;
+
+        const payloadLines = lines.map(line=>({
+          pedido_id:pedido.id,
+          referencia:line.ref,
+          descripcion:line.desc,
+          talla:line.talla,
+          cantidad:line.cantidad,
+          precio:line.precio,
+          importe:line.importe,
+          modo:currentMode
+        }));
+
+        const {error:lineErr} = await supabaseClient
+          .from("pedido_lineas_ceremonia26")
+          .insert(payloadLines);
+
+        if(lineErr) throw lineErr;
+
+        lastSavedSignature = signature;
+        return {pedidoId:pedido.id,total};
+      }catch(err){
+        if(pedidoId){
+          try{
+            await supabaseClient.from("pedido_lineas_ceremonia26").delete().eq("pedido_id",pedidoId);
+          }catch(e){
+            console.error("Rollback líneas pedido", e);
+          }
+          try{
+            await supabaseClient.from("pedidos_ceremonia26").delete().eq("id",pedidoId);
+          }catch(e){
+            console.error("Rollback cabecera pedido", e);
+          }
+        }
+        if(reservations.length) await restoreStock(reservations);
+        throw err;
+      }
+    }
+
+    async function generatePDF(){
+      if(!validateFormAndOrder()) return;
+
+      const d = getForm();
+      const lines = buildOrderLines();
+      let total = 0;
+      const {jsPDF} = window.jspdf;
+      const doc = new jsPDF({unit:"mm",format:"a4"});
+      const margin = 12;
+      let y = 14;
+
+      doc.setFont("times","bold");
+      doc.setFontSize(16);
+      doc.text(`ABUELA TATA · ${MODE_INFO[currentMode].title.toUpperCase()}`,margin,y);
+      y += 7;
+
+      doc.setFont("times","normal");
+      doc.setFontSize(11);
+      doc.text("Importes NETOS antes de impuestos (IVA/RE según cliente)",margin,y);
+      y += 8;
+
+      doc.setFontSize(10);
+      [
+        `Modo: ${MODE_INFO[currentMode].title}`,
+        `Tienda/Empresa: ${d.empresa}`,
+        `Nombre: ${d.nombre}`,
+        `CIF/NIF: ${d.cif}`,
+        `CP: ${d.cp} · Población: ${d.poblacion} · Provincia: ${d.provincia}`,
+        `Tel: ${d.tel}`,
+        `Email: ${d.email}`,
+        d.rep ? `Representante: ${d.rep}` : null,
+        `Fecha del pedido: ${isoToEs(d.fechaPedido || isoToday())}`,
+        `Servicio previsto: ${isoToEs(d.fechaServicio || calcularFechaServicio())}`
+      ].filter(Boolean).forEach(t=>{
+        doc.text(t,margin,y);
+        y += 5;
+      });
+
+      if(d.obs){
+        y += 2;
+        doc.setFont("times","bold");
+        doc.text("Observaciones:",margin,y);
+        y += 5;
+        doc.setFont("times","normal");
+        const obsLines = doc.splitTextToSize(d.obs,180);
+        doc.text(obsLines,margin,y);
+        y += obsLines.length*5;
+      }
+
+      y += 6;
+      doc.setDrawColor(160);
+      doc.line(margin,y,210-margin,y);
+      y += 7;
+      doc.setFont("times","bold");
+      doc.setFontSize(12);
+      doc.text("MODELOS PEDIDOS",margin,y);
+      y += 6;
+
+      const X_IMG=margin, X_REF=margin+26, X_TALLAS=margin+92, W_REF=60, W_TALLAS=52, X_PRICE=176, X_IMPORTE=198;
+      doc.setFontSize(9);
+      doc.text("Imagen",X_IMG,y);
+      doc.text("Ref / Descripción",X_REF,y);
+      doc.text("Tallas",X_TALLAS,y);
+      doc.text("Precio",X_PRICE,y,{align:"right"});
+      doc.text("Importe",X_IMPORTE,y,{align:"right"});
+      y += 5;
+      doc.setDrawColor(200);
+      doc.line(margin,y,210-margin,y);
+      y += 5;
+      doc.setFont("times","normal");
+
+      for(const ln of lines){
+        const refDesc = `${ln.ref} · ${ln.desc}`;
+        const refLines = doc.splitTextToSize(refDesc,W_REF);
+        const tallaLines = doc.splitTextToSize(ln.tallas||"",W_TALLAS);
+        const maxLines = Math.max(refLines.length,tallaLines.length,1);
+        const lineH = 4.1, minRowH = 22, padTop = 3, padBottom = 6;
+        const rowH = Math.max(minRowH,padTop+(maxLines*lineH)+padBottom);
+
+        if(y+rowH>287){
+          doc.addPage();
+          y = 16;
+        }
+
+        let imgData = null;
+        if(ln.imgUrl) imgData = await urlToDataURL(ln.imgUrl);
+
+        if(imgData){
+          try{
+            doc.addImage(imgData,"JPEG",X_IMG,y-1,20,20);
+          }catch(e){
+            try{
+              doc.addImage(imgData,"PNG",X_IMG,y-1,20,20);
+            }catch(_){}
+          }
+        } else {
+          doc.setDrawColor(210);
+          doc.rect(X_IMG,y-1,20,20);
+          doc.setFontSize(7);
+          doc.text("Sin foto",X_IMG+10,y+9,{align:"center"});
+          doc.setFontSize(9);
+        }
+
+        doc.text(refLines,X_REF,y+3);
+        doc.text(tallaLines,X_TALLAS,y+3);
+        doc.text(eur(ln.precio),X_PRICE,y+3,{align:"right"});
+        doc.setFont("times","bold");
+        doc.text(eur(ln.subtotal),X_IMPORTE,y+3,{align:"right"});
+        doc.setFont("times","normal");
+
+        if(ln.obs){
+          const obsY = y+Math.min(rowH-5, 18);
+          doc.setFontSize(8);
+          doc.text(doc.splitTextToSize(`Obs: ${ln.obs}`, 140), X_REF, obsY);
+          doc.setFontSize(9);
+        }
+
+        if(ln.inc){
+          doc.setTextColor(192,57,43);
+          doc.setFont("times","bold");
+          doc.text("+10% (1–2 uds)",X_REF,y+Math.min(18,rowH-5));
+          doc.setFont("times","normal");
+          doc.setTextColor(0,0,0);
+        }
+
+        total += ln.subtotal;
+        y += rowH;
+        doc.setDrawColor(235);
+        doc.line(margin,y-2,210-margin,y-2);
+      }
+
+      if(y+30>287){
+        doc.addPage();
+        y = 16;
+      }
+
+      y += 6;
+      doc.setFont("times","bold");
+      doc.setFontSize(12);
+      doc.text("TOTAL NETO (antes de impuestos): "+eur(total),margin,y);
+      y += 8;
+      doc.setFont("times","normal");
+      doc.setFontSize(9);
+
+      doc.text(
+        total>=SHIPPING_FREE_THRESHOLD
+          ? `🚚 No se cargarán gastos de envío (pedido ≥ ${SHIPPING_FREE_THRESHOLD}€ netos).`
+          : `🚚 Se cargarán gastos de envío (pedido < ${SHIPPING_FREE_THRESHOLD}€ netos).`,
+        margin,
+        y
+      );
+
+      doc.save(`ABUELA_TATA_${currentMode.toUpperCase()}_${(d.empresa||"PEDIDO").replace(/\s+/g,"_")}.pdf`);
+      toast("PDF guardado.");
+    }
+
+    async function sendEmail(){
+      if(!validateFormAndOrder()) return;
+
+      const btns = [
+        $("btnEmail"),
+        $("btnEnviarResumen")
+      ].filter(Boolean);
+
+      btns.forEach(btn=>setBtnBusy(btn,true,"ENVIANDO…"));
+      hideAllErrors();
+
+      let persistDone = false;
+
+      try{
+        await persistOrderInSupabase();
+        persistDone = true;
+        await sendEmailAutomatic();
+        saveCustomerProfile();
+
+        toast(
+          currentMode==="stock"
+            ? "Pedido enviado, guardado y stock descontado correctamente."
+            : "Pedido enviado y guardado correctamente."
+        );
+
+        clearOrderButKeepCustomer();
+
+        if(currentMode==="stock") await loadData();
+        render();
+        updateSummary();
+        renderSummaryScreen();
+        showScreen("datos");
+      }catch(e){
+        console.error(e);
+
+        if(!persistDone){
+          showError(`⚠️ No se pudo guardar el pedido${e?.message ? `: ${e.message}` : "."}`, "errorBox");
+          showError(`⚠️ No se pudo guardar el pedido${e?.message ? `: ${e.message}` : "."}`, "errorBoxDatos");
+          toast("No se pudo guardar el pedido.");
+        } else {
+          try{ openManualEmailFallback(); }catch(_){}
+          showError("⚠️ El pedido se ha guardado correctamente, pero el envío automático ha fallado. Se ha abierto el email manual como respaldo.", "errorBox");
+          showError("⚠️ El pedido se ha guardado correctamente, pero el envío automático ha fallado. Se ha abierto el email manual como respaldo.", "errorBoxDatos");
+          toast("Pedido guardado. Falló el envío automático.");
+        }
+      }finally{
+        btns.forEach(btn=>setBtnBusy(btn,false,"ENVIANDO…"));
+      }
+    }
+
+    function vaciar(){
+      ORDER.clear();
+      markOrderDirty();
+      closeModal(true);
+      closeImageZoom();
+      render();
+      updateSummary();
+      renderSummaryScreen();
+      clearDraft();
+      if($("obs")) $("obs").value = "";
+      toast("Pedido vaciado.");
+    }
+
+    function applyModeUI(){
+      const info = MODE_INFO[currentMode];
+      document.body.dataset.mode = currentMode;
+      document.querySelectorAll(".modebtn").forEach(btn=>btn.classList.toggle("active", btn.dataset.mode===currentMode));
+      $("subTitle").textContent = info.subtitle;
+      $("catalogTitle").textContent = info.catalogTitle;
+      $("catalogNote").innerHTML = info.catalogNote;
+      $("formNote").innerHTML = info.formNote;
+      $("serviceLabel").textContent = info.serviceLabel;
+      $("serviceBoxText").innerHTML = info.serviceBoxText;
+      $("summaryFineprint").innerHTML = info.serviceFineprint;
+      resetFiltersUI();
+      calcularFechaServicio();
+    }
+
+    async function setMode(mode){
+      if(mode!=="repeticiones" && mode!=="stock") return;
+      if(currentMode===mode) return;
+      currentMode = mode;
+      applyModeUI();
+      await loadData();
+      refreshFilterOptions();
+      applySearch();
+      renderSummaryScreen();
+    }
+
+    function getModeFromUrl(){
+      const params = new URLSearchParams(window.location.search);
+      const modo = (params.get("modo")||"").trim().toLowerCase();
+      if(modo==="stock") return "stock";
+      if(modo==="repeticiones") return "repeticiones";
+      return "repeticiones";
+    }
+
+    function continuarADetalle(){
+      if(!validateFormFields()) return;
+      calcularFechaServicio();
+      showScreen("productos");
+    }
+
+    function abrirResumen(){
+      if(!validateFormFields()) return;
+      if(!validateOrder()) return;
+      calcularFechaServicio();
+      updateSummary();
+      renderSummaryScreen();
+      showScreen("resumen");
+    }
+
+    async function buscarPedidosRealizados(){
+      hideError("errorBoxHistorial");
+
+      if(!supabaseClient){
+        showError("No hay conexión con Supabase.", "errorBoxHistorial");
+        return;
+      }
+
+      const cif = ($("histCif")?.value || $("cif")?.value || "").trim();
+      const email = ($("histEmail")?.value || $("email")?.value || "").trim().toLowerCase();
+      const box = $("historialList");
+
+      box.innerHTML = "<div class='empty-state'>Buscando pedidos…</div>";
+
+      try{
+        let query = supabaseClient
+          .from("pedidos_ceremonia26")
+          .select("*")
+          .order("id", { ascending:false });
+
+        if(cif){
+          query = query.eq("cif", cif);
+        } else if(email){
+          query = query.eq("email", email);
+        } else {
+          showError("Escribe al menos un CIF/NIF o un email para buscar.", "errorBoxHistorial");
+          box.innerHTML = "";
+          return;
+        }
+
+        const { data, error } = await query;
+        if(error) throw error;
+
+        if(!data || !data.length){
+          box.innerHTML = "<div class='empty-state'>No se encontraron pedidos.</div>";
+          return;
+        }
+
+        box.innerHTML = data.map(p=>`
+          <article class="history-card">
+            <div class="resume-ref">Pedido #${p.id}</div>
+            <div class="resume-desc">${escapeHtml(p.empresa || "")}</div>
+            <div class="resume-meta">
+              <div><b>Cliente:</b> ${escapeHtml(p.nombre_apellidos || "")}</div>
+              <div><b>CIF:</b> ${escapeHtml(p.cif || "")}</div>
+              <div><b>Email:</b> ${escapeHtml(p.email || "")}</div>
+              <div><b>Fecha pedido:</b> ${escapeHtml(isoToEs(p.fecha_pedido) || "")}</div>
+              <div><b>Fecha servicio:</b> ${escapeHtml(isoToEs(p.fecha_servicio) || "")}</div>
+              <div><b>Modo:</b> ${escapeHtml(p.modo || "")}</div>
+              <div class="resume-total"><b>Total:</b> ${eur(p.total || 0)}</div>
+            </div>
+            <div class="history-actions">
+              <button class="btn ghost btnVerLineas" type="button" data-pedido-id="${p.id}">Ver detalle</button>
+            </div>
+            <div class="history-lines" id="pedido_lineas_${p.id}" style="display:none;"></div>
+          </article>
+        `).join("");
+      }catch(e){
+        console.error(e);
+        showError("No se pudo cargar el historial de pedidos.", "errorBoxHistorial");
+        box.innerHTML = "";
+      }
+    }
+
+    async function verLineasPedido(pedidoId){
+      const box = document.getElementById(`pedido_lineas_${pedidoId}`);
+      if(!box || !supabaseClient) return;
+
+      if(box.dataset.loaded === "1"){
+        box.style.display = box.style.display === "none" ? "grid" : "none";
+        return;
+      }
+
+      box.style.display = "grid";
+      box.innerHTML = "<div class='fineprint'>Cargando detalle…</div>";
+
+      try{
+        const { data, error } = await supabaseClient
+          .from("pedido_lineas_ceremonia26")
+          .select("*")
+          .eq("pedido_id", pedidoId)
+          .order("referencia", { ascending:true });
+
+        if(error) throw error;
+
+        if(!data || !data.length){
+          box.innerHTML = "<div class='fineprint'>Sin líneas.</div>";
+          box.dataset.loaded = "1";
+          return;
+        }
+
+        box.innerHTML = data.map(line=>`
+          <div class="history-line">
+            <b>${escapeHtml(line.referencia || "")}</b> · ${escapeHtml(line.descripcion || "")}<br>
+            Talla: ${escapeHtml(line.talla || "")} · Cantidad: ${line.cantidad} · Precio: ${eur(line.precio || 0)} · Importe: ${eur(line.importe || 0)}
+          </div>
+        `).join("");
+
+        box.dataset.loaded = "1";
+      }catch(e){
+        console.error(e);
+        box.innerHTML = "<div class='fineprint'>No se pudo cargar el detalle.</div>";
+      }
+    }
+
+    $("q").addEventListener("input", applySearch);
+    $("filterSize").addEventListener("change", applySearch);
+    $("filterColor").addEventListener("change", applySearch);
+    $("btnClearFilters").addEventListener("click", ()=>{
+      resetFiltersUI();
+      applySearch();
+    });
+
+    $("btnPdf").addEventListener("click", generatePDF);
+    $("btnPdfResumen").addEventListener("click", generatePDF);
+
+    $("btnEmail").addEventListener("click", sendEmail);
+    $("btnEnviarResumen").addEventListener("click", sendEmail);
+
+    $("btnVaciar").addEventListener("click", vaciar);
+
+    $("btnContinuar").addEventListener("click", continuarADetalle);
+    $("btnBackToDatos").addEventListener("click", ()=>showScreen("datos"));
+    $("btnBackToProductos").addEventListener("click", ()=>showScreen("productos"));
+    $("btnResumen").addEventListener("click", abrirResumen);
+
+    $("btnPedidosRealizados")?.addEventListener("click", ()=>{
+      if($("histCif")) $("histCif").value = $("cif").value || "";
+      if($("histEmail")) $("histEmail").value = $("email").value || "";
+      $("historialList").innerHTML = "";
+      hideError("errorBoxHistorial");
+      showScreen("historial");
+    });
+
+    $("btnBuscarHistorial")?.addEventListener("click", buscarPedidosRealizados);
+    $("btnBackFromHistorial")?.addEventListener("click", ()=>showScreen("datos"));
+
+    document.querySelectorAll(".modebtn").forEach(btn=>{
+      btn.addEventListener("click", ()=>setMode(btn.dataset.mode));
+    });
+
+    ["empresa","nombre","cif","cp","poblacion","provincia","tel","email","rep","obs"].forEach(id=>{
+      const el = $(id);
+      if(!el) return;
+
+      el.addEventListener("input", ()=>{
+        markOrderDirty();
+        saveDraftDebounced();
+        if(id !== "obs"){
+          hideError("errorBoxDatos");
+        }
+        renderSummaryScreen();
+      });
+
+      el.addEventListener("change", ()=>{
+        markOrderDirty();
+        saveDraftDebounced();
+        renderSummaryScreen();
+      });
+    });
+
+    $("modal").addEventListener("click", e=>{
+      if(e.target.id==="modal") closeModal();
+    });
+
+    $("modalX").addEventListener("click", closeModal);
+
+    $("imageZoomModal").addEventListener("click", e=>{
+      if(e.target.id==="imageZoomModal") closeImageZoom();
+    });
+
+    $("imageZoomClose").addEventListener("click", closeImageZoom);
+
+    $("historialList").addEventListener("click", e=>{
+      const btn = e.target.closest(".btnVerLineas");
+      if(!btn) return;
+      const pedidoId = btn.dataset.pedidoId;
+      if(pedidoId) verLineasPedido(Number(pedidoId));
+    });
+
+    document.addEventListener("keydown", e=>{
+      if(e.key==="Escape"){
+        if($("imageZoomModal").classList.contains("show")){
+          closeImageZoom();
+        } else {
+          closeModal();
+        }
+      }
+    });
+
+    (async function init(){
+      if(emailJsConfigured()){
+        try{
+          window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        }catch(e){
+          console.error("EmailJS init", e);
+        }
+      }
+
+      const fav = document.getElementById("favicon");
+      const test = new Image();
+      test.onerror = ()=>{ fav.href="./images/logo.jpg"; };
+      test.src = "./images/logo.png";
+
+      enforcePedidoHoy();
+      loadCustomerProfile();
+      currentMode = getModeFromUrl();
+      applyModeUI();
+      await loadData();
+      refreshFilterOptions();
+      applySearch();
+      renderSummaryScreen();
+      showScreen("datos");
+    })();
+  </script>
+</body>
+</html>
