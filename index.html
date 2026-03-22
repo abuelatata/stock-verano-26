@@ -214,6 +214,13 @@
     const SIZES_NINO = ["2A","3A","4A","5A","6A","8A","10A","12A","14A","16A"];
     const SIZES_UNICA = ["ÚNICA"];
     let currentMode = "repeticiones";
+    function getInitialModeFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  const modo = (params.get("modo") || "").trim().toLowerCase();
+  if(modo === "stock") return "stock";
+  if(modo === "repeticiones") return "repeticiones";
+  return "repeticiones";
+}
     let ALL = [], VIEW = [];
     const ORDER = new Map();
     let lastSavedSignature = null;
@@ -353,6 +360,7 @@
       if(!session) return;
 
       startAuthWatcher();
+      currentMode = getInitialModeFromURL();
       enforcePedidoHoy();
       applyModeUI();
       await loadData();
