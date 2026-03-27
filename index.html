@@ -1875,31 +1875,40 @@
     const EMAILJS_PUBLIC_KEY = "w9oca5obX66kstcBb";
     const EMAILJS_SERVICE_ID = "service_vooz9gy";
     const EMAILJS_TEMPLATE_ID = "template_5933w4y";
-    const SUPABASE_URL = "https://qoyrjhgjtydbcngfnyqn.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_w1UF4CwiWSCD5Ykd5yejfw_O--zV3OL";
-    const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_KEY)
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-      : null;
+   const SUPABASE_URL = "https://qoyrjhgjtydbcngfnyqn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_w1UF4CwiWSCD5Ykd5yejfw_O--zV3OL";
+const LOGIN_PAGE_URL = "https://abuelatata.github.io/area-profesional-ceremonia-26-abuela-tata/";
+
+const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_KEY)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    })
+  : null;
 
 async function requireAuth(){
   try{
     if(!supabaseClient){
-      window.location.href = "./index.html";
-      return;
+      window.location.href = LOGIN_PAGE_URL;
+      return false;
     }
 
     const { data, error } = await supabaseClient.auth.getSession();
 
     if(error || !data?.session){
-      window.location.href = "./index.html";
-      return;
+      window.location.href = LOGIN_PAGE_URL;
+      return false;
     }
 
+    return true;
   }catch(e){
-    window.location.href = "./index.html";
+    window.location.href = LOGIN_PAGE_URL;
+    return false;
   }
 }
-  
     const DATA_SOURCES = { repeticiones: "./data/tarifa.json" };
 
     const MODE_INFO = {
@@ -3978,8 +3987,8 @@ async function requireAuth(){
 
     (async function init(){
 
-  await requireAuth(); // 🔐 aquí
-
+   const isAuthenticated = await requireAuth();
+  if(!isAuthenticated) return;
       if(emailJsConfigured()){
         try{
           window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
