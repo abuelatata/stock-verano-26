@@ -1,0 +1,852 @@
+[
+  {
+    "referencia": "1299415",
+    "descripcion": "Jesusito con capota",
+    "precio": 36.85,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399415",
+    "descripcion": "Jesusito sin capota",
+    "precio": 34.7,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599415",
+    "descripcion": "Vestido de vuelo",
+    "precio": 34.7,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "4399415",
+    "descripcion": "Conjunto de niño",
+    "precio": 29.7,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "899415",
+    "descripcion": "Diadema",
+    "precio": 8.3,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1299416",
+    "descripcion": "Jesusito con capota",
+    "precio": 40.15,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399416",
+    "descripcion": "Jesusito sin capota",
+    "precio": 38.0,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599416",
+    "descripcion": "Vestido de vuelo",
+    "precio": 37.5,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "8199716",
+    "descripcion": "Felpa",
+    "precio": 4.0,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "899416",
+    "descripcion": "Diadema",
+    "precio": 8.2,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1299417",
+    "descripcion": "Jesusito con capota",
+    "precio": 39.65,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399417",
+    "descripcion": "Jesusito sin capota",
+    "precio": 37.5,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599417",
+    "descripcion": "Vestido de vuelo",
+    "precio": 37.95,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "1299418",
+    "descripcion": "Jesusito con capota",
+    "precio": 36.25,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399418",
+    "descripcion": "Jesusito sin capota",
+    "precio": 34.15,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599418",
+    "descripcion": "Vestido de vuelo",
+    "precio": 35.3,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "4300418",
+    "descripcion": "Conjunto de niño",
+    "precio": 33.25,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "4399418",
+    "descripcion": "Conjunto de niño",
+    "precio": 32.85,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "8199418",
+    "descripcion": "Felpa",
+    "precio": 4.0,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "899418",
+    "descripcion": "Diadema",
+    "precio": 8.3,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1299419",
+    "descripcion": "Jesusito con capota",
+    "precio": 36.95,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399419",
+    "descripcion": "Jesusito sin capota",
+    "precio": 34.85,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599419",
+    "descripcion": "Vestido de vuelo",
+    "precio": 35.45,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "4399419",
+    "descripcion": "Conjunto de niño",
+    "precio": 29.3,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "899419",
+    "descripcion": "Diadema",
+    "precio": 8.15,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1299420",
+    "descripcion": "Jesusito con capota",
+    "precio": 38.35,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399420",
+    "descripcion": "Jesusito sin capota",
+    "precio": 36.2,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599420",
+    "descripcion": "Vestido de vuelo",
+    "precio": 38.75,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "899420",
+    "descripcion": "Diadema",
+    "precio": 7.95,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1299421",
+    "descripcion": "Jesusito con capota",
+    "precio": 41.5,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399421",
+    "descripcion": "Jesusito sin capota",
+    "precio": 39.45,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599421",
+    "descripcion": "Vestido de vuelo",
+    "precio": 36.75,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "899421",
+    "descripcion": "Diadema",
+    "precio": 8.1,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1201422",
+    "descripcion": "Jesusito con capota",
+    "precio": 36.95,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1301422",
+    "descripcion": "Jesusito sin capota",
+    "precio": 34.85,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1204422",
+    "descripcion": "Jesusito con capota",
+    "precio": 36.95,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1304422",
+    "descripcion": "Jesusito sin capota",
+    "precio": 34.85,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2501422",
+    "descripcion": "Vestido de vuelo",
+    "precio": 34.5,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "2504422",
+    "descripcion": "Vestido de vuelo",
+    "precio": 34.5,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "4304422",
+    "descripcion": "Conjunto de niño",
+    "precio": 32.0,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "8001422",
+    "descripcion": "Pañuelo pelo",
+    "precio": 4.0,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "8004422",
+    "descripcion": "Pañuelo pelo",
+    "precio": 4.0,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "801422",
+    "descripcion": "Diadema",
+    "precio": 8.3,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "804422",
+    "descripcion": "Diadema",
+    "precio": 8.3,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1299423",
+    "descripcion": "Jesusito con capota",
+    "precio": 33.85,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399423",
+    "descripcion": "Jesusito sin capota",
+    "precio": 31.7,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599423",
+    "descripcion": "Vestido de vuelo",
+    "precio": 32.95,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "8099423",
+    "descripcion": "Pañuelo pelo",
+    "precio": 4.15,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "899423",
+    "descripcion": "Diadema",
+    "precio": 7.85,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1200424",
+    "descripcion": "Jesusito con capota",
+    "precio": 34.7,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1300424",
+    "descripcion": "Jesusito sin capota",
+    "precio": 32.55,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1227424",
+    "descripcion": "Jesusito con capota",
+    "precio": 36.35,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1327424",
+    "descripcion": "Jesusito sin capota",
+    "precio": 34.2,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2500424",
+    "descripcion": "Vestido de vuelo",
+    "precio": 32.95,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "2527424",
+    "descripcion": "Vestido de vuelo",
+    "precio": 35.0,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "899424",
+    "descripcion": "Diadema",
+    "precio": 8.25,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "1299425",
+    "descripcion": "Jesusito con capota",
+    "precio": 36.1,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "1399425",
+    "descripcion": "Jesusito sin capota",
+    "precio": 33.95,
+    "tallas": [
+      "3M",
+      "6M",
+      "9M",
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A"
+    ]
+  },
+  {
+    "referencia": "2599425",
+    "descripcion": "Vestido de vuelo",
+    "precio": 35.85,
+    "tallas": [
+      "12M",
+      "18M",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "8A",
+      "10A",
+      "11A",
+      "12A"
+    ]
+  },
+  {
+    "referencia": "8099425",
+    "descripcion": "Diadema",
+    "precio": 4.15,
+    "tallas": [
+      "ÚNICA"
+    ]
+  },
+  {
+    "referencia": "899425",
+    "descripcion": "Diadema",
+    "precio": 7.95,
+    "tallas": [
+      "ÚNICA"
+    ]
+  }
+]
