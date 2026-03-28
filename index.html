@@ -3198,7 +3198,24 @@
           modo:currentMode,
           total
         };
+if (currentMode === "stock") {
+  for (const line of lines) {
+    const { data: stockOk, error: stockErr } = await supabaseClient.rpc("comprar_stock", {
+      ref: line.ref,
+      talla_sel: line.talla,
+      cantidad_comprar: line.cantidad
+    });
 
+    if (stockErr) {
+      throw stockErr;
+    }
+
+    if (stockOk !== true) {
+      throw new Error(`No hay stock suficiente para ${line.ref} talla ${line.talla}`);
+    }
+  }
+}
+        
         const {data:pedido,error:pedidoErr} = await supabaseClient
           .from("pedidos_verano26")
           .insert(header)
