@@ -2176,7 +2176,7 @@
       if(!supabaseClient) throw new Error("Supabase no está disponible en este navegador.");
 
       const {data,error} = await supabaseClient
-        .from("stock_verano26")
+        .from("stock_verano_26")
         .select("id, referencia, descripcion, precio, talla, stock")
         .order("referencia",{ascending:true});
 
