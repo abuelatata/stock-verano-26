@@ -3030,7 +3030,7 @@
 
       for(let attempt=0; attempt<3; attempt++){
         const {data:rows,error:readErr} = await supabaseClient
-          .from("stock_verano26")
+          .from("stock_verano_26")
           .select("id, referencia, talla, stock")
           .eq("referencia",ref)
           .in("talla", tallaAliases);
@@ -3072,7 +3072,7 @@
       for(const r of reservations.reverse()){
         try{
           await supabaseClient
-            .from("stock_verano26")
+            .from("stock_verano_26")
             .update({stock:r.previousStock})
             .eq("id",r.id)
             .eq("stock",r.nextStock);
