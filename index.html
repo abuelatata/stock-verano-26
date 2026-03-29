@@ -1771,26 +1771,32 @@
       : null;
 
     async function requireAuth(){
-      try{
-        if(!supabaseClient){
-          window.location.href = LOGIN_PAGE_URL;
-          return false;
-        }
-
-        const { data, error } = await supabaseClient.auth.getSession();
-
-        if(error || !data?.session){
-          window.location.href = LOGIN_PAGE_URL;
-          return false;
-        }
-
-        return true;
-      }catch(e){
-        window.location.href = LOGIN_PAGE_URL;
-        return false;
-      }
+  try{
+    if(!supabaseClient){
+      showError("No hay conexión con Supabase.", "errorBoxDatos");
+      return false;
     }
 
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if(error){
+      console.error("Error al comprobar sesión:", error);
+      showError("No se pudo comprobar la sesión.", "errorBoxDatos");
+      return false;
+    }
+
+    if(!data?.session){
+      window.location.replace(LOGIN_PAGE_URL);
+      return false;
+    }
+
+    return true;
+  }catch(e){
+    console.error("Error en requireAuth:", e);
+    showError("Error al comprobar acceso.", "errorBoxDatos");
+    return false;
+  }
+}
     const MODE_INFO = {
       stock: {
         title: "Stock disponible Verano 26",
@@ -3045,7 +3051,7 @@
 
         const nextStock = currentStock-qty;
         const {data:updated,error:updateErr} = await supabaseClient
-          .from("stock_verano26")
+          .from("stock_verano_26")
           .update({stock:nextStock})
           .eq("id",row.id)
           .eq("stock",currentStock)
@@ -3218,7 +3224,7 @@ if (currentMode === "stock") {
 }
         
         const {data:pedido,error:pedidoErr} = await supabaseClient
-          .from("pedidos_verano26")
+          .from("pedidos_verano_26")
           .insert(header)
           .select("id")
           .single();
@@ -3238,7 +3244,7 @@ if (currentMode === "stock") {
         }));
 
         const {error:lineErr} = await supabaseClient
-          .from("pedido_lineas_verano26")
+          .from("pedido_lineas_verano_26")
           .insert(payloadLines);
 
         if(lineErr) throw lineErr;
@@ -3248,12 +3254,12 @@ if (currentMode === "stock") {
       }catch(err){
         if(pedidoId){
           try{
-            await supabaseClient.from("pedido_lineas_verano26").delete().eq("pedido_id",pedidoId);
+            await supabaseClient.from("pedido_lineas_verano_26").delete().eq("pedido_id",pedidoId);
           }catch(e){
             console.error("Rollback líneas pedido", e);
           }
           try{
-            await supabaseClient.from("pedidos_verano26").delete().eq("id",pedidoId);
+            await supabaseClient.from("pedidos_verano_26").delete().eq("id",pedidoId);
           }catch(e){
             console.error("Rollback cabecera pedido", e);
           }
@@ -3515,7 +3521,7 @@ if (currentMode === "stock") {
 
       try{
         let query = supabaseClient
-          .from("pedidos_verano26")
+          .from("pedidos_verano_26")
           .select("*")
           .order("id", { ascending:false });
 
@@ -3577,7 +3583,7 @@ if (currentMode === "stock") {
 
       try{
         const { data, error } = await supabaseClient
-          .from("pedido_lineas_verano26")
+          .from("pedido_lineas_verano_26")
           .select("*")
           .eq("pedido_id", pedidoId)
           .order("referencia", { ascending:true });
