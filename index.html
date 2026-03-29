@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Verano26 · Abuela Tata</title>
-  
 
   <link id="favicon" rel="icon" href="./images/logo.png" />
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -1756,9 +1755,10 @@
     const EMAILJS_PUBLIC_KEY = "w9oca5obX66kstcBb";
     const EMAILJS_SERVICE_ID = "service_vooz9gy";
     const EMAILJS_TEMPLATE_ID = "template_5933w4y";
-    const SUPABASE_URL = "https://dscuemveajmlgzhrpopj.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_U477X85MkfoGqVOov3I5vw_WUZoCSS7";
-    const LOGIN_PAGE_URL = "./login.html";
+    const SUPABASE_URL = "https://qoyrjhgjtydbcngfnyqn.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_w1UF4CwiWSCD5Ykd5yejfw_O--zV3OL";
+    const LOGIN_PAGE_URL = "https://abuelatata.github.io/area-profesional-Verano-26-abuela-tata/";
+
     const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_KEY)
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
           auth: {
@@ -1770,32 +1770,26 @@
       : null;
 
     async function requireAuth(){
-  try{
-    if(!supabaseClient){
-      showError("No hay conexión con Supabase.", "errorBoxDatos");
-      return false;
+      try{
+        if(!supabaseClient){
+          window.location.href = LOGIN_PAGE_URL;
+          return false;
+        }
+
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if(error || !data?.session){
+          window.location.href = LOGIN_PAGE_URL;
+          return false;
+        }
+
+        return true;
+      }catch(e){
+        window.location.href = LOGIN_PAGE_URL;
+        return false;
+      }
     }
 
-    const { data, error } = await supabaseClient.auth.getSession();
-
-    if(error){
-      console.error("Error al comprobar sesión:", error);
-      showError("No se pudo comprobar la sesión.", "errorBoxDatos");
-      return false;
-    }
-
-    if(!data?.session){
-      window.location.replace(LOGIN_PAGE_URL);
-      return false;
-    }
-
-    return true;
-  }catch(e){
-    console.error("Error en requireAuth:", e);
-    showError("Error al comprobar acceso.", "errorBoxDatos");
-    return false;
-  }
-}
     const MODE_INFO = {
       stock: {
         title: "Stock disponible Verano 26",
@@ -2182,7 +2176,7 @@
       if(!supabaseClient) throw new Error("Supabase no está disponible en este navegador.");
 
       const {data,error} = await supabaseClient
-        .from("stock_verano_26")
+        .from("stock_verano26")
         .select("id, referencia, descripcion, precio, talla, stock")
         .order("referencia",{ascending:true});
 
@@ -3035,7 +3029,7 @@
 
       for(let attempt=0; attempt<3; attempt++){
         const {data:rows,error:readErr} = await supabaseClient
-          .from("stock_verano_26")
+          .from("stock_verano26")
           .select("id, referencia, talla, stock")
           .eq("referencia",ref)
           .in("talla", tallaAliases);
@@ -3050,7 +3044,7 @@
 
         const nextStock = currentStock-qty;
         const {data:updated,error:updateErr} = await supabaseClient
-          .from("stock_verano_26")
+          .from("stock_verano26")
           .update({stock:nextStock})
           .eq("id",row.id)
           .eq("stock",currentStock)
@@ -3077,7 +3071,7 @@
       for(const r of reservations.reverse()){
         try{
           await supabaseClient
-            .from("stock_verano_26")
+            .from("stock_verano26")
             .update({stock:r.previousStock})
             .eq("id",r.id)
             .eq("stock",r.nextStock);
@@ -3086,7 +3080,7 @@
         }
       }
     }
-       function emailJsConfigured(){
+        function emailJsConfigured(){
       return !!(window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID);
     }
 
@@ -3204,9 +3198,9 @@
           modo:currentMode,
           total
         };
-        
+
         const {data:pedido,error:pedidoErr} = await supabaseClient
-          .from("pedidos_verano_26")
+          .from("pedidos_verano26")
           .insert(header)
           .select("id")
           .single();
@@ -3226,7 +3220,7 @@
         }));
 
         const {error:lineErr} = await supabaseClient
-          .from("pedido_lineas_verano_26")
+          .from("pedido_lineas_verano26")
           .insert(payloadLines);
 
         if(lineErr) throw lineErr;
@@ -3236,12 +3230,12 @@
       }catch(err){
         if(pedidoId){
           try{
-            await supabaseClient.from("pedido_lineas_verano_26").delete().eq("pedido_id",pedidoId);
+            await supabaseClient.from("pedido_lineas_verano26").delete().eq("pedido_id",pedidoId);
           }catch(e){
             console.error("Rollback líneas pedido", e);
           }
           try{
-            await supabaseClient.from("pedidos_verano_26").delete().eq("id",pedidoId);
+            await supabaseClient.from("pedidos_verano26").delete().eq("id",pedidoId);
           }catch(e){
             console.error("Rollback cabecera pedido", e);
           }
@@ -3503,7 +3497,7 @@
 
       try{
         let query = supabaseClient
-          .from("pedidos_verano_26")
+          .from("pedidos_verano26")
           .select("*")
           .order("id", { ascending:false });
 
@@ -3565,7 +3559,7 @@
 
       try{
         const { data, error } = await supabaseClient
-          .from("pedido_lineas_verano_26")
+          .from("pedido_lineas_verano26")
           .select("*")
           .eq("pedido_id", pedidoId)
           .order("referencia", { ascending:true });
@@ -3702,4 +3696,4 @@
     })();
   </script>
 </body>
-</html> 
+</html>
