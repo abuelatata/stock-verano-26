@@ -1,107 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Login · Abuela Tata</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login · Abuela Tata</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-body{
-  margin:0;
-  font-family:Georgia, serif;
-  background:#f5efe6;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-}
-.box{
-  background:#fff;
-  padding:30px;
-  border-radius:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,.1);
-  width:320px;
-}
-input{
-  width:100%;
-  padding:12px;
-  margin-bottom:10px;
-  border-radius:10px;
-  border:1px solid #ddd;
-}
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:#2f7f75;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-}
-</style>
+  <style>
+    body{
+      margin:0;
+      font-family:Georgia, serif;
+      background:#f5efe6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+    }
+    .box{
+      background:#fff;
+      padding:30px;
+      border-radius:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.1);
+      width:320px;
+      box-sizing:border-box;
+    }
+    h2{
+      margin-top:0;
+      color:#5b3f2d;
+      text-align:center;
+    }
+    input{
+      width:100%;
+      box-sizing:border-box;
+      padding:12px;
+      margin-bottom:10px;
+      border-radius:10px;
+      border:1px solid #ddd;
+      font-size:16px;
+    }
+    button{
+      width:100%;
+      box-sizing:border-box;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:#2f7f75;
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
+      font-size:16px;
+    }
+    button:disabled{
+      opacity:.7;
+      cursor:default;
+    }
+    #msg{
+      margin-top:12px;
+      font-size:14px;
+      text-align:center;
+      color:#b42318;
+      min-height:20px;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="box">
-  <h2>Área Profesional</h2>
+  <div class="box">
+    <h2>Área Profesional</h2>
 
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Contraseña">
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="Email" autocomplete="username" required>
+      <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+      <button id="loginBtn" type="submit">Entrar</button>
+    </form>
 
-  <button type="button" onclick="login()">Entrar</button>
-</div>
+    <div id="msg"></div>
+  </div>
 
-<script>
-const SUPABASE_URL = "https://dscuemveajmlgzhrpopj.supabase.co";
-const SUPABASE_KEY = "sb_publishable_U477X85MkfoGqVOov3I5vw_WUZoCSS7";
+  <script>
+    const SUPABASE_URL = "https://dscuemveajmlgzhrpopj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_U477X85MkfoGqVOov3I5vw_WUZoCSS7";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
-});
+    const msgEl = document.getElementById("msg");
+    const formEl = document.getElementById("loginForm");
+    const btnEl = document.getElementById("loginBtn");
 
-async function login(){
-  try{
-    console.log("LOGIN PULSADO");
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    if(!email || !password){
-      alert("Introduce email y contraseña");
-      return;
+    function setMsg(text, isError = true){
+      msgEl.textContent = text || "";
+      msgEl.style.color = isError ? "#b42318" : "#2f7f75";
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    if (!window.supabase) {
+      setMsg("No se ha cargado la librería de Supabase.");
+    } else {
+      const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      });
 
-    console.log("RESPUESTA LOGIN:", data, error);
+      formEl.addEventListener("submit", async function(e){
+        e.preventDefault();
+        setMsg("");
 
-    if(error){
-      alert(error.message);
-      return;
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) {
+          setMsg("Introduce email y contraseña.");
+          return;
+        }
+
+        btnEl.disabled = true;
+        btnEl.textContent = "Entrando...";
+
+        try {
+          const { error } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
+
+          if (error) {
+            setMsg(error.message);
+            btnEl.disabled = false;
+            btnEl.textContent = "Entrar";
+            return;
+          }
+
+          setMsg("Acceso correcto. Entrando...", false);
+
+          setTimeout(function(){
+            window.location.href = "./index.html";
+          }, 500);
+
+        } catch (err) {
+          console.error(err);
+          setMsg("Error al iniciar sesión.");
+          btnEl.disabled = false;
+          btnEl.textContent = "Entrar";
+        }
+      });
     }
-
-    // pequeña pausa para asegurar sesión
-    setTimeout(()=>{
-      window.location.href = "./index.html";
-    }, 300);
-
-  }catch(err){
-    console.error("ERROR LOGIN:", err);
-    alert("Error en el login");
-  }
-}
-</script>
+  </script>
 
 </body>
 </html>
