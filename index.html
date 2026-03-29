@@ -2176,7 +2176,7 @@
       if(!supabaseClient) throw new Error("Supabase no está disponible en este navegador.");
 
       const {data,error} = await supabaseClient
-        .from("stock_verano26")
+        .from("stock_verano_26")
         .select("id, referencia, descripcion, precio, talla, stock")
         .order("referencia",{ascending:true});
 
@@ -3029,7 +3029,7 @@
 
       for(let attempt=0; attempt<3; attempt++){
         const {data:rows,error:readErr} = await supabaseClient
-          .from("stock_verano26")
+          .from("stock_verano_26")
           .select("id, referencia, talla, stock")
           .eq("referencia",ref)
           .in("talla", tallaAliases);
@@ -3044,7 +3044,7 @@
 
         const nextStock = currentStock-qty;
         const {data:updated,error:updateErr} = await supabaseClient
-          .from("stock_verano26")
+          .from("stock_verano_26")
           .update({stock:nextStock})
           .eq("id",row.id)
           .eq("stock",currentStock)
@@ -3071,7 +3071,7 @@
       for(const r of reservations.reverse()){
         try{
           await supabaseClient
-            .from("stock_verano26")
+            .from("stock_verano_26")
             .update({stock:r.previousStock})
             .eq("id",r.id)
             .eq("stock",r.nextStock);
@@ -3200,7 +3200,7 @@
         };
 
         const {data:pedido,error:pedidoErr} = await supabaseClient
-          .from("pedidos_verano26")
+          .from("pedidos_verano_26")
           .insert(header)
           .select("id")
           .single();
@@ -3220,7 +3220,7 @@
         }));
 
         const {error:lineErr} = await supabaseClient
-          .from("pedido_lineas_verano26")
+          .from("pedido_lineas_verano_26")
           .insert(payloadLines);
 
         if(lineErr) throw lineErr;
@@ -3497,7 +3497,7 @@
 
       try{
         let query = supabaseClient
-          .from("pedidos_verano26")
+          .from("pedidos_verano_26")
           .select("*")
           .order("id", { ascending:false });
 
@@ -3559,7 +3559,7 @@
 
       try{
         const { data, error } = await supabaseClient
-          .from("pedido_lineas_verano26")
+          .from("pedido_lineas_verano_26")
           .select("*")
           .eq("pedido_id", pedidoId)
           .order("referencia", { ascending:true });
